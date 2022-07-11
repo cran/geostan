@@ -24,6 +24,7 @@ stan_glm(
   chains = 4,
   iter = 2000,
   refresh = 1000,
+  keep_all = FALSE,
   pars = NULL,
   control = NULL,
   ...
@@ -73,6 +74,8 @@ alpha_tau ~ Student_t(d.f., location, scale).
 \item{iter}{Number of samples per chain.}
 
 \item{refresh}{Stan will print the progress of the sampler every \code{refresh} number of samples; set \code{refresh=0} to silence this.}
+
+\item{keep_all}{If \code{keep_all = TRUE} then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors and the \code{bridgesampling} package.}
 
 \item{pars}{Specify any additional parameters you'd like stored from the Stan model.}
 

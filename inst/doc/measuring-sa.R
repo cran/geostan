@@ -9,39 +9,64 @@ knitr::opts_chunk$set(
 
 ## ----setup, message = FALSE, warning = FALSE----------------------------------
 library(geostan)
+library(ggplot2)
+library(gridExtra)
 data("georgia")
 
 ## ----fig.width = 8------------------------------------------------------------
 sp_diag(georgia$college, georgia, name = "College (%)")
 
 ## -----------------------------------------------------------------------------
-mean(georgia$college)
+W <- shape2mat(georgia, style = "W")
 
 ## -----------------------------------------------------------------------------
-weighted.mean(georgia$college, w = georgia$population)
+moran_plot(georgia$college, W)
 
 ## -----------------------------------------------------------------------------
-C <- shape2mat(georgia, style = "W")
-moran_plot(georgia$college, C)
+mc(georgia$college, W)
 
 ## -----------------------------------------------------------------------------
-mc(georgia$college, C)
+A <- shape2mat(georgia, "B")
+moran_plot(georgia$college, A)
 
 ## -----------------------------------------------------------------------------
-moran_plot(georgia$college, shape2mat(georgia, "B"))
+x <- georgia$college
+W <- shape2mat(georgia, "W")
+mc(x, W)
+gr(x, W)
+mc(x, W) + gr(x, W)
 
 ## -----------------------------------------------------------------------------
-Li <- lisa(georgia$college, C)
-head(Li)
+W <- shape2mat(georgia, "W")
+x <- log(georgia$income)
+Ii <- lisa(x, W)
+head(Ii)
 
 ## -----------------------------------------------------------------------------
-c(mc(georgia$college, C), mean(Li$Li))
+Ci <- lg(x, W)
+head(Ci)
+
+## ----fig.width = 5------------------------------------------------------------
+Ci_map <- ggplot(georgia) + 
+  geom_sf(aes(fill=Ci)) +
+  # or try: scale_fill_viridis() 
+  scale_fill_gradient(high = "navy",  
+                      low = "white") +
+  theme_void()
+
+Li_map <- ggplot(georgia) + 
+  geom_sf(aes(fill=Ii$Li)) +
+  scale_fill_gradient2(name = "Ii") +
+  theme_void()
+
+gridExtra::grid.arrange(Ci_map, Li_map, nrow = 1)
 
 ## -----------------------------------------------------------------------------
-rho <- aple(georgia$ICE, C)
+x <- log(georgia$income)
+rho <- aple(x, W)
 n <- nrow(georgia)
 ess <- n_eff(rho = rho, n = n)
-c(nominal_n = n, rho = rho, ESS = ess)
+c(nominal_n = n, rho = rho, MC = mc(x, W), ESS = ess)
 
 ## -----------------------------------------------------------------------------
 C <- shape2mat(georgia)

@@ -45,7 +45,7 @@ me_diag(
 \item{binwidth}{A function with a single argument that will be passed to the \code{binwidth} argument in \code{\link[ggplot2]{geom_histogram}}. The default is to set the width of bins to \code{0.5 * sd(x)}.}
 }
 \value{
-A grid of spatial diagnostic plots for measurement error models comparing the raw observations to the posterior distribution of the true values. Includes a point-interval plot, a histogram of Moran coefficient values for the posterior distribution of Delta values (\code{Delta = z - x}, where \code{z} are the survey estimates and \code{x} are the modeled true values), and a map of the posterior mean of the Delta values.
+A grid of spatial diagnostic plots for measurement error models comparing the raw observations to the posterior distribution of the true values. Includes a point-interval plot of raw values and modeled values; a Moran scatter plot for \code{delta = z - x} where \code{z} are the survey estimates and \code{x} are the modeled values; and a map of the delta values (take at their posterior means).
 }
 \description{
 Visual diagnostics for spatial measurement error models.

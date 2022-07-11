@@ -19,7 +19,7 @@ prep_me_data(
 
 \item{car_parts}{A list of data required for spatial CAR models, as created by \code{\link[geostan]{prep_car_data}}; optional. If omitted, the measurement error model will be a non-spatial Student's t model.}
 
-\item{prior}{A named list of prior distributions (see \code{\link[geostan]{priors}}). If none are provided, default priors will be assigned. The liste of priors may include the following parameters:
+\item{prior}{A named list of prior distributions (see \code{\link[geostan]{priors}}). If none are provided, default priors will be assigned. The list of priors may include the following parameters:
 \describe{
 \item{df}{If using a non-spatial ME model, the degrees of freedom (df) for the Student's t model is assigned a gamma prior with default parameters of \code{gamma(alpha = 3, beta = 0.2)}. Provide values for each covariate in \code{se}, listing the values in the same order as the columns of \code{se}.}
 

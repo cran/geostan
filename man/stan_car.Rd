@@ -21,6 +21,7 @@ stan_car(
   re,
   data,
   car_parts,
+  C,
   family = gaussian(),
   prior = NULL,
   ME = NULL,
@@ -30,6 +31,7 @@ stan_car(
   chains = 4,
   iter = 2000,
   refresh = 500,
+  keep_all = FALSE,
   pars = NULL,
   control = NULL,
   ...
@@ -49,6 +51,8 @@ With the CAR model, any \code{alpha_re} term should be at a \emph{different} lev
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
 \item{car_parts}{A list of data for the CAR model, as returned by \code{\link[geostan]{prep_car_data}}.}
+
+\item{C}{Optional spatial connectivity matrix which will be used to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms; it will automatically be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.}
 
 \item{family}{The likelihood function for the outcome variable. Current options are \code{auto_gaussian()}, \code{binomial(link = "logit")}, and \code{poisson(link = "log")}; if \code{family = gaussian()} is provided, it will automatically be converted to \code{auto_gaussian()}.}
 
@@ -81,6 +85,8 @@ With the CAR model, any \code{alpha_re} term should be at a \emph{different} lev
 \item{iter}{Number of samples per chain.}
 
 \item{refresh}{Stan will print the progress of the sampler every \code{refresh} number of samples. Set \code{refresh=0} to silence this.}
+
+\item{keep_all}{If \code{keep_all = TRUE} then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors and the \code{bridgesampling} package.}
 
 \item{pars}{Optional; specify any additional parameters you'd like stored from the Stan model.}
 
