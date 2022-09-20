@@ -4,13 +4,16 @@
 \alias{auto_gaussian}
 \title{Auto-Gaussian family for CAR models}
 \usage{
-auto_gaussian()
+auto_gaussian(type)
+}
+\arguments{
+\item{type}{Optional; either "CAR" for conditionally specified auto-model or "SAR" for the simultaneously specified auto-model. The type is added internally by \code{stan_car} or \code{stan_sar} when needed.}
 }
 \value{
 An object of class \code{family}
 }
 \description{
-create a family object for the auto-Gaussian CAR specification
+create a family object for the auto-Gaussian CAR or SAR specification
 }
 \examples{
 cp = prep_car_data(shape2mat(georgia))
@@ -18,7 +21,7 @@ fit <- stan_car(log(rate.male) ~ 1,
                 data = georgia,
                 car_parts = cp,
                 family = auto_gaussian(),
-                chains = 2, iter = 800) # for speed only
+                chains = 2, iter = 700) # for speed only
 print(fit)
 }
 \seealso{

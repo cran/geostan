@@ -24,8 +24,8 @@ state-of-the-art platform for Bayesian inference.
 
 ### Disease mapping and spatial regression
 
-Model small-area incidence rates with mortality or disease data recorded
-across areal units like states, counties, or census tracts.
+Statistical models for data recorded across areal units like states,
+counties, or census tracts.
 
 ### Observational uncertainty
 
@@ -63,16 +63,6 @@ Install **geostan** from CRAN using:
 install.packages("geostan")
 ```
 
-Linux users may also install from source:
-
-``` r
-remotes::install_github("connordonegan/geostan")
-```
-
-Then run:
-
-    rstantools::rstan_config()
-
 ## Usage
 
 Load the package and the `georgia` county mortality data set (ages
@@ -80,12 +70,6 @@ Load the package and the `georgia` county mortality data set (ages
 
 ``` r
 library(geostan)
-#> This is geostan version 0.2.1
-#> 
-#> Attaching package: 'geostan'
-#> The following object is masked from 'package:base':
-#> 
-#>     gamma
 data(georgia)
 ```
 
@@ -93,8 +77,9 @@ The `sp_diag` function provides visual summaries of spatial data,
 including a histogram, Moran scatter plot, and map:
 
 ``` r
-sp_diag(georgia$rate.female, georgia)
-#> 3 NA values found in x. They will be dropped from the data before creating the Moran plot. If matrix w was row-standardized, it no longer is. To address this, you can use a binary connectivity matrix, using style = 'B' in shape2mat.
+A <- shape2mat(georgia, style = "B")
+sp_diag(georgia$rate.female, georgia, w = A)
+#> 3 NA values found in x; they will be dropped from the data before creating the Moran plot. If matrix w was row-standardized, it no longer is. You may want to use a binary connectivity matrix using style = 'B' in shape2mat.
 #> Warning: Removed 3 rows containing non-finite values (stat_bin).
 ```
 
@@ -108,7 +93,6 @@ include our information on the censored observations to obtain results
 for all counties:
 
 ``` r
-A <- shape2mat(georgia, style = "B")
 cars <- prep_car_data(A)
 #> Range of permissible rho values:  -1.661134 1
 fit <- stan_car(deaths.female ~ offset(log(pop.at.risk.female)),
@@ -129,7 +113,7 @@ fit <- stan_car(deaths.female ~ offset(log(pop.at.risk.female)),
 #>   df location scale
 #> 1 10        0     3
 #> 
-#> *Setting prior for CAR spatial autocorrelation parameter (rho)
+#> *Setting prior for CAR spatial autocorrelation parameter (sar_rho)
 #> Distribution: uniform
 #>   lower upper
 #> 1  -1.7     1
@@ -140,7 +124,7 @@ diagnostics for spatial models:
 
 ``` r
 sp_diag(fit, georgia, w = A)
-#> 3 NA values found in x. They will be dropped from the data before creating the Moran plot. If matrix w was row-standardized, it no longer is. To address this, you can use a binary connectivity matrix, using style = 'B' in shape2mat.
+#> 3 NA values found in x; they will be dropped from the data before creating the Moran plot. If matrix w was row-standardized, it no longer is. You may want to use a binary connectivity matrix using style = 'B' in shape2mat.
 #> Warning: Removed 3 rows containing missing values (geom_pointrange).
 ```
 
@@ -159,8 +143,8 @@ print(fit)
 #> Spatial method (outcome):  CAR 
 #> Likelihood function:  poisson 
 #> Link function:  log 
-#> Residual Moran Coefficient:  0.000228 
-#> WAIC:  1292.1 
+#> Residual Moran Coefficient:  0.0017505 
+#> WAIC:  1290.39 
 #> Observations:  159 
 #> Data models (ME): none
 #> Inference for Stan model: foundation.
@@ -168,11 +152,11 @@ print(fit)
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean    sd   2.5%    25%    50%    75%  97.5% n_eff  Rhat
-#> intercept -4.674   0.002 0.089 -4.846 -4.718 -4.674 -4.631 -4.496  1648 1.002
-#> car_rho    0.923   0.001 0.058  0.778  0.895  0.935  0.966  0.995  3618 1.000
-#> car_scale  0.457   0.001 0.035  0.393  0.432  0.455  0.480  0.531  3855 1.000
+#> intercept -4.673   0.002 0.089 -4.851 -4.720 -4.675 -4.630 -4.488  2465 1.001
+#> car_rho    0.926   0.001 0.057  0.783  0.898  0.939  0.969  0.995  2896 1.001
+#> car_scale  0.456   0.001 0.036  0.391  0.432  0.454  0.479  0.532  3110 1.001
 #> 
-#> Samples were drawn using NUTS(diag_e) at Thu Jun 30 12:41:42 2022.
+#> Samples were drawn using NUTS(diag_e) at Mon Sep 19 15:23:26 2022.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).

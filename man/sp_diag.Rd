@@ -28,7 +28,7 @@ sp_diag(
   w = shape2mat(shape, match.arg(style)),
   binwidth = function(x) 0.5 * stats::sd(x, na.rm = TRUE),
   rates = TRUE,
-  size = 0.15,
+  size = 0.1,
   ...
 )
 
@@ -70,7 +70,9 @@ sp_diag(
 \value{
 A grid of spatial diagnostic plots. When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map. When provided with a fitted \code{geostan} model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions).
 
-If \code{plot = TRUE}, the \code{ggplots} are drawn using \code{\link[gridExtra]{grid.arrange}}; otherwise, they are returned in a list. For the \code{geostan_fit} method, the underlying data for the Moran coefficient will also be returned if \code{plot = FALSE}.
+If \code{plot = TRUE}, the \code{ggplots} are drawn using \link[gridExtra]{grid.arrange}; otherwise, they are returned in a list. For the \code{geostan_fit} method, the underlying data for the Moran coefficient will also be returned if \code{plot = FALSE}.
+
+When \code{y} is a fitted CAR or SAR model with \code{family = auto_gaussian()}, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default \code{trend = TRUE} and the call to \link[geostan]{residuals.geostan_fit} will use the default \code{detrend = TRUE}. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.)
 }
 \description{
 Visual diagnostics for areal data and model residuals

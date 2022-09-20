@@ -1,7 +1,7 @@
-#' Conditional autoregressive (CAR) models
-#' 
-#' @description Use the CAR model as a prior on parameters, or fit data to a spatial Gaussian CAR model.
-#' 
+#' Simultaneous autoregressive (SAR) models
+#'
+#' @description Fit data to an spatial Gaussian SAR (spatial error) model, or model a vector of spatially-autocorrelated parameters using a SAR prior model.
+#'
 #' @param formula A model formula, following the R \code{\link[stats]{formula}} syntax. Binomial models can be specified by setting the left hand side of the equation to a data frame of successes and failures, as in \code{cbind(successes, failures) ~ x}.
 #' 
 #' @param slx Formula to specify any spatially-lagged covariates. As in, \code{~ x1 + x2} (the intercept term will be removed internally). When setting priors for \code{beta}, remember to include priors for any SLX terms. 
@@ -11,16 +11,17 @@
 #' alpha_re ~ N(0, alpha_tau)
 #' alpha_tau ~ Student_t(d.f., location, scale).
 #' ```
-#' With the CAR model, any \code{alpha_re} term should be at a *different* level or scale than the observations; that is, at a different scale than the autocorrelation structure of the CAR model itself.
+#' With the SAR model, any \code{alpha_re} term should be at a *different* level or scale than the observations; that is, at a different scale than the autocorrelation structure of the SAR model itself.
 #'
 #' @param data A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.
-#' 
-#' @param car_parts A list of data for the CAR model, as returned by \code{\link[geostan]{prep_car_data}}.
 #'
-#' @param C Optional spatial connectivity matrix which will be used to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms; it will automatically be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.
+#' @param C Spatial weights matrix (conventionally referred to as \eqn{W} in the SAR model). Typically, this will be created using `geostan::shape2mat(shape, style = "W")`. This will be passed internally to \code{\link[geostan]{prep_sar_data}}, and will also be used to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms; it will automatically be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.
+#'
+#' @param sar_parts Optional. If not provided, then \code{\link[geostan]{prep_sar_data}} will be used automatically to create `sar_parts` using the user-provided spatial weights matrix. 
 #' 
 #' @param family The likelihood function for the outcome variable. Current options are \code{auto_gaussian()}, \code{binomial(link = "logit")}, and \code{poisson(link = "log")}; if `family = gaussian()` is provided, it will automatically be converted to `auto_gaussian()`.
 #'
+
 #' @param prior A named list of parameters for prior distributions (see \code{\link[geostan]{priors}}):
 #' \describe{
 #' 
@@ -29,14 +30,14 @@
 #' \item{beta}{Regression coefficients are assigned Gaussian prior distributions. Variables must follow their order of appearance in the model `formula`. Note that if you also use `slx` terms (spatially lagged covariates), and you use custom priors for `beta`, then you have to provide priors for the slx terms. Since slx terms are *prepended* to the design matrix, the prior for the slx term will be listed first.
 #' }
 #'
-#' \item{car_scale}{Scale parameter for the CAR model, \code{car_scale}. The scale is assigned a Student's t prior model (constrained to be positive).}
+#' \item{sar_scale}{Scale parameter for the SAR model, \code{sar_scale}. The scale is assigned a Student's t prior model (constrained to be positive).}
 #'
-#' \item{car_rho}{The spatial autocorrelation parameter in the CAR model, `rho`, is assigned a uniform prior distribution. By default, the prior will be uniform over all permissible values as determined by the eigenvalues of the connectivity matrix, `C`. The range of permissible values for `rho` is automatically printed to the console by \code{\link[geostan]{prep_car_data}}.}
+#' \item{sar_rho}{The spatial autocorrelation parameter in the SAR model, `rho`, is assigned a uniform prior distribution. By default, the prior will be uniform over all permissible values as determined by the eigenvalues of the spatial weights matrix. The range of permissible values for `rho` is printed to the console by \code{\link[geostan]{prep_sar_data}}.}
 #'
 #' \item{tau}{The scale parameter for any varying intercepts (a.k.a exchangeable random effects, or partial pooling) terms. This scale parameter, `tau`, is assigned a Student's t prior (constrained to be positive).}
 #' 
 #' }
-#' 
+#'
 #' @param ME To model observational uncertainty (i.e. measurement or sampling error) in any or all of the covariates, provide a list of data as constructed by the \code{\link[geostan]{prep_me_data}} function. 
 #'
 #' @param centerx To center predictors on their mean values, use `centerx = TRUE`. If the ME argument is used, the modeled covariate (i.e., latent variable), rather than the raw observations, will be centered. When using the ME argument, this is the recommended method for centering the covariates.
@@ -55,90 +56,89 @@
 #' 
 #' @details
 #'
-#' CAR models are discussed in Cressie and Wikle (2011, p. 184-88), Cressie (2015, Ch. 6-7), and Haining and Li (2020, p. 249-51). It is often used for areal or lattice data.
+#' Discussions of SAR models may be found in Cliff and Ord (1981), Cressie (2015, Ch. 6), LeSage and Pace (2009), and LeSage (2014). 
 #'
-#' Details for the Stan code for this implementation of the CAR model can be found in Donegan (2021).
+#' The general scheme of the SAR model for numeric vector \eqn{y} is
+#' \deqn{
+#'  y = \mu + ( I - \rho W)^{-1} \epsilon \\
+#' \epsilon \sim Gauss(0, \sigma^2 I)
+#' }
+#' where \eqn{W} is the spatial weights matrix, \eqn{I} is the n-by-n identity matrix, and \eqn{\rho} is a spatial autocorrelation parameter. In words, the errors of the regression equation are spatially autocorrelated. 
 #'
-#' The general scheme for the CAR model is as follows:
+#' Re-arranging terms, the model can also be written as follows:
 #' \deqn{
-#'  y \sim Gauss( \mu, ( I - \rho C)^{-1} M),
+#'  y = \mu + \rho W (y - \mu)  + \epsilon
 #' }
-#' where \eqn{I} is the identity matrix, \eqn{\rho} is a spatial dependence parameter, \eqn{C} is a spatial connectivity matrix, and \eqn{M} is a diagonal matrix of variance terms. The diagonal of \eqn{M} contains a scale parameter \eqn{\tau} multiplied by a vector of weights (often set to be proportional to the inverse of the number of neighbors assigned to each site). The CAR model owes its name to the fact that this joint distribution corresponds to a set of conditional distributions that relate the expected value of each observation to a function of neighboring values, i.e., the Markov condition holds:
-#' \deqn{
-#' E(y_i | y_1, y_2, \dots, y_{i-1}, y_{i+1}, \dots, y_n) = \mu_i + \rho \sum_{j=1}^n c_{i,j} (y_j - \mu_j),
-#' }
-#' where entries of \eqn{c_{i,j}} are non-zero only if \eqn{j \in N(i)} and \eqn{N(i)} indexes the sites that are neighbors of the \eqn{i^{th}} site.
+#' which perhaps shows more intuitively the implicit spatial trend component, \eqn{\rho W (y - \mu)}.
 #' 
-#' With the Gaussian probability distribution,
-#' \deqn{
-#'  y_i | y_j: j \neq i \sim Gauss(\mu_i + \rho \sum_{j=1}^n c_{i,j} (y_j - \mu_j), \tau_i^2)
-#' }
-#' where \eqn{\tau_i} is a scale parameter and \eqn{\mu_i} may contain covariates or simply the intercept.
+#' Most often, this model is applied directly to observations (referred to below as the auto-Gaussian model). The SAR model can also be applied to a vector of parameters inside a hierarchical model. The latter enables spatial autocorrelation to be modeled when the observations are discrete counts (e.g., disease incidence data).
 #'
-#' The covariance matrix of the CAR model contains two parameters: \eqn{\rho} (\code{car_rho}) which controls the kind (positive or negative) and degree of spatial autocorrelation, and the scale parameter \eqn{\tau} (\code{car_scale}). The range of permissible values for \eqn{\rho} depends on the specification of \eqn{\boldsymbol C} and \eqn{\boldsymbol M}; for specification options, see \link[geostan]{prep_car_data} and Cressie and Wikle (2011, pp. 184-188) or Donegan (2021).
+#' A note on terminology: the spatial statistics literature conceptualizes the simultaneously-specified spatial autoregressive model (SAR) in relation to the conditionally-specified spatial autoregressive model (CAR) (see \link[geostan]{stan_car}) (see Cliff and Ord 1981). The spatial econometrics literature, by contrast, refers to the simultaneously-specified spatial autoregressive (SAR) model as the spatial error model (SEM), and they contrast the SEM with the spatial lag model (which contains a spatially-lagged dependent variable on the right-hand-side of the regression equation) (see LeSage 2014). 
 #' 
-#' Further details of the models and results depend on the \code{family} argument, as well as on the particular CAR specification chosen (from \link[geostan]{prep_car_data}).
-#'
 #' ###  Auto-Gaussian
 #'
-#' When \code{family = auto_gaussian()} (the default), the CAR model is applied directly to the data as follows:
+#' When \code{family = auto_gaussian()}, the SAR model is specified as follows:
 #' \deqn{
-#'  y \sim Gauss( \mu, (I - \rho C)^{-1} M),
+#' y \sim Gauss(\mu, \Sigma) \\
+#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
 #' }
-#' where \eqn{\mu} is the mean vector (with intercept, covariates, etc.), \eqn{C} is a spatial connectivity matrix, and \eqn{M} is a known diagonal matrix containing the conditional variances \eqn{\tau_i^2}. \eqn{C} and \eqn{M} are provided by \link[geostan]{prep_car_data}.
+#' where \eqn{\mu} is the mean vector (with intercept, covariates, etc.), \eqn{W} is a spatial weights matrix (usually row-standardized), and \eqn{\sigma} is a scale parameter.
 #'
-#' The auto-Gaussian model contains an implicit spatial trend (i.e. autocorrelation) component \eqn{\phi} which can be calculated as follows (Cressie 2015, p. 564):
+#' The SAR model contains an implicit spatial trend (i.e., spatial autocorrelation) component \eqn{\phi} which is calculated as follows:
 #' \deqn{
-#'  \phi = \rho C (y - \mu).
+#' \phi = \rho W (y - \mu)
 #' }
+#' 
 #' This term can be extracted from a fitted auto-Gaussian model using the \link[geostan]{spatial} method.
 #'
 #' When applied to a fitted auto-Gaussian model, the \link[geostan]{residuals.geostan_fit} method returns 'de-trended' residuals \eqn{R} by default. That is,
 #' \deqn{
-#' R = y - \mu - \rho C (y - \mu).
+#' R = y - \mu - \rho W (y - \mu).
 #' }
 #' To obtain "raw" residuals (\eqn{y - \mu}), use `residuals(fit, detrend = FALSE)`. Similarly, the fitted values obtained from the \link[geostan]{fitted.geostan_fit} will include the spatial trend term by default.
-#' 
+#'
 #' ### Poisson
 #'
 #' For \code{family = poisson()}, the model is specified as:
-#'\deqn{
+#'
+#' \deqn{
 #' y \sim Poisson(e^{O + \lambda}) \\
-#' \lambda \sim Gauss(\mu, (I - \rho C)^{-1} \boldsymbol M).
+#' \lambda \sim Gauss(\mu, \Sigma)   \\
+#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.
 #' }
 #' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator {p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
-#'
+#' 
 #' This is often written (equivalently) as:
 #' \deqn{
 #' y \sim Poisson(e^{O + \mu + \phi}) \\
-#' \phi \sim Gauss(0, (I - \rho C)^{-1} \boldsymbol M).
+#' \phi \sim Gauss(0, \Sigma) \\
+#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
 #' }
+#'
 #' For Poisson models, the \link[geostan]{spatial} method returns the parameter vector \eqn{\phi}.
-#' 
-#' In the Poisson CAR model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it: \eqn{\phi_i = \rho \sum_{i=1}^n c_{ij} \phi_j + \epsilon_i}, \eqn{\epsilon_i \sim Gauss(0, \tau_i^2)}. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating (following Cressie 2015, p. 564):
+#'
+#' In the Poisson SAR model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 #' \deqn{
-#' \rho  C  \phi.
+#'  \rho W \phi.
 #' }
 #' 
 #' ### Binomial
 #' 
 #' For `family = binomial()`, the model is specified as:
-#'\deqn{
-#' y \sim Binomial(N, \lambda)  \\
-#' logit(\lambda) \sim Gauss(\mu, (I - \rho C)^{-1} \boldsymbol M).
-#' }
-#' where outcome data \eqn{y} are counts, \eqn{N} is the number of trials, and \eqn{\lambda} is the 'success' rate. Note that the model formula should be structured as: `cbind(sucesses, failures) ~ x`, such that `trials = successes + failures`.
-#'
-#' This is often written (equivalently) as:
 #' \deqn{
-#' y \sim Binomial(N, (\mu + \phi))  \\
-#' logit(\phi) \sim Gauss(0, (I - \rho C)^{-1} \boldsymbol M).
+#' y \sim Binomial(N, \lambda)  \\
+#' logit(\lambda) \sim Gauss(\mu, \Sigma)  \\
+#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
 #' }
-#' For fitted Binomial models, the \link[geostan]{spatial} method will return the parameter vector \code{phi}.
+#' where outcome data \eqn{y} are counts, \eqn{N} is the number of trials, and \eqn{\lambda} is the rate of 'success'. Note that the model formula should be structured as: `cbind(sucesses, failures) ~ 1` (for an intercept-only model), such that `trials = successes + failures`.
 #' 
+#' For fitted Binomial models, the \code{\link[geostan]{spatial}} method will return the parameter vector \code{phi}, equivalent to:
+#' \deqn{
+#' \phi = logit(\lambda) - \mu.
+#' }
 #' As is also the case for the Poisson model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 #' \deqn{
-#' \rho C \phi.
+#' \rho W \phi.
 #' }
 #' 
 #' ### Spatially lagged covariates (SLX)
@@ -167,7 +167,7 @@
 #'  z \sim Gauss(\mu_z, \Sigma_z) \\
 #' \Sigma_z = (I - \rho C)^{-1} M \\
 #'  \mu_z \sim Gauss(0, 100) \\
-#'  \tau_z \sim Student(10, 0, 40), \tau > 0 \\
+#'  \tau_z \sim Student-t(10, 0, 40), \tau > 0 \\
 #'  \rho_z \sim uniform(l, u)
 #'  }
 #' where \eqn{\Sigma} specifies a spatial conditional autoregressive model with scale parameter \eqn{\tau} (on the diagonal of \eqn{M}), and \eqn{l}, \eqn{u} are the lower and upper bounds that \eqn{\rho} is permitted to take (which is determined by the extreme eigenvalues of the spatial connectivity matrix \eqn{C}).
@@ -175,10 +175,10 @@
 #' For non-spatial ME models, the following is used instead:
 #' \deqn{
 #' x \sim Gauss(z, s^2) \\
-#' z \sim student(\nu_z, \mu_z, \sigma_z) \\
+#' z \sim student_t(\nu_z, \mu_z, \sigma_z) \\
 #' \nu_z \sim gamma(3, 0.2) \\
 #' \mu_z \sim Gauss(0, 100) \\
-#' \sigma_z \sim student(10, 0, 40).
+#' \sigma_z \sim student-t(10, 0, 40).
 #' }
 #' 
 #' For strongly skewed variables, such as census tract poverty rates, it can be advantageous to apply a logit transformation to \eqn{z} before applying the CAR or Student-t prior model. When the `logit` argument is used, the model becomes:
@@ -190,7 +190,7 @@
 #' and similarly for the Student t model:
 #' \deqn{
 #' x \sim Gauss(z, s^2) \\
-#' logit(z) \sim student(\nu_z, \mu_z, \sigma_z) \\
+#' logit(z) \sim student-t(\nu_z, \mu_z, \sigma_z) \\
 #' ...
 #' }
 #'
@@ -211,8 +211,8 @@
 #' where \eqn{M} is the censor point and \eqn{\mu_i} again is the fitted value for the \eqn{i^{th}} observation.
 #' 
 #' For example, the US Centers for Disease Control and Prevention's CDC WONDER database censors all death counts between 0 and 9. To model CDC WONDER mortality data, you could provide `censor_point = 9` and then the likelihood statement for censored counts would equal the summation of the Poisson probability mass function over each integer ranging from zero through 9 (inclusive), conditional on the fitted values (i.e., all model parameters). See Donegan (2021) for additional discussion, references, and Stan code.
-#'
-#'
+#' 
+#' 
 #' @return An object of class class \code{geostan_fit} (a list) containing: 
 #' \describe{
 #' \item{summary}{Summaries of the main parameters of interest; a data frame.}
@@ -228,74 +228,65 @@
 #' 
 #' \item{x_center}{If covariates are centered internally (`centerx = TRUE`), then `x_center` is a numeric vector of the values on which covariates were centered.}
 #' 
-#' \item{spatial}{A data frame with the name of the spatial component parameter (either "phi" or, for auto Gaussian models, "trend") and method ("CAR")}
+#' \item{spatial}{A data frame with the name of the spatial component parameter (either "phi" or, for auto Gaussian models, "trend") and method ("SAR")}
 #' \item{ME}{A list indicating if the object contains an ME model; if so, the user-provided ME list is also stored here.}
-#' \item{C}{Spatial connectivity matrix (in sparse matrix format).}
+#' \item{C}{Spatial weights matrix (in sparse matrix format).}
 #' }
-#' 
+#'
 #' @author Connor Donegan, \email{connor.donegan@gmail.com}
 #' 
 #' @source
 #'
-#' Besag, Julian (1974). Spatial interaction and the statistical analysis of lattice systems. *Journal of the Royal Statistical Society* B36.2: 192–225.
+#' Cliff, A D and Ord, J K (1981). *Spatial Processes: Models and Applications*. Pion.
 #' 
 #' Cressie, Noel (2015 (1993)). *Statistics for Spatial Data*. Wiley Classics, Revised Edition.
-#' 
+#'
 #' Cressie, Noel and Wikle, Christopher (2011). *Statistics for Spatio-Temporal Data*. Wiley.
 #'
-#' Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. *Int. J. Env. Res. and Public Health* 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
-#'
-#' Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
+#' LeSage, James (2014). What Regional Scientists Need to Know about Spatial Econometrics. *The Review of Regional Science* 44: 13-32 (2014 Southern Regional Science Association Fellows Address).
 #' 
-#' Haining, Robert and Li, Guangquan (2020). *Modelling Spatial and Spatial-Temporal Data: A Bayesian Approach*. CRC Press.
-#' 
+#' LeSage, James, & Pace, Robert Kelley (2009). *Introduction to Spatial Econometrics*. Chapman and Hall/CRC.
 #'
 #' @examples
-#' 
 #' # model mortality risk
 #' data(georgia)
-#' C <- shape2mat(georgia, style = "B")
-#' cp <- prep_car_data(C)
+#' W <- shape2mat(georgia, style = "W")
 #' 
-#' fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
-#'                 car_parts = cp,
+#' fit <- stan_sar(log(rate.male) ~ 1,
+#'                 C = W,
 #'                 data = georgia,
-#'                 family = poisson(),
-#'                 iter = 800, chains = 1 # for example speed only
-#'                  )
+#'                 chains = 1, # for ex. speed only
+#'                 iter = 700 
+#'                 )
+#' 
 #' rstan::stan_rhat(fit$stanfit)
 #' rstan::stan_mcse(fit$stanfit)
 #' print(fit)
+#' plot(fit)
 #' sp_diag(fit, georgia)
 #'
 #' \donttest{
-#' ## DCAR specification (inverse-distance based)
-#' library(sf)
-#' A <- shape2mat(georgia, "B")
-#' D <- sf::st_distance(sf::st_centroid(georgia))
-#' A <- D * A
-#' cp <- prep_car_data(A, "DCAR", k = 1)
-#' 
-#' fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
-#'                data = georgia,
-#'                car = cp,
-#'                family = poisson(),
-#'                iter = 800, chains = 1 # for example speed only 
-#' )
-#' print(fit)
+#'  # a more appropriate model for count data:
+#' fit2 <- stan_sar(deaths.male ~ offset(log(pop.at.risk.male)),
+#'                 C = W,
+#'                 data = georgia,
+#'                 family = poisson(),
+#'                 chains = 1, # for ex. speed only
+#'                 iter = 700 
+#'                  )
+#' sp_diag(fit2, georgia)
 #' }
-#' 
 #' @export
 #' @md
 #' @importFrom rstan extract_sparse_parts
 #' 
-stan_car <- function(formula,
+stan_sar <- function(formula,
                      slx,
                      re,
                      data,
-                     car_parts,
                      C,
-                     family = gaussian(),
+                     sar_parts = prep_sar_data(C),
+                     family = auto_gaussian(),
                      prior = NULL,                      
                      ME = NULL,                     
                      centerx = FALSE,
@@ -312,30 +303,22 @@ stan_car <- function(formula,
     stopifnot(inherits(formula, "formula"))
     stopifnot(inherits(family, "family"))
     stopifnot(family$family %in% c("gaussian", "auto_gaussian", "poisson", "binomial"))
-    if (family$family == "gaussian" | family$family == "auto_gaussian") family <- auto_gaussian(type = "CAR")
+    if (family$family == "gaussian" | family$family == "auto_gaussian") family <- auto_gaussian(type = "SAR")
     stopifnot(!missing(data))
-    check_car_parts(car_parts)
-    stopifnot(length(car_parts$Delta_inv) == nrow(data))
-    if (!missing(C)) {
-        stopifnot(inherits(C, "Matrix") | inherits(C, "matrix"))
-        stopifnot(all(dim(C) == nrow(data)))
-    } else {
-        C <- car_parts$C
-        if (car_parts$WCAR == 0) {
-            message("Consider providing the matrix C explicitly using the C argument. The matrix C is used for calculating spatial-lag of X (SLX) terms and residual spatial autocorrelation. Since you did not provide C, the matrix is being taken from car_parts$C.")
-        }
-    }
+    stopifnot(!missing(C))
+    check_sar_parts(sar_parts)
+    stopifnot(all(dim(C) == nrow(data)))
     tmpdf <- as.data.frame(data)
     n <- nrow(tmpdf)    
-    family_int <- family_2_int(family)        
+    family_int <- family_2_int(family)
     if (!missing(censor_point)) if (family$family != "poisson") stop("censor_point argument is only available for Poisson models.")
     if (missing(censor_point)) censor_point <- FALSE
     mod_frame <- model.frame(formula, tmpdf, na.action = NULL)
     handle_missing_x(mod_frame)
     y_index_list <- handle_censored_y(censor_point, mod_frame)
     y <- y_int <- model.response(mod_frame)
-    ## CAR: INCLUDE AUTO-GAUSSIAN AS family_int=5 -------------      
-    if (family_int %in% c(1,2,5)) y_int <- rep(0, length(y))
+    ## SAR: INCLUDE AUTO-GAUSSIAN AS family_int=6 -------------      
+    if (family_int %in% c(1,2,6)) y_int <- rep(0, length(y))
     ## -------------      
     y[y_index_list$y_mis_idx] <- y_int[y_index_list$y_mis_idx] <- 0
     mod_frame[y_index_list$y_mis_idx, 1] <- 0 
@@ -411,30 +394,29 @@ stan_car <- function(formula,
     )
     ## ADD MISSING/OBSERVED INDICES -------------  
     standata <- c(y_index_list, standata)    
-    ## PRIORS & CAR DATA -------------  
+    ## PRIORS & SAR DATA -------------  
     is_student <- FALSE ##family$family == "student_t"
     priors_made <- make_priors(user_priors = prior,
                                y = y,
                                x = x_full,
                                link = family$link,
                                offset = offset)
-    if (is.null(prior$car_scale)) {
-        priors_made$car_scale <- priors_made$sigma        
+    if (is.null(prior$sar_scale)) {
+        priors_made$sar_scale <- priors_made$sigma        
     } else {
-        priors_made$car_scale <- prior$car_scale
+        priors_made$sar_scale <- prior$sar_scale
     }
-    if (is.null(prior$car_rho)) {
-        lims <- 1 / range(car_parts$lambda)
-        priors_made$car_rho <- uniform(lims[1], lims[2])
+    if (is.null(prior$sar_rho)) {
+        priors_made$sar_rho <- uniform(sar_parts$rho_min, sar_parts$rho_max)
     } else {
-        priors_made$car_rho <- prior$car_rho
+        priors_made$sar_rho <- prior$sar_rho
     }
-    standata$car_rho_lims = c(priors_made$car_rho$lower, priors_made$car_rho$upper)     
-    standata <- c(standata, car_parts)
+    standata$sar_rho_lims = c(priors_made$sar_rho$lower, priors_made$sar_rho$upper)
+    standata <- c(standata, sar_parts)
     standata <- append_priors(standata, priors_made)
-    standata$car <- 1
+    standata$sar <- 1
     ## EMPTY PLACEHOLDERS
-    standata <- c(standata, empty_icar_data(n), empty_esf_data(n), empty_sar_data(n))    
+    standata <- c(standata, empty_icar_data(n), empty_car_data(), empty_esf_data(n))    
     ## ME MODEL -------------
     me.list <- make_me_data(ME, xraw)
     standata <- c(standata, me.list)
@@ -443,9 +425,9 @@ stan_car <- function(formula,
         standata$y <- standata$y_int <- y[,1]
         standata$trials <- y[,1] + y[,2]
     }
-    ## PARAMETERS TO KEEP, with CAR PARAMETERS [START] -------------            
-    pars <- c(pars, 'intercept', 'car_scale', 'car_rho', 'fitted', 'log_lik')
-    if (family_int < 5) pars <- c(pars, 'log_lambda_mu') 
+    ## PARAMETERS TO KEEP, with SAR PARAMETERS [START] -------------            
+    pars <- c(pars, 'intercept', 'sar_scale', 'sar_rho', 'fitted', 'log_lik')
+    if (family_int < 6) pars <- c(pars, 'log_lambda_mu') 
     if (!intercept_only) pars <- c(pars, 'beta')
     if (dwx) pars <- c(pars, 'gamma')
     if (has_re) pars <- c(pars, "alpha_re", "alpha_tau")
@@ -458,7 +440,7 @@ stan_car <- function(formula,
         }
     }
     priors_made_slim <- priors_made[which(names(priors_made) %in% pars)]
-    ## PARAMETERS TO KEEP, with CAR PARAMETERS [STOP] -------------
+    ## PARAMETERS TO KEEP, with SAR PARAMETERS [STOP] -------------
     if (me.list$has_me) priors_made_slim$ME_model <- ME$prior    
     ## PRINT PRIORS  -------------
     print_priors(prior, priors_made_slim)
@@ -469,14 +451,12 @@ stan_car <- function(formula,
         inits <- init_fn_builder(FRAME_NUMBER = FRAME)
     }     
     ## CALL STAN -------------  
-    standata$car <- 1
     if (keep_all == TRUE) {
         xparsx <- NA
     } else {
         xparsx <- pars
     }
     samples <- rstan::sampling(stanmodels$foundation, data = standata, iter = iter, chains = chains, refresh = refresh, pars = xparsx, control = control, init = inits, ...)
-    ## OUTPUT -------------
     out <- clean_results(samples, pars, is_student, has_re, Wx, xraw, me.list$x_me_idx)
     out$data <- data.frame(as.matrix(ModData))
     out$family <- family
@@ -487,14 +467,17 @@ stan_car <- function(formula,
     out$x_center <- get_x_center(standata, samples)
     out$ME <- list(has_me = me.list$has_me, spatial_me = me.list$spatial_me)
     if (out$ME$has_me) out$ME <- c(out$ME, ME)
-    if (family_int == 5) {
-        out$spatial <- data.frame(par = "trend", method = "CAR") #!#
+    if (family_int == 6) {
+        out$spatial <- data.frame(par = "trend", method = "SAR") #!#
     } else {
-        out$spatial <- data.frame(par = "phi", method = "CAR")
+        out$spatial <- data.frame(par = "phi", method = "SAR")
     }
     out$C <- Matrix::Matrix(C)    
     R <- resid(out, summary = FALSE)
     out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )    
     return (out)
 }
+
+
+    
 

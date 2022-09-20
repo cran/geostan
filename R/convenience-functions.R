@@ -148,7 +148,9 @@ sim_sar <- function(m = 1, mu = rep(0, nrow(w)), w, rho, sigma = 1, ...) {
 #' 
 #' @return A grid of spatial diagnostic plots. When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map. When provided with a fitted `geostan` model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions).
 #'
-#' If `plot = TRUE`, the `ggplots` are drawn using \code{\link[gridExtra]{grid.arrange}}; otherwise, they are returned in a list. For the `geostan_fit` method, the underlying data for the Moran coefficient will also be returned if `plot = FALSE`.
+#' If `plot = TRUE`, the `ggplots` are drawn using \link[gridExtra]{grid.arrange}; otherwise, they are returned in a list. For the `geostan_fit` method, the underlying data for the Moran coefficient will also be returned if `plot = FALSE`.
+#'
+#' When `y` is a fitted CAR or SAR model with `family = auto_gaussian()`, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default `trend = TRUE` and the call to \link[geostan]{residuals.geostan_fit} will use the default `detrend = TRUE`. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.) 
 #'
 #' @seealso \code{\link[geostan]{me_diag}}, \code{\link[geostan]{mc}}, \code{\link[geostan]{moran_plot}}, \code{\link[geostan]{aple}}
 #' 
@@ -203,7 +205,7 @@ sp_diag.geostan_fit <- function(y,
                             w = shape2mat(shape, match.arg(style)),
                             binwidth = function(x) 0.5 * stats::sd(x, na.rm = TRUE),
                             rates = TRUE,
-                            size = 0.15,
+                            size = 0.1,
                             ...) {
     mc_style <- match.arg(mc_style, c("scatter", "hist"))
     if (!inherits(shape, "sf")) shape <- sf::st_as_sf(shape)
@@ -231,7 +233,7 @@ sp_diag.geostan_fit <- function(y,
     marginal_residual <- apply(residuals(y, summary = FALSE, ...), 2, mean, na.rm = TRUE)
     map.y <- ggplot(shape) +
         geom_sf(aes(fill = marginal_residual),
-                lwd = 0.05,
+                lwd =  .05,
                 col = "gray20") +
         scale_fill_gradient2(name = name,
                              label = signs::signs) +
@@ -670,8 +672,9 @@ row_standardize <- function(C, warn = TRUE, msg = "Row standardizing connectivit
 
 #' Auto-Gaussian family for CAR models
 #'
+#' @param type Optional; either "CAR" for conditionally specified auto-model or "SAR" for the simultaneously specified auto-model. The type is added internally by `stan_car` or `stan_sar` when needed.
 #' @export
-#' @description create a family object for the auto-Gaussian CAR specification
+#' @description create a family object for the auto-Gaussian CAR or SAR specification
 #' @return An object of class \code{family}
 #' @seealso \code{\link[geostan]{stan_car}}
 #' @examples
@@ -680,10 +683,11 @@ row_standardize <- function(C, warn = TRUE, msg = "Row standardizing connectivit
 #'                 data = georgia,
 #'                 car_parts = cp,
 #'                 family = auto_gaussian(),
-#'                 chains = 2, iter = 800) # for speed only
+#'                 chains = 2, iter = 700) # for speed only
 #' print(fit)
-auto_gaussian <- function() {
+auto_gaussian <- function(type) {
     family <- list(family = "auto_gaussian", link = "identity")
+    if (!missing(type)) family$type <- type
     class(family) <- "family"
     return(family)
 }
@@ -977,12 +981,19 @@ prep_icar_data <- function(C, scale_factor = NULL) {
 #' @md
 #' @importFrom rstan extract_sparse_parts
 #' @importFrom Matrix isSymmetric Matrix rowSums summary
-prep_car_data <- function(A, style = c("WCAR", "ACAR", "DCAR"), k = 1, gamma = 0, lambda = TRUE, cmat = TRUE, stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf")) {
+prep_car_data <- function(A,
+                          style = c("WCAR", "ACAR", "DCAR"),
+                          k = 1,
+                          gamma = 0,
+                          lambda = TRUE,
+                          cmat = TRUE,
+                          stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf")
+                          ) {
     style = match.arg(style)
     if (style != "WCAR" & stan_fn == "wcar_normal_lpdf") stop("wcar_normal_lpdf only works with style = 'WCAR'.")
     stopifnot(inherits(A, "matrix") | inherits(A, "Matrix"))
     stopifnot(all(Matrix::rowSums(A) > 0))
-    A <- Matrix::Matrix(A, sparse = TRUE)
+    A <- as(A, "dMatrix")
     n <- nrow(A)
     if (style == "ACAR") {
         Ni <- Matrix::rowSums(A)
@@ -1043,6 +1054,62 @@ prep_car_data <- function(A, style = c("WCAR", "ACAR", "DCAR"), k = 1, gamma = 0
     }
     if (cmat) car.dl$C <- C
     return (car.dl)
+}
+
+
+#' Prepare data for a simultaneous autoregressive (SAR) model 
+#'
+#' @description Given a spatial weights matrix \eqn{W}, this function prepares data for the simultaneous autoregressive (SAR) model (a.k.a spatial error model (SEM)) in Stan. This is used internally by \code{\link[geostan]{stan_sar}}, and may also be used for building custom SAR models in Stan. 
+#' 
+#' @param W Spatial weights matrix, typically row-standardized.
+#' 
+#' @return list of data to add to a Stan data list:
+#' 
+#' \describe{
+#' \item{ImW_w}{Numeric vector containing the non-zero elements of matrix \eqn{(I - W)}.}
+#' \item{ImW_v}{An integer vector containing the column indices of the non-zero elements of \eqn{(I - W)}.}
+#' \item{ImW_u}{An integer vector indicating where in `ImW_w` a given row's non-zero values start.}
+#' \item{nImW_w}{Number of entries in `ImW_w`.}
+#' \item{Widx}{Integer vector containing the indices corresponding to values of `-W` in `ImW_w` (i.e. non-diagonal entries of \eqn{(I-W)}).}
+#' \item{nW}{Integer length of `Widx`.}
+#' \item{eigenvalues_w}{Eigenvalues of \eqn{W} matrix.}
+#' \item{n}{Number of rows in \eqn{W}.}
+#' \item{W}{Sparse matrix representation of \eqn{W}}
+#' \item{rho_min}{Minimum permissible value of \eqn{\rho} (`1/min(eigenvalues_w)`).}
+#' \item{rho_max}{Maximum permissible value of \eqn{\rho} (`1/max(eigenvalues_w)`.}
+#' }
+#' The function will also print the range of permissible \eqn{\rho} values to the console.
+#'
+#' @details
+#'
+#' This is used internally to prepare data for \code{\link[geostan]{stan_sar}} models. It can also be helpful for fitting custom SAR models in Stan (outside of \code{geostan}). 
+#' 
+#' @seealso \link[geostan]{shape2mat}, \link[geostan]{stan_sar}, \link[geostan]{prep_car_data}, \link[geostan]{prep_icar_data}
+#'
+#' @examples
+#' data(georgia)
+#' W <- shape2mat(georgia, "W")
+#' sar_dl <- prep_sar_data(W)
+#' 
+#' @export
+#' @importFrom Matrix rowSums
+#' @importFrom rstan extract_sparse_parts
+prep_sar_data <- function(W) {
+    stopifnot(inherits(W, "matrix") | inherits(W, "Matrix"))
+    N <- nrow(W)
+    sar.dl <- rstan::extract_sparse_parts(Matrix::Diagonal(N) - W)
+    names(sar.dl) <- paste0("ImW_", names(sar.dl))
+    sar.dl$nImW_w <- length(sar.dl$ImW_w)
+    sar.dl$Widx <- which(sar.dl$ImW_w != 1)
+    sar.dl$nW <- length(sar.dl$Widx)
+    sar.dl$eigenvalues_w <- as.numeric( eigen(W)$values )
+    sar.dl$n <- N
+    sar.dl$W <- W
+    rho_lims <- 1/range(sar.dl$eigenvalues_w)
+    cat("Range of permissible rho values: ", rho_lims, "\n")
+    sar.dl$rho_min <- min(rho_lims)
+    sar.dl$rho_max <- max(rho_lims)    
+    return( sar.dl )
 }
 
 

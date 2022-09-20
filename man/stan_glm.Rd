@@ -108,70 +108,94 @@ Fit a generalized linear model.
 Fit a generalized linear model using the R formula interface. Default prior distributions are designed to be weakly informative relative to the data. Much of the functionality intended for spatial models, such as the ability to add spatially lagged covariates and observational error models, are also available in \code{stan_glm}. All of \code{geostan}'s spatial models build on top of the same Stan code used in \code{stan_glm}.
 \subsection{Poisson models and disease mapping}{
 
-In spatial statistics, Poisson models are often used to calculate incidence rates (mortality rates, or disease incidence rates) for administrative areas like counties or census tracts. If \code{Y} are counts of cases, and \code{P} are populations at risk, then the crude rates are \code{Y/P}. The purpose is to model risk, \code{eta}, for which crude rates are a (noisy) indicator. Our analysis should also respect the fact that the amount of information contained in the observations, \code{Y/P}, increases with \code{P}. Hierarchical Poisson models are often the best way to incorporate all of this information.
+In spatial statistics, Poisson models are often used to calculate incidence rates (mortality rates, or disease incidence rates) for administrative areas like counties or census tracts. If \eqn{y} are counts of cases, and \eqn{P} are populations at risk, then the crude rates are \eqn{y/P}. The purpose is to model risk \eqn{\eta} for which crude rates are a (noisy) indicator. Our analysis should also respect the fact that the amount of information contained in the observations \eqn{y/P} increases with \eqn{P}. Hierarchical Poisson models are often used to incorporate all of this information.
 
-For the Poisson model, \code{Y} is specified as the outcome and the log of the population at risk, \code{log(P)}, needs to be provided as an offset term. For such a case, disease incidence across the collection of areas could be modeled as:\preformatted{Y ~ Poisson(exp(log(P) + eta))
-eta = alpha + A
-A ~ Guass(0, tau)
-tau ~ student(20, 0, 2),
+For the Poisson model, \eqn{y} is specified as the outcome and the log of the population at risk \code{log(P)} needs to be provided as an offset term. For such a case, disease incidence across the collection of areas could be modeled as:
+\deqn{
+y \sim Poisson(e^{log(P) + \eta}) \\
+\eta = \alpha + A \\
+A \sim Guass(0, \tau) \\
+\tau \sim student(20, 0, 2),
 }
+where \eqn{\alpha} is the mean log-risk (incidence rate) and \eqn{A} is a vector of (so-called) random effects, which enable partial pooling of information across observations. Covariates can be added to the model for the log-rates, such that \eqn{\eta = \alpha + X * \beta + A}. See the example section of this document for a demonstration (where the denominator of the outcome is the expected count, rather than population at risk).
 
-where \code{alpha} is the mean log-risk (incidence rate) and \code{A} is a vector of (so-called) random effects, which enable partial pooling of information across observations. Covariates can be added to the model for the log-rates, such that \code{eta = alpha + X * beta + A}. See the example section of this document for a demonstration (where the denominator of the outcome is the expected count, rather than population at risk).
-
-Note that the denominator for the rates is specified as a log-offset to provide a consistent, formula-line interface to the model. An equivalent, and perhaps more intuitive, specification is the following:\preformatted{Y ~ Poisson(P * exp(eta))
+Note that the denominator for the rates is specified as a log-offset to provide a consistent, formula-line interface to the model. An equivalent, and perhaps more intuitive, specification is the following:
+\deqn{
+y \sim Poisson(P * e^{\eta})
 }
-
-where \code{P} is still the population at risk and \code{exp(eta)} is the incidence rate (risk).
+where \eqn{P} is still the population at risk and \eqn{e^{\eta}} is the incidence rate (risk). The various spatial models available in \code{geostan} expand upon this specification (and others) by incorporating spatial arrangement and spatial autocorrelation.
 }
 
 \subsection{Spatially lagged covariates (SLX)}{
 
-The \code{slx} argument is a convenience function for including SLX terms. For example,\preformatted{stan_glm(y ~ x1 + x2, slx = ~ x1, ...)
+The \code{slx} argument is a convenience function for including SLX terms. For example,
+\deqn{
+ y = W X \gamma + X \beta + \epsilon
+}
+where \eqn{W} is a row-standardized spatial weights matrix (see \code{\link[geostan]{shape2mat}}), \eqn{WX} is the mean neighboring value of \eqn{X}, and \eqn{\gamma} is a coefficient vector. This specifies a regression with spatially lagged covariates. SLX terms can specified by providing a formula to the \code{slx} argument:\preformatted{stan_glm(y ~ x1 + x2, slx = ~ x1 + x2, \\...),
 }
 
-is a shortcut for\preformatted{stan_glm(y ~ I(W \%*\% x1) + x1 + x2, ...)
+which is a shortcut for\preformatted{stan_glm(y ~ I(W \\\%*\\\% x1) + I(W \\\%*\\\% x2) + x1 + x2, \\...)
 }
 
-where \code{W} is a row-standardized spatial weights matrix (see \code{\link[geostan]{shape2mat}}). SLX terms will always be \emph{prepended} to the design matrix, as above, which is important to know when setting prior distributions for regression coefficients.
+SLX terms will always be \emph{prepended} to the design matrix, as above, which is important to know when setting prior distributions for regression coefficients.
 
 For measurement error (ME) models, the SLX argument is the only way to include spatially lagged covariates since the SLX term needs to be re-calculated on each iteration of the MCMC algorithm.
 }
 
 \subsection{Measurement error (ME) models}{
 
-The ME models are designed for surveys with spatial sampling designs, such as the American Community Survey (ACS) estimates (Donegan et al. 2021; Donegan 2021). With estimates, \code{x}, and their standard errors, \code{se}, the ME models have one of the the following two specifications, depending on the user input:\preformatted{x ~ Gauss(x_true, se)
-x_true ~ MVGauss(mu, Sigma)
-Sigma = (I - rho * C)^(-1) M * tau^2
-mu ~ Gauss(0, 100)
-tau ~ student_t(10, 0, 40)
-rho ~ uniform(lower_bound, upper_bound)
+The ME models are designed for surveys with spatial sampling designs, such as the American Community Survey (ACS) estimates. Given estimates \eqn{x}, their standard errors \eqn{s}, and the target quantity of interest (i.e., the unknown true value) \eqn{z}, the ME models have one of the the following two specifications, depending on the user input. If a spatial CAR model is specified, then:
+\deqn{
+ x \sim Gauss(z, s^2) \\
+ z \sim Gauss(\mu_z, \Sigma_z) \\
+\Sigma_z = (I - \rho C)^{-1} M \\
+ \mu_z \sim Gauss(0, 100) \\
+ \tau_z \sim Student(10, 0, 40), \tau > 0 \\
+ \rho_z \sim uniform(l, u)
+ }
+where \eqn{\Sigma} specifies a spatial conditional autoregressive model with scale parameter \eqn{\tau} (on the diagonal of \eqn{M}), and \eqn{l}, \eqn{u} are the lower and upper bounds that \eqn{\rho} is permitted to take (which is determined by the extreme eigenvalues of the spatial connectivity matrix \eqn{C}).
+
+For non-spatial ME models, the following is used instead:
+\deqn{
+x \sim Gauss(z, s^2) \\
+z \sim student_t(\nu_z, \mu_z, \sigma_z) \\
+\nu_z \sim gamma(3, 0.2) \\
+\mu_z \sim Gauss(0, 100) \\
+\sigma_z \sim student(10, 0, 40).
 }
 
-where the covariance matrix, \code{Sigma}, has the conditional autoregressive specification, and \code{tau} is the scale parameter. For non-spatial ME models, the following is used instead:\preformatted{x ~ Gauss(x_true, se)
-x_true ~ student_t(df, mu, sigma)
-df ~ gamma(3, 0.2)
-mu ~ Gauss(0, 100)
-sigma ~ student_t(10, 0, 40)
+For strongly skewed variables, such as census tract poverty rates, it can be advantageous to apply a logit transformation to \eqn{z} before applying the CAR or Student-t prior model. When the \code{logit} argument is used, the model becomes:
+\deqn{
+x \sim Gauss(z, s^2) \\
+logit(z) \sim Gauss(\mu_z, \Sigma_z) 
+...
 }
-
-For strongly skewed variables, such census tract poverty rates, it can be advantageous to apply a logit transformation to \code{x_true} before applying the CAR or Student t prior model. When the \code{logit} argument is used, the model becomes:\preformatted{x ~ Gauss(x_true, se)
-logit(x_true) ~ MVGauss(mu, Sigma)
+and similarly for the Student t model:
+\deqn{
+x \sim Gauss(z, s^2) \\
+logit(z) \sim student(\nu_z, \mu_z, \sigma_z) \\
+...
 }
-
-and similar for the Student t model.
 }
 
 \subsection{Censored counts}{
 
-Vital statistics systems and disease surveillance programs typically suppress case counts when they are smaller than a specific threshold value. In such cases, the observation of a censored count is not the same as a missing value; instead, you are informed that the value is an integer somewhere between zero and the threshold value. For Poisson models (\code{family = poisson()}), you can use the \code{censor_point} argument to encode this information into your model.
+Vital statistics systems and disease surveillance programs typically suppress case counts when they are smaller than a specific threshold value. In such cases, the observation of a censored count is not the same as a missing value; instead, you are informed that the value is an integer somewhere between zero and the threshold value. For Poisson models (\verb{family = poisson())}), you can use the \code{censor_point} argument to encode this information into your model.
 
-Internally, \code{geostan} will keep the index values of each censored observation, and the index value of each of the fully observed outcome values. For all observed counts, the likelihood statement will be:\preformatted{p(y_i | data, model) = Poisson(y_i | fitted_i), 
+Internally, \code{geostan} will keep the index values of each censored observation, and the index value of each of the fully observed outcome values. For all observed counts, the likelihood statement will be:
+\deqn{
+p(y_i | data, model) = poisson(y_i | \mu_i), 
 }
+as usual, where \eqn{\mu_i} may include whatever spatial terms are present in the model.
 
-as usual. For each censored count, the likelihood statement will equal the cumulative Poisson distribution function for values zero through the censor point:\preformatted{p(y_j | data, model) = sum_\{m=0\}^censor_point Poisson( c_m | fitted_j),
+For each censored count, the likelihood statement will equal the cumulative Poisson distribution function for values zero through the censor point:
+\deqn{
+p(y_i | data, model) = \sum_{m=0}^{M} Poisson( m | \mu_i),
 }
+where \eqn{M} is the censor point and \eqn{\mu_i} again is the fitted value for the \eqn{i^{th}} observation.
 
-For example, the US Centers for Disease Control and Prevention's CDC WONDER database censors all death counts between 0 and 9. To model CDC WONDER mortality data, you could provide \code{censor_point = 9} and then the likelihood statement for censored counts would equal the summation of the Poisson probability mass function over each integer ranging from zero through 9 (inclusive), conditional on the fitted values (i.e., all model paramters). See Donegan (2021) for additional discussion, references, and Stan code.
+For example, the US Centers for Disease Control and Prevention's CDC WONDER database censors all death counts between 0 and 9. To model CDC WONDER mortality data, you could provide \code{censor_point = 9} and then the likelihood statement for censored counts would equal the summation of the Poisson probability mass function over each integer ranging from zero through 9 (inclusive), conditional on the fitted values (i.e., all model parameters). See Donegan (2021) for additional discussion, references, and Stan code.
 }
 }
 \examples{
@@ -205,5 +229,5 @@ for (i in 2:nrow(yrep)) lines(density(yrep[i,]), col = "gray30")
 lines(density(sentencing$sents), col = "darkred", lwd = 2)
 }
 \author{
-Connor Donegan, \email{Connor.Donegan@UTDallas.edu}
+Connor Donegan, \email{connor.donegan@gmail.com}
 }
