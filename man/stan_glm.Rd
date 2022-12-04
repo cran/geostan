@@ -93,6 +93,7 @@ An object of class class \code{geostan_fit} (a list) containing:
 \item{family}{the user-provided or default \code{family} argument used to fit the model}
 \item{formula}{The model formula provided by the user (not including ESF component)}
 \item{slx}{The \code{slx} formula}
+\item{C}{The spatial weights matrix, if one was provided by the user.}
 \item{re}{A list containing \code{re}, the random effects (varying intercepts) formula if provided, and
 \code{Data} a data frame with columns \code{id}, the grouping variable, and \code{idx}, the index values assigned to each group.}
 \item{priors}{Prior specifications.}

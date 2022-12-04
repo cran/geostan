@@ -6,17 +6,7 @@
 \alias{sp_diag.numeric}
 \title{Spatial data diagnostics}
 \usage{
-sp_diag(
-  y,
-  shape,
-  name = "y",
-  plot = TRUE,
-  mc_style = c("scatter", "hist"),
-  style = c("W", "B"),
-  w = shape2mat(shape, match.arg(style)),
-  binwidth = function(x) 0.5 * sd(x, na.rm = TRUE),
-  ...
-)
+sp_diag(y, shape, ...)
 
 \method{sp_diag}{geostan_fit}(
   y,
@@ -25,9 +15,9 @@ sp_diag(
   plot = TRUE,
   mc_style = c("scatter", "hist"),
   style = c("W", "B"),
-  w = shape2mat(shape, match.arg(style)),
-  binwidth = function(x) 0.5 * stats::sd(x, na.rm = TRUE),
+  w,
   rates = TRUE,
+  binwidth = function(x) 0.5 * stats::sd(x, na.rm = TRUE),
   size = 0.1,
   ...
 )
@@ -49,6 +39,8 @@ sp_diag(
 
 \item{shape}{An object of class \code{sf} or another spatial object coercible to \code{sf} with \code{sf::st_as_sf} such as \code{SpatialPolygonsDataFrame}.}
 
+\item{...}{Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}. For binomial and Poisson models, this includes the option to view the outcome variable as a rate (the default) rather than a count; for \code{\link[geostan]{stan_car}} models with auto-Gaussian likelihood (\verb{fit$family$family = "auto_gaussian"), the residuals will be detrended by default, but this can be changed using }detrend = FALSE`.}
+
 \item{name}{The name to use on the plot labels; default to "y" or, if \code{y} is a \code{geostan_fit} object, to "Residuals".}
 
 \item{plot}{If \code{FALSE}, return a list of \code{gg} plots.}
@@ -57,25 +49,26 @@ sp_diag(
 
 \item{style}{Style of connectivity matrix; if \code{w} is not provided, \code{style} is passed to \code{\link[geostan]{shape2mat}} and defaults to "W" for row-standardized.}
 
-\item{w}{An optional spatial connectivity matrix; if not provided, one will be created using \code{\link[geostan]{shape2mat}}.}
+\item{w}{An optional spatial connectivity matrix; if not provided and \code{y} is a numeric vector, one will be created using \code{\link[geostan]{shape2mat}}. If \code{w} is not provided and \code{y} is a fitted \code{geostan} model, then the spatial connectivity matrix that is stored with the fitted model (\code{y$C}) will be used.}
+
+\item{rates}{For Poisson and binomial models, convert the outcome variable to a rate before plotting fitted values and residuals. Defaults to \code{rates = TRUE}.}
 
 \item{binwidth}{A function with a single argument that will be passed to the \code{binwidth} argument in \code{\link[ggplot2]{geom_histogram}}. The default is to set the width of bins to \code{0.5 * sd(x)}.}
-
-\item{...}{Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}. For binomial and Poisson models, this includes the option to view the outcome variable as a rate (the default) rather than a count; for \code{\link[geostan]{stan_car}} models with auto-Gaussian likelihood (\verb{fit$family$family = "auto_gaussian"), the residuals will be detrended by default, but this can be changed using }detrend = FALSE`.}
-
-\item{rates}{For Poisson and binomial models, convert the outcome variable to a rate before calculating residuals. Defaults to \code{rates = TRUE}.}
 
 \item{size}{Point size and linewidth for point-interval plot of observed vs. fitted values (passed to \code{\link[ggplot2]{geom_pointrange}}).}
 }
 \value{
-A grid of spatial diagnostic plots. When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map. When provided with a fitted \code{geostan} model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions).
-
-If \code{plot = TRUE}, the \code{ggplots} are drawn using \link[gridExtra]{grid.arrange}; otherwise, they are returned in a list. For the \code{geostan_fit} method, the underlying data for the Moran coefficient will also be returned if \code{plot = FALSE}.
-
-When \code{y} is a fitted CAR or SAR model with \code{family = auto_gaussian()}, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default \code{trend = TRUE} and the call to \link[geostan]{residuals.geostan_fit} will use the default \code{detrend = TRUE}. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.)
+A grid of spatial diagnostic plots. If \code{plot = TRUE}, the \code{ggplots} are drawn using \link[gridExtra]{grid.arrange}; otherwise, they are returned in a list. For the \code{geostan_fit} method, the underlying data for the Moran coefficient (as required for \code{mc_style = "hist"}) will also be returned if \code{plot = FALSE}.
 }
 \description{
 Visual diagnostics for areal data and model residuals
+}
+\details{
+When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map.
+
+When provided with a fitted \code{geostan} model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions).
+
+When \code{y} is a fitted CAR or SAR model with \code{family = auto_gaussian()}, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default \code{trend = TRUE} and the call to \link[geostan]{residuals.geostan_fit} will use the default \code{detrend = TRUE}. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.)
 }
 \examples{
 \donttest{
