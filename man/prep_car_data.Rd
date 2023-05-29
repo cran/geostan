@@ -2,7 +2,7 @@
 % Please edit documentation in R/convenience-functions.R
 \name{prep_car_data}
 \alias{prep_car_data}
-\title{Prepare data for a Stan CAR model}
+\title{Prepare data for the CAR model}
 \source{
 Cliff A, Ord J (1981). Spatial Processes: Models and Applications. Pion.
 
@@ -46,7 +46,7 @@ prep_car_data(
 A list containing all of the data elements required by the CAR model in \code{\link[geostan]{stan_car}}.
 }
 \description{
-Prepare data for a Stan CAR model
+Prepare data for the CAR model
 }
 \details{
 The CAR model is:\preformatted{  Normal(Mu, Sigma), Sigma = (I - rho * C)^-1 * M * tau^2,

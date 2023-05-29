@@ -32,20 +32,34 @@ ME_list <- prep_me_data(se = SE,
                         )
 
 ## ----eval = FALSE, message = FALSE--------------------------------------------
-#  fit <- stan_car(log(rate.male) ~ insurance,
+#  fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
+#                  centerx = TRUE,
 #                  data = georgia,
-#                  family = auto_gaussian(),
+#                  family = poisson(),
 #                  car_parts = cars)
 
 ## ----eval = TRUE, message = FALSE---------------------------------------------
-fit <- stan_car(log(rate.male) ~ insurance, 
+fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
+                centerx = TRUE,
                 ME = ME_list,
-                family = auto_gaussian(),
+                family = poisson(),
                 data = georgia, 
                 car_parts = cars,
                 iter = 650, # for demo speed 
                 refresh = 0, # minimizes printing
                 )
+
+print(fit)
+
+## ----eval = FALSE-------------------------------------------------------------
+#  fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
+#                  centerx = TRUE,
+#                  ME = ME_list,
+#  		slim = TRUE,
+#                  family = poisson(),
+#                  data = georgia,
+#                  car_parts = cars
+#                  )
 
 ## ----fig.width = 8------------------------------------------------------------
 me_diag(fit, 'insurance', georgia)

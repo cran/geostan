@@ -171,3 +171,27 @@ test_that("GLM with censored y", {
 })
 
 
+test_that("Slim GLM works", {
+    N <- 20 * 26
+    x <- rnorm(n = N)
+    y <- .75 *x + rnorm(n = N, sd = .5)
+    df <- data.frame(y=y, x=x)
+    SW(
+    fit <- stan_glm(y ~ x,
+                    data = df,
+                    chains = 1,
+                    iter = iter,
+                    refresh = refresh,
+                    slim = TRUE)
+    )
+    expect_geostan(fit)
+    SW(
+    fit <- stan_glm(y ~ x,
+                    data = df,
+                    chains = 1,
+                    iter = iter,
+                    refresh = refresh,
+                    drop = c('fitted', 'fake'))
+    )
+    expect_geostan(fit)    
+})

@@ -50,7 +50,16 @@
 #' @param iter Number of samples per chain. 
 #' @param refresh Stan will print the progress of the sampler every \code{refresh} number of samples; set \code{refresh=0} to silence this.
 #' @param pars Specify any additional parameters you'd like stored from the Stan model.
-#' @param keep_all  If `keep_all = TRUE` then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors and the `bridgesampling` package.
+#' @param keep_all  If `keep_all = TRUE` then samples for all parameters in the Stan model will be kept; this is required if you want to do model comparison with Bayes factors and the `bridgesampling` package.
+#' @param slim If `slim = TRUE`, then the Stan model will not collect the most memory-intensive parameters (including n-length vectors of fitted values, log-likelihoods, and ME-modeled covariate values). This will disable many convenience functions that are otherwise available for fitted \code{geostan} models, such as the extraction of residuals, fitted values, and spatial trends, WAIC, and spatial diagnostics, and ME diagnostics; many quantities of interest, such as fitted values and spatial trends, can still be calculated manually using given parameter estimates. The "slim" option is designed for data-intensive routines, such as regression with raster data, Monte Carlo studies, and measurement error models. For more control over which parameters are kept or dropped, use the `drop` argument instead of `slim`.
+#' @param drop Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from GLM models:
+#' \describe{
+#' \item{'fitted'}{The N-length vector of fitted values}
+#' \item{'log_lik'}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
+#' \item{'alpha_re'}{Vector of 'random effects'/varying intercepts.}
+#' \item{'x_true'}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
+#' }
+#' Using `drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')` is equivalent to `slim = TRUE`. Note that if `slim = TRUE`, then `drop` will be ignored---so only use one or the other.
 #' @param control A named list of parameters to control the sampler's behavior. See \link[rstan]{stan} for details. 
 #' @param ... Other arguments passed to \link[rstan]{sampling}. For multi-core processing, you can use \code{cores = parallel::detectCores()}, or run \code{options(mc.cores = parallel::detectCores())} first.
 #' 
@@ -63,19 +72,18 @@
 #' In spatial statistics, Poisson models are often used to calculate incidence rates (mortality rates, or disease incidence rates) for administrative areas like counties or census tracts. If \eqn{y} are counts of cases, and \eqn{P} are populations at risk, then the crude rates are \eqn{y/P}. The purpose is to model risk \eqn{\eta} for which crude rates are a (noisy) indicator. Our analysis should also respect the fact that the amount of information contained in the observations \eqn{y/P} increases with \eqn{P}. Hierarchical Poisson models are often used to incorporate all of this information.
 #'
 #' For the Poisson model, \eqn{y} is specified as the outcome and the log of the population at risk `log(P)` needs to be provided as an offset term. For such a case, disease incidence across the collection of areas could be modeled as:
-#' \deqn{
-#' y \sim Poisson(e^{log(P) + \eta}) \\
-#' \eta = \alpha + A \\
-#' A \sim Guass(0, \tau) \\
-#' \tau \sim student(20, 0, 2),
-#' }
-#' where \eqn{\alpha} is the mean log-risk (incidence rate) and \eqn{A} is a vector of (so-called) random effects, which enable partial pooling of information across observations. Covariates can be added to the model for the log-rates, such that \eqn{\eta = \alpha + X * \beta + A}. See the example section of this document for a demonstration (where the denominator of the outcome is the expected count, rather than population at risk).
 #'
-#' Note that the denominator for the rates is specified as a log-offset to provide a consistent, formula-line interface to the model. An equivalent, and perhaps more intuitive, specification is the following:
+#' \deqn{y \sim Poisson(e^{log(P) + \eta})}
+#' \deqn{ \eta = \alpha + A}
+#' \deqn{ A \sim Gauss(0, \tau)}
+#' \deqn{\tau \sim Student(20, 0, 2)}
+#' where \eqn{\alpha} is the mean log-risk (incidence rate) and \eqn{A} is a vector of (so-called) random effects, which enable partial pooling of information across observations. Covariates can be added to the model for the log-rates, such that \eqn{\eta = \alpha + X \beta + A}.
+#'
+#' Note that the denominator for the rates is specified as a log-offset to provide a consistent, formula-line interface to the model. Using the log-offest (as above) is equivalent to the following:
 #' \deqn{
 #' y \sim Poisson(P * e^{\eta})
 #' }
-#' where \eqn{P} is still the population at risk and \eqn{e^{\eta}} is the incidence rate (risk). The various spatial models available in \code{geostan} expand upon this specification (and others) by incorporating spatial arrangement and spatial autocorrelation.
+#' where \eqn{P} is still the population at risk and it is multiplied by \eqn{e^{\eta}}, the incidence rate (risk). 
 #'
 #' ### Spatially lagged covariates (SLX)
 #' 
@@ -97,38 +105,32 @@
 #' 
 #' ### Measurement error (ME) models
 #' 
-#' The ME models are designed for surveys with spatial sampling designs, such as the American Community Survey (ACS) estimates. Given estimates \eqn{x}, their standard errors \eqn{s}, and the target quantity of interest (i.e., the unknown true value) \eqn{z}, the ME models have one of the the following two specifications, depending on the user input. If a spatial CAR model is specified, then:
-#' \deqn{
-#'  x \sim Gauss(z, s^2) \\
-#'  z \sim Gauss(\mu_z, \Sigma_z) \\
-#' \Sigma_z = (I - \rho C)^{-1} M \\
-#'  \mu_z \sim Gauss(0, 100) \\
-#'  \tau_z \sim Student(10, 0, 40), \tau > 0 \\
-#'  \rho_z \sim uniform(l, u)
-#'  }
-#' where \eqn{\Sigma} specifies a spatial conditional autoregressive model with scale parameter \eqn{\tau} (on the diagonal of \eqn{M}), and \eqn{l}, \eqn{u} are the lower and upper bounds that \eqn{\rho} is permitted to take (which is determined by the extreme eigenvalues of the spatial connectivity matrix \eqn{C}).
+#' The ME models are designed for surveys with spatial sampling designs, such as the American Community Survey (ACS) estimates. For a tutorial, see \code{vignette("spatial-me-models", package = "geostan")}.
+#'
+#' Given estimates \eqn{x}, their standard errors \eqn{s}, and the target quantity of interest (i.e., the unknown true value) \eqn{z}, the ME models have one of the the following two specifications, depending on the user input. If a spatial CAR model is specified, then:
+#' 
+#' \deqn{x \sim Gauss(z, s^2)}
+#' \deqn{z \sim Gauss(\mu_z, \Sigma_z)}
+#' \deqn{\Sigma_z = (I - \rho C)^{-1} M}
+#' \deqn{\mu_z \sim Gauss(0, 100)}
+#' \deqn{\tau_z \sim Student(10, 0, 40), \tau > 0}
+#' \deqn{\rho_z \sim uniform(l, u)}
+#'
+#' where \eqn{\Sigma} specifies the covariance matrix of a spatial conditional autoregressive (CAR) model with scale parameter \eqn{\tau} (on the diagonal of \eqn{M}), autocorrelation parameter \eqn{\rho}, and \eqn{l}, \eqn{u} are the lower and upper bounds that \eqn{\rho} is permitted to take (which is determined by the extreme eigenvalues of the spatial connectivity matrix \eqn{C}). \eqn{M} contains the inverse of the row sums of \eqn{C} on its diagonal multiplied by \eqn{\tau} (following the "WCAR" specification).
 #' 
 #' For non-spatial ME models, the following is used instead:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' z \sim student_t(\nu_z, \mu_z, \sigma_z) \\
-#' \nu_z \sim gamma(3, 0.2) \\
-#' \mu_z \sim Gauss(0, 100) \\
-#' \sigma_z \sim student(10, 0, 40).
-#' }
+#'\deqn{x \sim Gauss(z, s^2)}
+#' \deqn{z \sim student_t(\nu_z, \mu_z, \sigma_z)}
+#' \deqn{\nu_z \sim gamma(3, 0.2)}
+#' \deqn{\mu_z \sim Gauss(0, 100)}
+#' \deqn{\sigma_z \sim student(10, 0, 40)}
 #' 
-#' For strongly skewed variables, such as census tract poverty rates, it can be advantageous to apply a logit transformation to \eqn{z} before applying the CAR or Student-t prior model. When the `logit` argument is used, the model becomes:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' logit(z) \sim Gauss(\mu_z, \Sigma_z) 
-#' ...
-#' }
+#' For strongly skewed variables, such as census tract poverty rates, it can be advantageous to apply a logit transformation to \eqn{z} before applying the CAR or Student-t prior model. When the `logit` argument is used, the first two lines of the model specification become:
+#' \deqn{x \sim Gauss(z, s^2)}
+#' \deqn{logit(z) \sim Gauss(\mu_z, \Sigma_z) }
 #' and similarly for the Student t model:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' logit(z) \sim student(\nu_z, \mu_z, \sigma_z) \\
-#' ...
-#' }
+#' \deqn{x \sim Gauss(z, s^2)}
+#' \deqn{logit(z) \sim student(\nu_z, \mu_z, \sigma_z)}
 #'
 #' ### Censored counts
 #'
@@ -173,7 +175,7 @@
 #'
 #' Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. *Int. J. Env. Res. and Public Health* 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
 #'
-#' Donegan, Connor (2021). Spatial conditional autoregressive models in Stan. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
+#' Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
 #' 
 #' @examples
 #' data(sentencing)
@@ -220,6 +222,8 @@ stan_glm <- function(formula,
                      iter = 2e3, 
                      refresh = 1e3,
                      keep_all = FALSE,
+                     slim = FALSE,
+                     drop = NULL,
                      pars = NULL,
                      control = NULL,
                      ...) {
@@ -272,8 +276,19 @@ stan_glm <- function(formula,
           x_full <- xraw          
       } else {
           stopifnot(inherits(slx, "formula"))
-          W <- row_standardize(C, msg =  "Row standardizing connectivity matrix to calculate spatially lagged covaraite(s)")
-          W.list <- rstan::extract_sparse_parts(W)
+          W <- C
+          if (!inherits(W, "sparseMatrix")) W <- as(W, "CsparseMatrix")
+          xrs <- Matrix::rowSums(W)
+          if (!all(xrs == 1)) W <- row_standardize(W, msg =  "Row standardizing connectivity matrix to calculate spatially lagged covaraite(s)")
+          # efficient transform to CRS representation for W.list (via transpose)
+          Wij <- as(W, "TsparseMatrix")
+          Tw <- Matrix::sparseMatrix(i = Wij@j + 1,
+                                     j = Wij@i + 1,
+                                     x = Wij@x,
+                                     dims = dim(Wij))
+          W.list <- list(w = Tw@x,
+                         v = Tw@i + 1,
+                         u = Tw@p + 1)          
           Wx <- SLX(f = slx, DF = mod_frame, x = xraw, W = W)
           dwx <- ncol(Wx)
           wx_idx <- as.array( which(paste0("w.", colnames(xraw)) %in% colnames(Wx)), dim = dwx )
@@ -335,7 +350,7 @@ stan_glm <- function(formula,
         standata$trials <- y[,1] + y[,2]
     }
     ## PARAMETERS TO KEEP -------------               
-    pars <- c(pars, 'intercept', 'log_lik', 'fitted')
+    pars <- c(pars, 'intercept', 'fitted', 'log_lik')
     if (!intercept_only) pars <- c(pars, 'beta')
     if (dwx) pars <- c(pars, 'gamma')
     if (family$family %in% c("gaussian", "student_t")) pars <- c(pars, 'sigma')
@@ -349,6 +364,8 @@ stan_glm <- function(formula,
             pars <- c(pars, "nu_x_true")
         }
     }
+    if (slim == TRUE) drop <- c('fitted', 'log_lik', 'alpha_re', 'x_true')
+    pars <- drop_params(pars = pars, drop_list = drop)
     priors_made_slim <- priors_made[which(names(priors_made) %in% pars)]
     if (me.list$has_me) priors_made_slim$ME_model <- ME$prior        
     print_priors(prior, priors_made_slim)
@@ -381,9 +398,9 @@ stan_glm <- function(formula,
     } else {
         out$spatial <- data.frame(par = "none", method = "none")
     }
-    if (!missing(C) && (inherits(C, "matrix") | inherits(C, "Matrix"))) {
+    if (!missing(C) && any(pars == 'fitted')) {
+        out$C <- as(C, "sparseMatrix")        
         R <- resid(out, summary = FALSE)
-        out$C <- as(C, "dMatrix")
         out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
     }        
     return(out)

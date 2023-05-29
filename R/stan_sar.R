@@ -50,25 +50,30 @@
 #' @param refresh Stan will print the progress of the sampler every \code{refresh} number of samples. Set \code{refresh=0} to silence this.
 #' @param pars Optional; specify any additional parameters you'd like stored from the Stan model.
 #' @param keep_all  If `keep_all = TRUE` then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors and the `bridgesampling` package.
+#' @param slim If `slim = TRUE`, then the Stan model will not collect the most memory-intensive parameters (including n-length vectors of fitted values, log-likelihoods, and ME-modeled covariate values). This will disable many convenience functions that are otherwise available for fitted \code{geostan} models, such as the extraction of residuals, fitted values, and spatial trends, WAIC, and spatial diagnostics, and ME diagnostics; many quantities of interest, such as fitted values and spatial trends, can still be calculated manually using given parameter estimates. The "slim" option is designed for data-intensive routines, such as regression with raster data, Monte Carlo studies, and measurement error models. For more control over which parameters are kept or dropped, use the `drop` argument instead of `slim`.
+#' @param drop Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from SAR models:
+#' \describe{
+#' \item{fitted}{The N-length vector of fitted values}
+#' \item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
+#' \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
+#' \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
+#' }
+#' Using `drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')` is equivalent to `slim = TRUE`. Note that if `slim = TRUE`, then `drop` will be ignored---so only use one or the other.
 #' @param control A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details. 
 #' 
 #' @param ... Other arguments passed to \code{\link[rstan]{sampling}}. For multi-core processing, you can use \code{cores = parallel::detectCores()}, or run \code{options(mc.cores = parallel::detectCores())} first.
 #' 
 #' @details
 #'
-#' Discussions of SAR models may be found in Cliff and Ord (1981), Cressie (2015, Ch. 6), LeSage and Pace (2009), and LeSage (2014). 
+#' Discussions of SAR models may be found in Cliff and Ord (1981), Cressie (2015, Ch. 6), LeSage and Pace (2009), and LeSage (2014). The Stan implementation draws from Donegan (2021).
 #'
 #' The general scheme of the SAR model for numeric vector \eqn{y} is
-#' \deqn{
-#'  y = \mu + ( I - \rho W)^{-1} \epsilon \\
-#' \epsilon \sim Gauss(0, \sigma^2 I)
-#' }
+#' \deqn{y = \mu + ( I - \rho W)^{-1} \epsilon}
+#' \deqn{\epsilon \sim Gauss(0, \sigma^2 I)}
 #' where \eqn{W} is the spatial weights matrix, \eqn{I} is the n-by-n identity matrix, and \eqn{\rho} is a spatial autocorrelation parameter. In words, the errors of the regression equation are spatially autocorrelated. 
 #'
 #' Re-arranging terms, the model can also be written as follows:
-#' \deqn{
-#'  y = \mu + \rho W (y - \mu)  + \epsilon
-#' }
+#' \deqn{y = \mu + \rho W (y - \mu)  + \epsilon}
 #' which perhaps shows more intuitively the implicit spatial trend component, \eqn{\rho W (y - \mu)}.
 #' 
 #' Most often, this model is applied directly to observations (referred to below as the auto-Gaussian model). The SAR model can also be applied to a vector of parameters inside a hierarchical model. The latter enables spatial autocorrelation to be modeled when the observations are discrete counts (e.g., disease incidence data).
@@ -78,10 +83,10 @@
 #' ###  Auto-Gaussian
 #'
 #' When \code{family = auto_gaussian()}, the SAR model is specified as follows:
-#' \deqn{
-#' y \sim Gauss(\mu, \Sigma) \\
-#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
-#' }
+#' 
+#' \deqn{y \sim Gauss(\mu, \Sigma)}
+#' \deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}}
+# 
 #' where \eqn{\mu} is the mean vector (with intercept, covariates, etc.), \eqn{W} is a spatial weights matrix (usually row-standardized), and \eqn{\sigma} is a scale parameter.
 #'
 #' The SAR model contains an implicit spatial trend (i.e., spatial autocorrelation) component \eqn{\phi} which is calculated as follows:
@@ -101,19 +106,17 @@
 #'
 #' For \code{family = poisson()}, the model is specified as:
 #'
-#' \deqn{
-#' y \sim Poisson(e^{O + \lambda}) \\
-#' \lambda \sim Gauss(\mu, \Sigma)   \\
-#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.
-#' }
+#' \deqn{y \sim Poisson(e^{O + \lambda})}
+#' \deqn{\lambda \sim Gauss(\mu, \Sigma)}
+#' \deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
+#' 
 #' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator {p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
 #' 
 #' This is often written (equivalently) as:
-#' \deqn{
-#' y \sim Poisson(e^{O + \mu + \phi}) \\
-#' \phi \sim Gauss(0, \Sigma) \\
-#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
-#' }
+#' 
+#' \deqn{y \sim Poisson(e^{O + \mu + \phi})}
+#' \deqn{ \phi \sim Gauss(0, \Sigma) }
+#' \deqn{ \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
 #'
 #' For Poisson models, the \link[geostan]{spatial} method returns the parameter vector \eqn{\phi}.
 #'
@@ -125,92 +128,25 @@
 #' ### Binomial
 #' 
 #' For `family = binomial()`, the model is specified as:
-#' \deqn{
-#' y \sim Binomial(N, \lambda)  \\
-#' logit(\lambda) \sim Gauss(\mu, \Sigma)  \\
-#' \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}
-#' }
+#' 
+#' \deqn{y \sim Binomial(N, \lambda) }
+#' \deqn{logit(\lambda) \sim Gauss(\mu, \Sigma) }
+#' \deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
+#' 
 #' where outcome data \eqn{y} are counts, \eqn{N} is the number of trials, and \eqn{\lambda} is the rate of 'success'. Note that the model formula should be structured as: `cbind(sucesses, failures) ~ 1` (for an intercept-only model), such that `trials = successes + failures`.
 #' 
 #' For fitted Binomial models, the \code{\link[geostan]{spatial}} method will return the parameter vector \code{phi}, equivalent to:
-#' \deqn{
-#' \phi = logit(\lambda) - \mu.
-#' }
+#' 
+#' \deqn{\phi = logit(\lambda) - \mu.}
+#' 
 #' As is also the case for the Poisson model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 #' \deqn{
 #' \rho W \phi.
 #' }
-#' 
-#' ### Spatially lagged covariates (SLX)
-#' 
-#' The `slx` argument is a convenience function for including SLX terms. For example, 
-#' \deqn{
-#'  y = W X \gamma + X \beta + \epsilon
-#' }
-#' where \eqn{W} is a row-standardized spatial weights matrix (see \link[geostan]{shape2mat}), \eqn{WX} is the mean neighboring value of \eqn{X}, and \eqn{\gamma} is a coefficient vector. This specifies a regression with spatially lagged covariates. SLX terms can specified by providing a formula to the \code{slx} argument:
-#' ```
-#' stan_glm(y ~ x1 + x2, slx = ~ x1 + x2, \...),
-#' ```
-#' which is a shortcut for
-#' ```
-#' stan_glm(y ~ I(W \%*\% x1) + I(W \%*\% x2) + x1 + x2, \...)
-#' ```
-#' SLX terms will always be *prepended* to the design matrix, as above, which is important to know when setting prior distributions for regression coefficients.
 #'
-#' For measurement error (ME) models, the SLX argument is the only way to include spatially lagged covariates since the SLX term needs to be re-calculated on each iteration of the MCMC algorithm.
-#' 
-#' ### Measurement error (ME) models
-#' 
-#' The ME models are designed for surveys with spatial sampling designs, such as the American Community Survey (ACS) estimates. Given estimates \eqn{x}, their standard errors \eqn{s}, and the target quantity of interest (i.e., the unknown true value) \eqn{z}, the ME models have one of the the following two specifications, depending on the user input. If a spatial CAR model is specified, then:
-#' \deqn{
-#'  x \sim Gauss(z, s^2) \\
-#'  z \sim Gauss(\mu_z, \Sigma_z) \\
-#' \Sigma_z = (I - \rho C)^{-1} M \\
-#'  \mu_z \sim Gauss(0, 100) \\
-#'  \tau_z \sim Student-t(10, 0, 40), \tau > 0 \\
-#'  \rho_z \sim uniform(l, u)
-#'  }
-#' where \eqn{\Sigma} specifies a spatial conditional autoregressive model with scale parameter \eqn{\tau} (on the diagonal of \eqn{M}), and \eqn{l}, \eqn{u} are the lower and upper bounds that \eqn{\rho} is permitted to take (which is determined by the extreme eigenvalues of the spatial connectivity matrix \eqn{C}).
-#' 
-#' For non-spatial ME models, the following is used instead:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' z \sim student_t(\nu_z, \mu_z, \sigma_z) \\
-#' \nu_z \sim gamma(3, 0.2) \\
-#' \mu_z \sim Gauss(0, 100) \\
-#' \sigma_z \sim student-t(10, 0, 40).
-#' }
-#' 
-#' For strongly skewed variables, such as census tract poverty rates, it can be advantageous to apply a logit transformation to \eqn{z} before applying the CAR or Student-t prior model. When the `logit` argument is used, the model becomes:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' logit(z) \sim Gauss(\mu_z, \Sigma_z) 
-#' ...
-#' }
-#' and similarly for the Student t model:
-#' \deqn{
-#' x \sim Gauss(z, s^2) \\
-#' logit(z) \sim student-t(\nu_z, \mu_z, \sigma_z) \\
-#' ...
-#' }
+#' ## Additional functionality
 #'
-#' ### Censored counts
-#'
-#' Vital statistics systems and disease surveillance programs typically suppress case counts when they are smaller than a specific threshold value. In such cases, the observation of a censored count is not the same as a missing value; instead, you are informed that the value is an integer somewhere between zero and the threshold value. For Poisson models (`family = poisson())`), you can use the `censor_point` argument to encode this information into your model. 
-#'
-#' Internally, `geostan` will keep the index values of each censored observation, and the index value of each of the fully observed outcome values. For all observed counts, the likelihood statement will be:
-#' \deqn{
-#' p(y_i | data, model) = poisson(y_i | \mu_i), 
-#' }
-#' as usual, where \eqn{\mu_i} may include whatever spatial terms are present in the model.
-#'
-#' For each censored count, the likelihood statement will equal the cumulative Poisson distribution function for values zero through the censor point:
-#' \deqn{
-#' p(y_i | data, model) = \sum_{m=0}^{M} Poisson( m | \mu_i),
-#' }
-#' where \eqn{M} is the censor point and \eqn{\mu_i} again is the fitted value for the \eqn{i^{th}} observation.
-#' 
-#' For example, the US Centers for Disease Control and Prevention's CDC WONDER database censors all death counts between 0 and 9. To model CDC WONDER mortality data, you could provide `censor_point = 9` and then the likelihood statement for censored counts would equal the summation of the Poisson probability mass function over each integer ranging from zero through 9 (inclusive), conditional on the fitted values (i.e., all model parameters). See Donegan (2021) for additional discussion, references, and Stan code.
+#' The SAR models can also incorporate spatially-lagged covariates, measurement/sampling error in covariates (particularly when using small area survey estimates as covariates), and censored outcomes (such as arise when a disease surveillance system suppresses data for privacy reasons). For details on these options, please see the Details section in the documentation for \link[geostan]{stan_glm}.
 #' 
 #' 
 #' @return An object of class class \code{geostan_fit} (a list) containing: 
@@ -242,6 +178,8 @@
 #' Cressie, Noel (2015 (1993)). *Statistics for Spatial Data*. Wiley Classics, Revised Edition.
 #'
 #' Cressie, Noel and Wikle, Christopher (2011). *Statistics for Spatio-Temporal Data*. Wiley.
+#'
+#' Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
 #'
 #' LeSage, James (2014). What Regional Scientists Need to Know about Spatial Econometrics. *The Review of Regional Science* 44: 13-32 (2014 Southern Regional Science Association Fellows Address).
 #' 
@@ -297,6 +235,8 @@ stan_sar <- function(formula,
                      refresh = 500,
                      keep_all = FALSE,
                      pars = NULL,
+                     slim = FALSE,
+                     drop = NULL,
                      control = NULL,
                      ...
                      ) {
@@ -305,9 +245,13 @@ stan_sar <- function(formula,
     stopifnot(family$family %in% c("gaussian", "auto_gaussian", "poisson", "binomial"))
     if (family$family == "gaussian" | family$family == "auto_gaussian") family <- auto_gaussian(type = "SAR")
     stopifnot(!missing(data))
-    stopifnot(!missing(C))
     check_sar_parts(sar_parts)
-    stopifnot(all(dim(C) == nrow(data)))
+    if (!missing(C)) {
+        stopifnot(inherits(C, "Matrix") | inherits(C, "matrix"))
+        stopifnot(all(dim(C) == nrow(data)))
+    } else {
+        C <- sar_parts$W
+    }
     tmpdf <- as.data.frame(data)
     n <- nrow(tmpdf)    
     family_int <- family_2_int(family)
@@ -348,13 +292,23 @@ stan_sar <- function(formula,
           dwx <- 0
           x_full <- xraw          
       } else {
-          stopifnot(inherits(slx, "formula"))
-          W <- row_standardize(C, msg =  "Row standardizing connectivity matrix to calculate spatially lagged covaraite(s)")
-          W.list <- rstan::extract_sparse_parts(W)
+          stopifnot(inherits(slx, "formula")) 
+          W <- C
+          if (!inherits(W, "sparseMatrix")) W <- as(W, "CsparseMatrix")
+          xrs <- Matrix::rowSums(W)
+          if (!all(xrs == 1)) W <- row_standardize(W, msg =  "Row standardizing connectivity matrix to calculate spatially lagged covaraite(s)")
+          # efficient transform to CRS representation for W.list (via Transpose)
+          Wij <- as(W, "TsparseMatrix")
+          Tw <- Matrix::sparseMatrix(i = Wij@j + 1, #intentional transpose of i,j#
+                                     j = Wij@i + 1,
+                                     x = Wij@x,
+                                     dims = dim(Wij))
+          W.list <- list(w = Tw@x,
+                         v = Tw@i + 1,
+                         u = Tw@p + 1)
           Wx <- SLX(f = slx, DF = mod_frame, x = xraw, W = W)
           dwx <- ncol(Wx)
           wx_idx <- as.array( which(paste0("w.", colnames(xraw)) %in% colnames(Wx)), dim = dwx )
-
           x_full <- cbind(Wx, xraw)
       }
   }
@@ -439,6 +393,8 @@ stan_sar <- function(formula,
             pars <- c(pars, "nu_x_true")
         }
     }
+    if (slim == TRUE) drop <- c('fitted', 'log_lik', 'alpha_re', 'x_true')
+    pars <- drop_params(pars = pars, drop_list = drop)
     priors_made_slim <- priors_made[which(names(priors_made) %in% pars)]
     ## PARAMETERS TO KEEP, with SAR PARAMETERS [STOP] -------------
     if (me.list$has_me) priors_made_slim$ME_model <- ME$prior    
@@ -458,7 +414,7 @@ stan_sar <- function(formula,
     }
     samples <- rstan::sampling(stanmodels$foundation, data = standata, iter = iter, chains = chains, refresh = refresh, pars = xparsx, control = control, init = inits, ...)
     out <- clean_results(samples, pars, is_student, has_re, Wx, xraw, me.list$x_me_idx)
-    out$data <- data.frame(as.matrix(ModData))
+    out$data <- ModData # data.frame(as.matrix(ModData)) # kills with massive data
     out$family <- family
     out$formula <- formula
     out$slx <- slx
@@ -468,16 +424,15 @@ stan_sar <- function(formula,
     out$ME <- list(has_me = me.list$has_me, spatial_me = me.list$spatial_me)
     if (out$ME$has_me) out$ME <- c(out$ME, ME)
     if (family_int == 6) {
-        out$spatial <- data.frame(par = "trend", method = "SAR") #!#
+        out$spatial <- data.frame(par = "trend", method = "SAR") 
     } else {
         out$spatial <- data.frame(par = "phi", method = "SAR")
     }
-    out$C <- Matrix::Matrix(C)    
-    R <- resid(out, summary = FALSE)
-    out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )    
+    if (any(pars == 'fitted')) {
+        out$C <- as(C, "sparseMatrix")
+        R <- resid(out, summary = FALSE)
+        out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
+    } 
     return (out)
 }
-
-
-    
 

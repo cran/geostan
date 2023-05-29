@@ -226,7 +226,7 @@ clean_results <- function(samples, pars, is_student, has_re, Wx, x, x_me_idx) {
     }    
     if (is_student) samples <- par_alias(samples, "^nu\\[1\\]", "nu")
     if (has_re) samples <- par_alias(samples, "^alpha_tau\\[1\\]", "alpha_tau")
-    main_pars <- pars[which(pars %in% c("nu", "intercept", "alpha_tau", "gamma", "beta", "sigma", "rho", "spatial_scale", "theta_scale", "car_scale", "car_rho"))]
+    main_pars <- pars[which(pars %in% c("nu", "intercept", "alpha_tau", "gamma", "beta", "sigma", "rho", "spatial_scale", "theta_scale", "car_scale", "car_rho", "sar_rho", "sar_scale"))]
     S <- as.matrix(samples, pars = main_pars)
     summary <- post_summary(S)
     Residual_MC <- NA
@@ -296,7 +296,7 @@ print_priors <- function(user_priors, priors) {
               print(p)
           }
           if (nm == "car_rho") {
-              message("\n*Setting prior for CAR spatial autocorrelation parameter (sar_rho)")
+              message("\n*Setting prior for CAR spatial autocorrelation parameter (car_rho)")
               print(p)
           }
           if (nm == "sar_scale") {
@@ -386,4 +386,15 @@ empty_sar_data <- function(n) {
         Widx = a.zero(),
         sar = 0
     )
+}
+
+
+#' @noRd
+drop_params <- function(pars, drop_list) {
+    if (!is.null(drop_list)) {
+        drop <- paste0(drop_list, collapse = "|")
+        keep_idx <- !grepl(drop, pars)
+        pars <- pars[keep_idx]
+    }        
+    return( pars )
 }
