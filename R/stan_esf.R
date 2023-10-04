@@ -175,18 +175,17 @@
 #' log.SSR <- log( SSR, base = 2 )
 #'
 #' # map the log-SSRs
-#' st_as_sf(sentencing) %>%
-#'  ggplot() +
-#'  geom_sf(aes(fill = log.SSR)) +
-#'  scale_fill_gradient2(
-#'    midpoint = 0,
-#'    name = NULL,
-#'    breaks = seq(-3, 3, by = 0.5)
+#'  ggplot(sentencing) +
+#'    geom_sf(aes(fill = log.SSR)) +
+#'    scale_fill_gradient2(
+#'     midpoint = 0,
+#'     name = NULL,
+#'     breaks = seq(-3, 3, by = 0.5)
+#'   ) +
+#'    labs(title = "Log-Standardized Sentencing Ratios",
+#'     subtitle = "log( Fitted/Expected ), base 2"
 #'  ) +
-#'  labs(title = "Log-Standardized Sentencing Ratios",
-#'       subtitle = "log( Fitted/Expected ), base 2"
-#'  ) +
-#'  theme_void()
+#'    theme_void()
 #' }
 #' @export
 #' @md
@@ -292,7 +291,7 @@ stan_esf <- function(formula,
         y_int = y_int,
         trials = rep(0, length(y)),
         n = n,
-        offset = offset,
+        input_offset = offset,
         has_re = has_re,
         n_ids = n_ids,
         id = id_index$idx,

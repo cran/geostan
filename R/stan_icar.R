@@ -232,7 +232,7 @@
 #' SSR <- f / sentencing$expected_sents
 #' log.SSR <- log( SSR, base = 2)
 #'
-#' ggplot( st_as_sf(sentencing) ) +
+#' ggplot(sentencing) +
 #'   geom_sf(aes(fill = log.SSR)) +
 #'   scale_fill_gradient2(
 #'    low = "navy",
@@ -348,7 +348,7 @@ stan_icar <- function(formula,
         y_int = y_int,
         trials = rep(0, length(y)),
         n = n,
-        offset = offset,
+        input_offset = offset,
         has_re = has_re,
         n_ids = n_ids,
         id = id_index$idx,

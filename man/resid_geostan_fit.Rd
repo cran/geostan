@@ -32,17 +32,21 @@ spatial(object, summary = TRUE, ...)
 Extract model residuals, fitted values, or spatial trend from a fitted \code{geostan_fit} model.
 }
 \details{
-When \code{rates = FALSE} and the model is Poisson or Binomial, the fitted values returned by the \code{fitted} method are the expected value of the response variable. The \code{rates} argument is used to translate count outcomes to rates by dividing by the appropriate denominator. The behavior of the \code{rates} argument depends on the model specification. Consider a Poisson model of disease incidence, such as the following intercept-only case:\preformatted{fit <- stan_glm(y ~ offset(log(E)),
+When \code{rates = FALSE} and the model is Poisson or Binomial, the fitted values returned by the \code{fitted} method are the expected value of the response variable. The \code{rates} argument is used to translate count outcomes to rates by dividing by the appropriate denominator. The behavior of the \code{rates} argument depends on the model specification. Consider a Poisson model of disease incidence, such as the following intercept-only case:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{fit <- stan_glm(y ~ offset(log(E)),
                data = data,
                family = poisson())
-}
+}\if{html}{\out{</div>}}
 
 If the fitted values are extracted using \code{rates = FALSE}, then \code{fitted(fit)} will return the expectation of \eqn{y}. If \code{rates = TRUE} (the default), then \code{fitted(fit)} will return the expected value of the rate \eqn{\frac{y}{E}}.
 
-If a binomial model is used instead of the Poisson, then using \code{rates = TRUE} will return the expectation of \eqn{\frac{y}{N}} where \eqn{N} is the sum of the number of 'successes' and 'failures', as in:\preformatted{fit <- stan_glm(cbind(successes, failures) ~ 1,
+If a binomial model is used instead of the Poisson, then using \code{rates = TRUE} will return the expectation of \eqn{\frac{y}{N}} where \eqn{N} is the sum of the number of 'successes' and 'failures', as in:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{fit <- stan_glm(cbind(successes, failures) ~ 1,
                data = data,
                family = binomial())
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 \donttest{

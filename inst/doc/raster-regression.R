@@ -1,6 +1,7 @@
 ## ----setup, message = FALSE, warning = FALSE, eval = TRUE---------------------
 library(geostan)
 library(sf)
+set.seed(1127)
 
 ## ----eval = TRUE--------------------------------------------------------------
 row <- 40
@@ -26,15 +27,14 @@ plot(grid[,'z'])
 
 ## ----eval = TRUE--------------------------------------------------------------
 sar_list <- prep_sar_data2(row = row, col = col)
-fit <- stan_sar(
-                y ~ z, 
-                data = grid,
-		centerx = TRUE,
-		sar_parts = sar_list,
-		iter = 500,
-		chains = 4,
-		slim = TRUE #,
-		# cores = 4, # for multi-core processing
+fit <- stan_sar(y ~ z, 
+      data = grid,
+		  centerx = TRUE,
+		  sar_parts = sar_list,
+		  iter = 500,
+		  chains = 4,
+		  slim = TRUE #,
+		  # cores = 4, # for multi-core processing
 		)
 print(fit)		
 

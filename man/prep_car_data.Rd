@@ -49,8 +49,10 @@ A list containing all of the data elements required by the CAR model in \code{\l
 Prepare data for the CAR model
 }
 \details{
-The CAR model is:\preformatted{  Normal(Mu, Sigma), Sigma = (I - rho * C)^-1 * M * tau^2,
-}
+The CAR model is:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{  Normal(Mu, Sigma), Sigma = (I - rho * C)^-1 * M * tau^2,
+}\if{html}{\out{</div>}}
 
 where \code{I} is the identity matrix, \code{rho} is a spatial autocorrelation parameter, \code{C} is a connectivity matrix, and \code{M * tau^2} is a diagonal matrix with conditional variances on the diagonal. \code{tau^2} is a (scalar) scale parameter.
 

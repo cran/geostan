@@ -71,21 +71,29 @@ For details on how any distribution is parameterized, see the Stan Language Func
 
 \subsection{The horseshoe prior}{
 
-The horseshoe prior is used by \code{\link[geostan]{stan_esf}} as a prior for the eigenvector coefficients. The horseshoe model encodes a prior state of knowledge that effectively states, 'I believe a small number of these variables may be important, but I don't know which of them is important.' The horseshoe is a normal distribution with unknown scale (Polson and Scott 2010):\preformatted{       beta_j ~ Normal(0, tau^2 * lambda_j^2)
-}
+The horseshoe prior is used by \code{\link[geostan]{stan_esf}} as a prior for the eigenvector coefficients. The horseshoe model encodes a prior state of knowledge that effectively states, 'I believe a small number of these variables may be important, but I don't know which of them is important.' The horseshoe is a normal distribution with unknown scale (Polson and Scott 2010):
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       beta_j ~ Normal(0, tau^2 * lambda_j^2)
+}\if{html}{\out{</div>}}
 
 The scale parameter for this prior is the product of two terms: \code{lambda_j^2} is specific to the variable \code{beta_j}, and \code{tau^2} is known as the global shrinkage parameter.
 
-The global shrinkage parameter is assigned a half-Cauchy prior:\preformatted{       tau ~ Cauchy(0, global_scale * sigma)
-}
+The global shrinkage parameter is assigned a half-Cauchy prior:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       tau ~ Cauchy(0, global_scale * sigma)
+}\if{html}{\out{</div>}}
 
 where \code{global_scale} is provided by the user and \code{sigma} is the scale parameter for the outcome variable; for Poisson and binomial models, sigma is fixed at one. Use \code{global_scale} to control the overall sparsity of the model.
 
-The second part of the model is a Student's t prior for \code{lambda_j}. Most \code{lambda_j} will be small, since the model is half-Cauchy:\preformatted{       lambda_j ~ Cauchy(0, 1)
-}
+The second part of the model is a Student's t prior for \code{lambda_j}. Most \code{lambda_j} will be small, since the model is half-Cauchy:
 
-This model results in most \code{lambda_j} being small, but due to the long tails of the Cauchy distribution, strong evidence in the data can force any particular \code{lambda_j} to be large. Piironen and Vehtari (2017) adjust the model so that those large \code{lambda_j} are effectively assigned a Student's t model:\preformatted{       Big_lambda_j ~ Student_t(slab_df, 0, slab_scale)
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       lambda_j ~ Cauchy(0, 1)
+}\if{html}{\out{</div>}}
+
+This model results in most \code{lambda_j} being small, but due to the long tails of the Cauchy distribution, strong evidence in the data can force any particular \code{lambda_j} to be large. Piironen and Vehtari (2017) adjust the model so that those large \code{lambda_j} are effectively assigned a Student's t model:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{       Big_lambda_j ~ Student_t(slab_df, 0, slab_scale)
+}\if{html}{\out{</div>}}
 
 This is a schematic representation of the model; see Piironen and Vehtari (2017) or Donegan et al. (2020) for details.
 }

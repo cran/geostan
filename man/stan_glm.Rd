@@ -37,9 +37,11 @@ stan_glm(
 
 \item{slx}{Formula to specify any spatially-lagged covariates. As in, \code{~ x1 + x2} (the intercept term will be removed internally). When setting priors for \code{beta}, remember to include priors for any SLX terms.}
 
-\item{re}{To include a varying intercept (or "random effects") term, \code{alpha_re}, specify the grouping variable here using formula syntax, as in \code{~ ID}. Then, \code{alpha_re} is a vector of parameters added to the linear predictor of the model, and:\preformatted{alpha_re ~ N(0, alpha_tau)
+\item{re}{To include a varying intercept (or "random effects") term, \code{alpha_re}, specify the grouping variable here using formula syntax, as in \code{~ ID}. Then, \code{alpha_re} is a vector of parameters added to the linear predictor of the model, and:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{alpha_re ~ N(0, alpha_tau)
 alpha_tau ~ Student_t(d.f., location, scale).
-}}
+}\if{html}{\out{</div>}}}
 
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
@@ -145,11 +147,15 @@ The \code{slx} argument is a convenience function for including SLX terms. For e
 \deqn{
  y = W X \gamma + X \beta + \epsilon
 }
-where \eqn{W} is a row-standardized spatial weights matrix (see \code{\link[geostan]{shape2mat}}), \eqn{WX} is the mean neighboring value of \eqn{X}, and \eqn{\gamma} is a coefficient vector. This specifies a regression with spatially lagged covariates. SLX terms can specified by providing a formula to the \code{slx} argument:\preformatted{stan_glm(y ~ x1 + x2, slx = ~ x1 + x2, \\...),
-}
+where \eqn{W} is a row-standardized spatial weights matrix (see \code{\link[geostan]{shape2mat}}), \eqn{WX} is the mean neighboring value of \eqn{X}, and \eqn{\gamma} is a coefficient vector. This specifies a regression with spatially lagged covariates. SLX terms can specified by providing a formula to the \code{slx} argument:
 
-which is a shortcut for\preformatted{stan_glm(y ~ I(W \\\%*\\\% x1) + I(W \\\%*\\\% x2) + x1 + x2, \\...)
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{stan_glm(y ~ x1 + x2, slx = ~ x1 + x2, \\...),
+}\if{html}{\out{</div>}}
+
+which is a shortcut for
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{stan_glm(y ~ I(W \\\%*\\\% x1) + I(W \\\%*\\\% x2) + x1 + x2, \\...)
+}\if{html}{\out{</div>}}
 
 SLX terms will always be \emph{prepended} to the design matrix, as above, which is important to know when setting prior distributions for regression coefficients.
 

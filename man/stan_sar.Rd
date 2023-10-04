@@ -46,9 +46,11 @@ stan_sar(
 
 \item{slx}{Formula to specify any spatially-lagged covariates. As in, \code{~ x1 + x2} (the intercept term will be removed internally). When setting priors for \code{beta}, remember to include priors for any SLX terms.}
 
-\item{re}{To include a varying intercept (or "random effects") term, \code{alpha_re}, specify the grouping variable here using formula syntax, as in \code{~ ID}. Then, \code{alpha_re} is a vector of parameters added to the linear predictor of the model, and:\preformatted{alpha_re ~ N(0, alpha_tau)
+\item{re}{To include a varying intercept (or "random effects") term, \code{alpha_re}, specify the grouping variable here using formula syntax, as in \code{~ ID}. Then, \code{alpha_re} is a vector of parameters added to the linear predictor of the model, and:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{alpha_re ~ N(0, alpha_tau)
 alpha_tau ~ Student_t(d.f., location, scale).
-}
+}\if{html}{\out{</div>}}
 
 With the SAR model, any \code{alpha_re} term should be at a \emph{different} level or scale than the observations; that is, at a different scale than the autocorrelation structure of the SAR model itself.}
 
