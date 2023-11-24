@@ -21,7 +21,7 @@ prep_me_data(
 
 \item{prior}{A named list of prior distributions (see \code{\link[geostan]{priors}}). If none are provided, default priors will be assigned. The list of priors may include the following parameters:
 \describe{
-\item{df}{If using a non-spatial ME model, the degrees of freedom (df) for the Student's t model is assigned a gamma prior with default parameters of \code{gamma(alpha = 3, beta = 0.2)}. Provide values for each covariate in \code{se}, listing the values in the same order as the columns of \code{se}.}
+\item{df}{If using a non-spatial ME model, the degrees of freedom (df) for the Student's t model is assigned a gamma prior with default parameters of \code{gamma2(alpha = 3, beta = 0.2)}. Provide values for each covariate in \code{se}, listing the values in the same order as the columns of \code{se}.}
 
 \item{location}{The prior for the location parameter (mu) is a normal (Gaussian) distribution (the default being \code{normal(location = 0, scale = 100)}). To adjust the prior distributions, provide values for each covariate in \code{se}, listing the values in the same order as the columns of se.}
 

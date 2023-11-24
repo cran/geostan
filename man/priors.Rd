@@ -5,7 +5,7 @@
 \alias{uniform}
 \alias{normal}
 \alias{student_t}
-\alias{gamma}
+\alias{gamma2}
 \alias{hs}
 \title{Prior distributions}
 \source{
@@ -22,7 +22,7 @@ normal(location = 0, scale, variable = NULL)
 
 student_t(df = 10, location = 0, scale, variable = NULL)
 
-gamma(alpha, beta, variable = NULL)
+gamma2(alpha, beta, variable = NULL)
 
 hs(global_scale = 1, slab_df = 10, slab_scale, variable = "beta_ev")
 }
@@ -119,7 +119,7 @@ plot(fit)
 
 se <- data.frame(insurance = georgia$insurance.se)
 prior <- list()
-prior$df <- gamma(3, 0.2)
+prior$df <- gamma2(3, 0.2)
 prior$location <- normal(50, 50)
 prior$scale <- student_t(12, 10, 20)
 print(prior)

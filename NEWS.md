@@ -1,3 +1,11 @@
+# geostan 0.5.3
+
+### Minor changes
+
+The `gamma` function (which is available to help set prior distributions) has been renamed to `geostan::gamma2` to avoid conflict with `base::gamma`. 
+
+Some code for `geostan::stan_car` was cleaned up to avoid sending duplicate variables to the Stan model when a spatial ME (measurement error) model was used: https://github.com/ConnorDonegan/geostan/issues/17. This should not change any functionality and there is no reason to suspect that results were ever impacted by the duplicate variables. 
+
 # geostan 0.5.2
 
 This release was built using rstan 2.26.23, which incorporates Stan's new syntax for declaring arrays. Some models seems to run a little bit faster, but otherwise there are no changes that users should notice.

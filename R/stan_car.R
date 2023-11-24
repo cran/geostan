@@ -60,7 +60,7 @@
 #' Using `drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')` is equivalent to `slim = TRUE`. Note that if `slim = TRUE`, then `drop` will be ignored---so only use one or the other.
 #' @param control A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details. 
 #' 
-#' @param ... Other arguments passed to \code{\link[rstan]{sampling}}. For multi-core processing, you can use \code{cores = parallel::detectCores()}, or run \code{options(mc.cores = parallel::detectCores())} first.
+#' @param ... Other arguments passed to \code{\link[rstan]{sampling}}.
 #' 
 #' @details
 #'
@@ -113,7 +113,7 @@
 #' For \code{family = poisson()}, the model is specified as:
 #' \deqn{y \sim Poisson(e^{O + \lambda})}
 #' \deqn{\lambda \sim Gauss(\mu, (I - \rho C)^{-1} \boldsymbol M).}
-#' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator {p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
+#' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator \eqn{p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
 #'
 #' This is often written (equivalently) as:
 #' \deqn{y \sim Poisson(e^{O + \mu + \phi})}
@@ -339,12 +339,12 @@ stan_car <- function(formula,
         y = y,
         y_int = y_int,
         trials = rep(0, length(y)),
-        n = n,
+        #n = n, # getting n from car_parts, below
         input_offset = offset,
         has_re = has_re,
         n_ids = n_ids,
         id = id_index$idx,
-        center_x = centerx,  ####////!!!!####        
+        center_x = centerx,         
         ## slx data -------------    
         W_w = as.array(W.list$w),
         W_v = as.array(W.list$v),
@@ -381,7 +381,14 @@ stan_car <- function(formula,
     standata <- c(standata, empty_icar_data(n), empty_esf_data(n), empty_sar_data(n))    
     ## ME MODEL -------------
     me.list <- make_me_data(ME, xraw)
+
+    # remove ME-car parts: othwerise, they duplicate the car_parts argument
+    duplicates <- c("n", "nC", "nAx_w", "C", "Delta_inv", "log_det_Delta_inv", "Ax_w", "Ax_v", "Ax_u", "Cidx", "lambda", "WCAR")
+    me.list[which(names(me.list) %in% duplicates)] <- NULL
+
+    # append me.list to standata
     standata <- c(standata, me.list)
+        
     ## INTEGER OUTCOMES -------------    
     if (family$family == "binomial") {
         standata$y <- standata$y_int <- y[,1]

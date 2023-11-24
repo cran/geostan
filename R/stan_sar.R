@@ -61,7 +61,7 @@
 #' Using `drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')` is equivalent to `slim = TRUE`. Note that if `slim = TRUE`, then `drop` will be ignored---so only use one or the other.
 #' @param control A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details. 
 #' 
-#' @param ... Other arguments passed to \code{\link[rstan]{sampling}}. For multi-core processing, you can use \code{cores = parallel::detectCores()}, or run \code{options(mc.cores = parallel::detectCores())} first.
+#' @param ... Other arguments passed to \code{\link[rstan]{sampling}}. 
 #' 
 #' @details
 #'
@@ -110,7 +110,7 @@
 #' \deqn{\lambda \sim Gauss(\mu, \Sigma)}
 #' \deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
 #' 
-#' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator {p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
+#' If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator \eqn{p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
 #' 
 #' This is often written (equivalently) as:
 #' 
@@ -332,12 +332,12 @@ stan_sar <- function(formula,
         y = y,
         y_int = y_int,
         trials = rep(0, length(y)),
-        n = n,
+        #n = n, # getting n from sar_parts, below
         input_offset = offset,
         has_re = has_re,
         n_ids = n_ids,
         id = id_index$idx,
-        center_x = centerx,  ####////!!!!####        
+        center_x = centerx,    
         ## slx data -------------    
         W_w = as.array(W.list$w),
         W_v = as.array(W.list$v),
