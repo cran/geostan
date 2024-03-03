@@ -361,27 +361,27 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="TOC">
 <ul>
-<li><a href="#car-models">CAR models</a>
+<li><a href="#car-models"><span class="toc-section-number">1</span> CAR models</a>
 <ul>
-<li><a href="#autonormal-model">Autonormal model</a></li>
-<li><a href="#poisson-models">Poisson models</a></li>
+<li><a href="#autonormal-model"><span class="toc-section-number">1.1</span> Autonormal model</a></li>
+<li><a href="#poisson-models"><span class="toc-section-number">1.2</span> Poisson models</a></li>
 </ul></li>
-<li><a href="#sar-models">SAR models</a></li>
+<li><a href="#sar-models"><span class="toc-section-number">2</span> SAR models</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
 <p>The spatial models in geostan use custom Stan functions that are far more efficient than using built-in functions, including the conditional (CAR) and simultaneous spatial autoregressive (SAR) models (both are particular specifications of the multivariate normal distribution). This vignette shows how you can use those functions together with some R functions in geostan to start building custom spatial models.</p>
 <p>This tutorial is written with the assumption that the reader is already familiar with <a href="https://mc-stan.org/users/documentation/">RStan</a>. Users are expected to make adjustments to the code as needed, including to prior distributions. For more details and an explanation of the computational approach, see <span class="citation">Donegan (<a href="#ref-donegan_2022" role="doc-biblioref">2022</a>)</span>. For more background on spatial modeling see <span class="citation">Haining and Li (<a href="#ref-haining_2020" role="doc-biblioref">2020</a>)</span>.</p>
-<div id="car-models" class="section level1">
-<h1>CAR models</h1>
+<div id="car-models" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> CAR models</h1>
 <p>The CAR model is a multivariate normal distribution with covariance matrix <span class="math display">\[\Sigma = (I - \rho \cdot C)^{-1} M,\]</span> where <span class="math inline">\(I\)</span> is the identity matrix, <span class="math inline">\(\rho\)</span> a spatial autocorrelation parameter which may be positive or negative, <span class="math inline">\(C\)</span> is a sparse connectivity matrix, and <span class="math inline">\(M\)</span> is a diagonal matrix with scale parameters <span class="math inline">\(\tau_i^2\)</span>. There is typically a single scale parameter <span class="math inline">\(\tau\)</span> multiplied by weights <span class="math inline">\(\delta_i\)</span>. The term <span class="math inline">\(\tau^2 \cdot \delta_i\)</span> is the conditional variance pertaining to <span class="math inline">\(y_i | y_{n(i)}\)</span> where <span class="math inline">\(n(i)\)</span> lists the areas that neighbor the <span class="math inline">\(i^{th}\)</span> one.</p>
 <p>The defining feature of the CAR model is that, similar to time-series autoregression, the expectation for the value at the <span class="math inline">\(i^{th}\)</span> site given any or all other values of <span class="math inline">\(y\)</span> besides <span class="math inline">\(i\)</span> (<span class="math inline">\(y_{-i}\)</span>) are known, is a function of the neighboring values: <span class="math display">\[\mathbb{E}[y_i | y_{-i}] = \mu_ + \sum_{j \in n(i)} \rho \cdot c_{ij} (y_j - \mu).\]</span></p>
 <p>The CAR function presented here is valid for what is sometimes called the WCAR specification. This is the most commonly employed CAR specification. The connectivity matrix is row-standardized. Let <span class="math inline">\(A\)</span> be a symmetric binary connectivity matrix where <span class="math inline">\(a_{ij}= 1\)</span> only if the <span class="math inline">\(i^{th}\)</span> and <span class="math inline">\(j^{th}\)</span> sites are neighbors, all other entries are zero (including the diagonal entries <span class="math inline">\(i=j\)</span>). The elements of <span class="math inline">\(C\)</span> are <span class="math display">\[c_{ij} = \frac{a_{ij}}{\sum_j^n a_{ij}} = \frac{a_{ij}}{|n(i)|}.\]</span></p>
 <p>The diagonal of matrix <span class="math inline">\(M\)</span> then is specified by the n-length vector of weights <span class="math inline">\(\delta_i = \tau^2 \cdot \frac{1}{|n(i)|}\)</span>.</p>
 <p>The <code>geostan::prep_car_data</code> function will complete all of this for you. The user passes in a binary connectivity matrix <span class="math inline">\(A\)</span> and and specifies <code>style = &quot;WCAR&quot;</code>, then the function returns a list of data inputs for the Stan model.</p>
-<div id="autonormal-model" class="section level2">
-<h2>Autonormal model</h2>
+<div id="autonormal-model" class="section level2" number="1.1">
+<h2 number="1.1"><span class="header-section-number">1.1</span> Autonormal model</h2>
 <p>This first example is an autonormal model: <span class="math display">\[y \sim Normal(\alpha + x \beta, \Sigma).\]</span> Here you have <span class="math inline">\(n\)</span> observations of a continuously measured outcome <span class="math inline">\(y\)</span>, possibly <span class="math inline">\(k=1\)</span> or more covariates <span class="math inline">\(x\)</span>, and you’re accounting for spatial autocorrelation in <span class="math inline">\(y\)</span> using the covariance matrix of an <span class="math inline">\(n\)</span>-dimensional multivariate normal distribution.</p>
 <p>The following Stan code implements the above model; if you’re following along, copy the Stan code and save it in a file inside your working directory; I’ll name it “autonormal.stan” and I’ll save the name as an R variable:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>autonormal_file &lt;-<span class="st"> &quot;autonormal.stan&quot;</span></span></code></pre></div>
@@ -505,8 +505,8 @@ real wcar_normal_lpdf(vector y, vector mu,
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">stan_car</span>(<span class="kw">log</span>(income <span class="op">/</span><span class="st"> </span><span class="fl">10e3</span>) <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(population <span class="op">/</span><span class="st"> </span><span class="fl">10e3</span>),</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>    <span class="dt">data =</span> georgia, <span class="dt">car =</span> car_list, <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
 </div>
-<div id="poisson-models" class="section level2">
-<h2>Poisson models</h2>
+<div id="poisson-models" class="section level2" number="1.2">
+<h2 number="1.2"><span class="header-section-number">1.2</span> Poisson models</h2>
 <p>Disease mapping is a common use for CAR models, though these models have many applications. In this class of models, the CAR model is assigned as the prior distribution to a parameter vector <span class="math inline">\(\phi\)</span>, which is used to model disease incidence rates across small areas like counties. The disease data consist of counts <span class="math inline">\(y\)</span> together with the size of population at risk <span class="math inline">\(p\)</span>, or possibly a different denominator such as the expected number of cases <span class="math inline">\(E\)</span> (which occurs when using indirect age-standardization). These models have the form <span class="math display">\[\begin{equation}
 \begin{aligned}
     &amp;y \sim Poisson(e^\phi) \\
@@ -624,8 +624,8 @@ model {
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>    <span class="dt">data =</span> georgia, <span class="dt">car =</span> car_list, <span class="dt">family =</span> <span class="kw">poisson</span>(), <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="sar-models" class="section level1">
-<h1>SAR models</h1>
+<div id="sar-models" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> SAR models</h1>
 <p>The simultaneously-specified spatial autoregression (SAR) is written as <span class="math display">\[\begin{equation}
   \begin{aligned}
     y = \mu + (I - \rho \cdot W)^{-1} \epsilon \\
@@ -758,8 +758,8 @@ model{
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a>    <span class="dt">sar_parts =</span> sar_dl, <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
 <p>One can also use the SAR model as a prior distribution for a parameter vector, just as was done above with the CAR model.</p>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="unnumbered">References</h1>
+<div id="references" class="section level1 unnumbered" number>
+<h1 class="unnumbered" number>References</h1>
 <div id="refs" class="references hanging-indent">
 <div id="ref-donegan_2022">
 <p>Donegan, Connor. 2022. “Building Spatial Conditional Autoregressive Models in the Stan Programming Language.” <em>OSF Preprints</em>. <a href="https://doi.org/10.31219/osf.io/3ey65">https://doi.org/10.31219/osf.io/3ey65</a>.</p>

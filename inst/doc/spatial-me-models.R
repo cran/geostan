@@ -15,10 +15,6 @@ georgia$insurance <- georgia$insurance / 100
 georgia$insurance.se <- georgia$insurance.se / 100
 
 ## -----------------------------------------------------------------------------
-max(georgia$insurance + georgia$insurance.se*2)
-min(georgia$insurance - georgia$insurance.se*2)
-
-## -----------------------------------------------------------------------------
 SE <- data.frame(insurance = georgia$insurance.se)
 
 ## -----------------------------------------------------------------------------
@@ -92,4 +88,74 @@ abline(h = 0)
 #    logit = TRUE
 #  )
 #  fit_nsp <- stan_glm(log(rate.male) ~ insurance, data = georgia, ME = ME_nsp, prior_only = TRUE)
+
+## ----eval = FALSE-------------------------------------------------------------
+#  georgia$college <- georgia$college / 100
+#  georgia$college.se <- georgia$college.se / 100
+#  
+#  se = data.frame(insurance = georgia$insurance.se,
+#                  college = georgia$college.se)
+#  
+#  ME <- prep_me_data(se = se, logit = c(TRUE, TRUE))
+#  
+#  fit <- stan_glm(deaths.male ~ offset(log(pop.at.risk.male)) + insurance + college,
+#                  ME = ME,
+#  		re = ~ GEOID,
+#                  family = poisson(),
+#                  data = georgia,
+#                  iter = 700
+#                  )		
+
+## ----eval = FALSE-------------------------------------------------------------
+#  data(georgia)
+#  
+#  # income in $1,000s
+#  georgia$income <- georgia$income / 1e3
+#  georgia$income.se <- georgia$income.se /1e3
+#  
+#  # create log income
+#  georgia$log_income <- log( georgia$income )
+#  
+#  # create SEs for log income
+#  log_income_se <- se_log( georgia$income, georgia$income.se )
+#  
+#  # prepare spatial CAR data
+#  C <- shape2mat(georgia, "B")
+#  cars <- prep_car_data(C)
+#  
+#  # prepare ME data
+#  se <- data.frame( log_income = log_income_se )
+#  ME <- prep_me_data( se = se, car_parts = cars )
+#  
+#  # fit model
+#  fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + log_income,
+#                  ME = ME,
+#  		car_parts = cars,
+#  		family = poisson(),
+#  		data = georgia,
+#  		cores = 4
+#                  )
+#  
+#  # check ME model
+#  me_diag(fit, 'log_income', georgia)
+#  
+#  # check disease model
+#  sp_diag(fit, georgia)
+#  
+#  # coefficient estimates
+#  plot(fit)
+#  
+#  # plot the income-mortality gradient
+#  values <- seq( min(georgia$log_income), max(georgia$log_income), length.out = 100 )
+#  new_data <- data.frame(pop.at.risk.male = 1,
+#                         log_income = values)
+#  
+#  preds <- predict(fit, new_data, type = 'response')
+#  preds$Income <- exp( preds$log_income )
+#  preds$Mortality <- preds$mean * 100e3
+#  
+#  plot(preds$Income, preds$Mortality,
+#      type = 'l',
+#      xlab = "Income",
+#      ylab = "Deaths per 100,000")
 

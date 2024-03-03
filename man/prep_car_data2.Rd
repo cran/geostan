@@ -20,7 +20,7 @@ Prepare a list of data required for the CAR model; this is for working with (lar
 \details{
 Prepare input data for the CAR model when your dataset consists of observations on a regular (rectangular) tessellation, such as a raster layer or remotely sensed imagery. The rook criteria is used to determine adjacency. This function uses Equation 5 from Griffith (2000) to generate approximate eigenvalues for a row-standardized spatial weights matrix from a P-by-Q dimension regular tessellation.
 
-This function can accomodate very large numbers of observations for use with \code{\link[geostan]{stan_car}}; for large N data, it is also recommended to use \code{slim = TRUE} or the \code{drop} argument. For more details, see: \code{vignette("raster-regression", package = "geostan")}.
+This function can accommodate very large numbers of observations for use with \code{\link[geostan]{stan_car}}; for large N data, it is also recommended to use \code{slim = TRUE} or the \code{drop} argument. For more details, see: \code{vignette("raster-regression", package = "geostan")}.
 }
 \examples{
 

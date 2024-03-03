@@ -20,7 +20,7 @@ Prepares a list of data required for using the SAR model; this is for working wi
 \details{
 Prepare data for the SAR model when your raw dataset consists of observations on a regular tessellation, such as a raster layer or remotely sensed imagery. The rook criteria is used to determine adjacency. This function uses Equation 5 from Griffith (2000) to calculate the eigenvalues for a row-standardized spatial weights matrix of a P-by-Q dimension regular tessellation.
 
-This function can accomodate very large numbers of observations for use with \code{\link[geostan]{stan_sar}}; for large N data, it is also recommended to use \code{slim = TRUE} or the \code{drop} argument. For details, see: \code{vignette("raster-regression", package = "geostan")}.
+This function can accommodate very large numbers of observations for use with \code{\link[geostan]{stan_sar}}; for large N data, it is also recommended to use \code{slim = TRUE} or the \code{drop} argument. For details, see: \code{vignette("raster-regression", package = "geostan")}.
 }
 \examples{
 

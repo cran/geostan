@@ -90,7 +90,7 @@ alpha_tau ~ Student_t(d.f., location, scale).
 \item{'alpha_re'}{Vector of 'random effects'/varying intercepts.}
 \item{'x_true'}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 }
-Using \code{drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. Note that if \code{slim = TRUE}, then \code{drop} will be ignored---so only use one or the other.}
+Using \code{drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. If \code{slim = TRUE}, then \code{drop} will be ignored.}
 
 \item{pars}{Specify any additional parameters you'd like stored from the Stan model.}
 

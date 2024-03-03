@@ -6,16 +6,14 @@
 \usage{
 prep_me_data(
   se,
-  bounds = c(-Inf, Inf),
   car_parts,
   prior,
-  logit = rep(FALSE, times = ncol(se))
+  logit = rep(FALSE, times = ncol(se)),
+  bounds = c(-Inf, Inf)
 )
 }
 \arguments{
 \item{se}{Data frame of standard errors; column names must match (exactly) the variable names used in the model formula.}
-
-\item{bounds}{An optional numeric vector of length two providing the upper and lower bounds, respectively, of the variables. If not provided, they will be set to c(-Inf, Inf) (i.e., unbounded). Common usages include keeping percentages between zero and one hundred or proportions between zero and one.}
 
 \item{car_parts}{A list of data required for spatial CAR models, as created by \code{\link[geostan]{prep_car_data}}; optional. If omitted, the measurement error model will be a non-spatial Student's t model.}
 
@@ -31,7 +29,9 @@ prep_me_data(
 
 }}
 
-\item{logit}{Optional vector of logical values (\code{TRUE}, \code{FALSE}) indicating if the variable should be logit-transformed before being modeled. When \code{TRUE}, the sampling error will be modeled on the untransformed scale as usual; however, the spatial CAR prior model (or non-spatial Student's t prior model) will be assigned to the logit-transformed variate. Transformation can be crucial for modeling proportions with frequency distributions that are highly skewed.}
+\item{logit}{Optional vector of logical values (\code{TRUE}, \code{FALSE}) indicating if the latent variable should be logit-transformed. Only use for rates. This keeps rates between zero and one and may improve modeling of skewed variables (e.g., the poverty rate).}
+
+\item{bounds}{Rarely needed; an optional numeric vector of length two providing the upper and lower bounds, respectively, of the variables (e.g., a magnitudes must be greater than 0). If not provided, they will be set to c(-Inf, Inf) (i.e., unbounded).}
 }
 \value{
 A list of data as required for (spatial) ME models. Missing arguments will be filled in with default values, including prior distributions.
@@ -61,4 +61,7 @@ A <- shape2mat(georgia, "B")
 cars <- prep_car_data(A)
 ME <- prep_me_data(se,
                    car_parts = cars)
+}
+\seealso{
+\link[geostan]{se_log}
 }

@@ -359,11 +359,17 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h4 class="date">April 27, 2023</h4>
 
 
+<div id="TOC">
+<ul>
+<li><a href="#demonstration"><span class="toc-section-number">0.1</span> Demonstration</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
 
 <p>This vignette provides a tutorial for fitting spatial regression models to raster data using <strong>geostan</strong>. The term “raster” is used here to refer to any regularly spaced set of observations such that the data can be represented spatially by a rectangular grid. Remotely sensed imagery is a common form of raster data.</p>
 <p><strong>geostan</strong> can be used for spatial regression with fairly large raster data layers, although the functionality of these models will often be limited to the estimation of regression coefficients and spatial autocorrelation parameters. Limited experience thus far finds that <strong>geostan</strong>’s spatial autoregressive models can be fit to raster layers with two hundred thousand observations using a laptop computer and fewer than ten minutes of sampling time.</p>
-<div id="demonstration" class="section level2">
-<h2>Demonstration</h2>
+<div id="demonstration" class="section level2" number="0.1">
+<h2 number="0.1"><span class="header-section-number">0.1</span> Demonstration</h2>
 <p>Start by loading some necessary R packages.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(geostan)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(sf)</span>
@@ -425,8 +431,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.000566 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 5.66 seconds.
+## Chain 1: Gradient evaluation took 0.000481 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 4.81 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -434,15 +440,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 1: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 3.872 seconds (Warm-up)
-## Chain 1:                0.916 seconds (Sampling)
-## Chain 1:                4.788 seconds (Total)
+## Chain 1:  Elapsed Time: 3.364 seconds (Warm-up)
+## Chain 1:                0.787 seconds (Sampling)
+## Chain 1:                4.151 seconds (Total)
 ## Chain 1: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 0.000496 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 4.96 seconds.
+## Chain 2: Gradient evaluation took 0.000444 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 4.44 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -450,15 +456,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 2: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 1.551 seconds (Warm-up)
-## Chain 2:                0.818 seconds (Sampling)
-## Chain 2:                2.369 seconds (Total)
+## Chain 2:  Elapsed Time: 1.456 seconds (Warm-up)
+## Chain 2:                0.811 seconds (Sampling)
+## Chain 2:                2.267 seconds (Total)
 ## Chain 2: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 0.000529 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 5.29 seconds.
+## Chain 3: Gradient evaluation took 0.000454 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 4.54 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -466,15 +472,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 3: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 1.573 seconds (Warm-up)
-## Chain 3:                0.947 seconds (Sampling)
-## Chain 3:                2.52 seconds (Total)
+## Chain 3:  Elapsed Time: 1.41 seconds (Warm-up)
+## Chain 3:                0.7 seconds (Sampling)
+## Chain 3:                2.11 seconds (Total)
 ## Chain 3: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 0.000502 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 5.02 seconds.
+## Chain 4: Gradient evaluation took 0.000444 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 4.44 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -482,9 +488,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 4: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 1.774 seconds (Warm-up)
-## Chain 4:                1.012 seconds (Sampling)
-## Chain 4:                2.786 seconds (Total)
+## Chain 4:  Elapsed Time: 1.422 seconds (Warm-up)
+## Chain 4:                0.687 seconds (Sampling)
+## Chain 4:                2.109 seconds (Total)
 ## Chain 4:</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">print</span>(fit)      </span></code></pre></div>
 <pre><code>## Spatial Model Results 
@@ -500,12 +506,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## post-warmup draws per chain=250, total post-warmup draws=1000.
 ## 
 ##             mean se_mean    sd   2.5%    25%    50%    75%  97.5% n_eff  Rhat
-## intercept  0.030   0.002 0.072 -0.109 -0.019  0.030  0.078  0.177   921 0.999
-## z         -0.510   0.000 0.009 -0.528 -0.516 -0.510 -0.504 -0.494  1091 0.999
-## sar_rho    0.873   0.001 0.017  0.838  0.862  0.874  0.884  0.904   676 1.000
-## sar_scale  0.312   0.000 0.007  0.298  0.307  0.312  0.316  0.327   876 1.000
+## intercept  0.035   0.002 0.073 -0.104 -0.016  0.035  0.087  0.168  1009 1.000
+## z         -0.510   0.000 0.009 -0.527 -0.516 -0.510 -0.503 -0.493  1350 0.998
+## sar_rho    0.874   0.000 0.015  0.844  0.864  0.874  0.883  0.902   924 1.004
+## sar_scale  0.312   0.000 0.006  0.299  0.307  0.311  0.316  0.324  1026 1.001
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri Nov 24 15:47:41 2023.
+## Samples were drawn using NUTS(diag_e) at Fri Mar  1 18:01:10 2024.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
@@ -514,8 +520,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>The favorable MCMC diagnostics for this model (sufficiently large effective sample sizes <code>n_eff</code>, and <code>Rhat</code> values very near to 1), based on just 250 post-warmup iterations per chain with four MCMC chains, provides some indication as to how computationally efficient these spatial autoregressive models can be.</p>
 <p>Also, note that Stan usually samples more efficiently when variables have been mean-centered. Using the <code>centerx = TRUE</code> argument in <code>stan_sar</code> (or any other model-fitting function in <strong>geostan</strong>) can be very helpful in this respect. Also note that the SAR models in <strong>geostan</strong> are (generally) no less computationally-efficient than the CAR models, and may even be slightly more efficient.</p>
 </div>
-<div id="references" class="section level2 unnumbered">
-<h2 class="unnumbered">References</h2>
+<div id="references" class="section level2 unnumbered" number>
+<h2 class="unnumbered" number>References</h2>
 <div id="refs" class="references hanging-indent">
 <div id="ref-donegan_2022">
 <p>Donegan, Connor. 2022. “Building Spatial Conditional Autoregressive Models in the Stan Programming Language.” <em>OSF Preprints</em>. <a href="https://doi.org/10.31219/osf.io/3ey65">https://doi.org/10.31219/osf.io/3ey65</a>.</p>
