@@ -5,13 +5,7 @@
 \alias{plot.geostan_fit}
 \title{print or plot a fitted geostan model}
 \usage{
-\method{print}{geostan_fit}(
-  x,
-  probs = c(0.025, 0.25, 0.5, 0.75, 0.975),
-  digits = 3,
-  pars = NULL,
-  ...
-)
+\method{print}{geostan_fit}(x, probs = c(0.025, 0.2, 0.5, 0.8, 0.975), digits = 3, pars = NULL, ...)
 
 \method{plot}{geostan_fit}(x, pars, plotfun = "hist", fill = "steelblue4", ...)
 }

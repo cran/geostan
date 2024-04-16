@@ -907,8 +907,9 @@ prep_icar_data <- function(C, scale_factor = NULL) {
   if (m) {
     GS <- group_size
     ID <- nb2$comp.id
-    change.to.one <- which(GS == 1)
-    ID[which(ID == change.to.one)] <- 1
+    main.group <- ID[which(rowSums(as.matrix(C))!=0)[1]]
+    change.group <- which(GS == 1)
+    ID[which(ID %in% change.group)] <- main.group
     A = model.matrix(~ factor(ID))
     A <- as.matrix(A[,-1])
   } else {
@@ -1306,9 +1307,11 @@ exp_pars <- function(formula, data, C) {
     MCM <- M %*% C %*% M
     eigens <- eigen(MCM, symmetric = TRUE)
     npos <- sum(eigens$values > 0)
-    sa <- mc(residuals(lm(formula, data = data)), C)
+    res <- residuals(lm(formula, data = data))
+    obs_idx <- which(!is.na(res))
+    sa <- mc(res[obs_idx], C[obs_idx, obs_idx])
     X <- model.matrix(formula, data)
-    E_sa <- expected_mc(X, C)
+    E_sa <- expected_mc(X, C[obs_idx, obs_idx])
     Sigma_sa <- sqrt( 2 / nlinks )
     z_sa <- (sa - E_sa) / Sigma_sa
     if (z_sa < -.59) {

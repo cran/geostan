@@ -192,6 +192,13 @@ and similarly for the Student t model:
 \deqn{logit(z) \sim student(\nu_z, \mu_z, \sigma_z)}
 }
 
+\subsection{Missing data}{
+
+For most geostan models, missing (NA) observations are allowed in the outcome variable. However, there cannot be any missing covariate data. Models that can handle missing data are: any Poisson or binomial model (GLM, SAR, CAR, ESF, ICAR), all GLMs and ESF models. The only models that cannot handle missing outcome data are the CAR and SAR models when the outcome is a continuous variable (auto-normal/Gaussian models).
+
+When observations are missing, they will simply be ignored when calculating the likelihood in the MCMC sampling process (reflecting the absence of information). The estimated model parameters (including any covariates and spatial trend) will then be used to produce estimates or fitted values for the missing observations. The \code{fitted} and \code{posterior_predict} functions will work as normal in this case, and return values for all rows in your data.
+}
+
 \subsection{Censored counts}{
 
 Vital statistics systems and disease surveillance programs typically suppress case counts when they are smaller than a specific threshold value. In such cases, the observation of a censored count is not the same as a missing value; instead, you are informed that the value is an integer somewhere between zero and the threshold value. For Poisson models (\verb{family = poisson())}), you can use the \code{censor_point} argument to encode this information into your model.

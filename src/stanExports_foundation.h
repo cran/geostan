@@ -27,229 +27,230 @@ namespace model_foundation_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 527> locations_array__ =
+static constexpr std::array<const char*, 528> locations_array__ =
   {" (found before start of program)",
-  " (in 'foundation', line 424, column 2 to column 22)",
-  " (in 'foundation', line 425, column 2 to column 33)",
-  " (in 'foundation', line 426, column 2 to column 50)",
-  " (in 'foundation', line 427, column 2 to column 39)",
-  " (in 'foundation', line 428, column 2 to column 45)",
+  " (in 'foundation', line 425, column 2 to column 22)",
+  " (in 'foundation', line 426, column 2 to column 33)",
+  " (in 'foundation', line 427, column 2 to column 50)",
+  " (in 'foundation', line 428, column 2 to column 39)",
   " (in 'foundation', line 429, column 2 to column 45)",
-  " (in 'foundation', line 431, column 2 to column 47)",
+  " (in 'foundation', line 430, column 2 to column 45)",
   " (in 'foundation', line 432, column 2 to column 47)",
-  " (in 'foundation', line 433, column 2 to column 34)",
+  " (in 'foundation', line 433, column 2 to column 47)",
   " (in 'foundation', line 434, column 2 to column 34)",
-  " (in 'foundation', line 435, column 2 to column 40)",
-  " (in 'foundation', line 436, column 2 to column 16)",
-  " (in 'foundation', line 438, column 2 to column 61)",
-  " (in 'foundation', line 439, column 2 to column 45)",
-  " (in 'foundation', line 440, column 2 to column 80)",
-  " (in 'foundation', line 441, column 2 to column 45)",
-  " (in 'foundation', line 442, column 2 to column 80)",
-  " (in 'foundation', line 445, column 2 to column 17)",
-  " (in 'foundation', line 446, column 2 to column 20)",
-  " (in 'foundation', line 447, column 2 to column 22)",
-  " (in 'foundation', line 448, column 2 to column 37)",
-  " (in 'foundation', line 449, column 2 to column 39)",
-  " (in 'foundation', line 451, column 2 to column 25)",
-  " (in 'foundation', line 452, column 2 to column 40)",
-  " (in 'foundation', line 454, column 2 to column 65)",
-  " (in 'foundation', line 456, column 4 to column 28)",
-  " (in 'foundation', line 457, column 2 to column 38)",
-  " (in 'foundation', line 458, column 2 to column 100)",
-  " (in 'foundation', line 459, column 2 to column 52)",
-  " (in 'foundation', line 463, column 2 to column 22)",
-  " (in 'foundation', line 464, column 2 to column 26)",
-  " (in 'foundation', line 465, column 2 to column 38)",
-  " (in 'foundation', line 467, column 2 to column 27)",
-  " (in 'foundation', line 468, column 2 to column 33)",
-  " (in 'foundation', line 470, column 2 to column 41)",
-  " (in 'foundation', line 472, column 2 to column 26)",
-  " (in 'foundation', line 473, column 2 to column 19)",
-  " (in 'foundation', line 660, column 2 to column 43)",
-  " (in 'foundation', line 474, column 14 to column 40)",
-  " (in 'foundation', line 474, column 2 to column 40)",
-  " (in 'foundation', line 475, column 32 to column 65)",
-  " (in 'foundation', line 475, column 13 to column 65)",
-  " (in 'foundation', line 475, column 2 to column 65)",
-  " (in 'foundation', line 476, column 36 to column 76)",
-  " (in 'foundation', line 476, column 16 to column 76)",
-  " (in 'foundation', line 476, column 2 to column 76)",
-  " (in 'foundation', line 477, column 12 to column 46)",
-  " (in 'foundation', line 477, column 2 to column 46)",
-  " (in 'foundation', line 479, column 4 to column 103)",
-  " (in 'foundation', line 480, column 11 to column 32)",
-  " (in 'foundation', line 480, column 4 to column 32)",
-  " (in 'foundation', line 481, column 4 to column 18)",
-  " (in 'foundation', line 478, column 17 to line 482, column 3)",
-  " (in 'foundation', line 478, column 2 to line 482, column 3)",
-  " (in 'foundation', line 484, column 4 to column 41)",
-  " (in 'foundation', line 485, column 4 to column 103)",
-  " (in 'foundation', line 486, column 11 to column 32)",
-  " (in 'foundation', line 486, column 4 to column 32)",
-  " (in 'foundation', line 487, column 4 to column 68)",
-  " (in 'foundation', line 483, column 17 to line 488, column 3)",
-  " (in 'foundation', line 483, column 2 to line 488, column 3)",
-  " (in 'foundation', line 490, column 4 to column 62)",
-  " (in 'foundation', line 491, column 4 to column 108)",
-  " (in 'foundation', line 492, column 11 to column 32)",
-  " (in 'foundation', line 492, column 4 to column 32)",
-  " (in 'foundation', line 493, column 4 to column 130)",
-  " (in 'foundation', line 489, column 17 to line 494, column 3)",
-  " (in 'foundation', line 489, column 2 to line 494, column 3)",
-  " (in 'foundation', line 499, column 6 to column 25)",
-  " (in 'foundation', line 498, column 11 to line 500, column 5)",
-  " (in 'foundation', line 497, column 6 to column 32)",
-  " (in 'foundation', line 496, column 19 to line 498, column 5)",
-  " (in 'foundation', line 496, column 4 to line 500, column 5)",
-  " (in 'foundation', line 501, column 4 to column 139)",
-  " (in 'foundation', line 502, column 4 to column 23)",
-  " (in 'foundation', line 503, column 4 to column 18)",
-  " (in 'foundation', line 495, column 11 to line 504, column 3)",
-  " (in 'foundation', line 495, column 2 to line 504, column 3)",
-  " (in 'foundation', line 507, column 4 to column 45)",
-  " (in 'foundation', line 510, column 1 to column 37)",
-  " (in 'foundation', line 509, column 21 to line 511, column 7)",
-  " (in 'foundation', line 509, column 6 to line 511, column 7)",
-  " (in 'foundation', line 508, column 16 to line 512, column 5)",
-  " (in 'foundation', line 508, column 4 to line 512, column 5)",
-  " (in 'foundation', line 514, column 18 to column 110)",
-  " (in 'foundation', line 514, column 1 to column 110)",
-  " (in 'foundation', line 513, column 13 to line 515, column 7)",
-  " (in 'foundation', line 513, column 4 to line 515, column 7)",
-  " (in 'foundation', line 516, column 16 to column 46)",
-  " (in 'foundation', line 516, column 4 to column 46)",
-  " (in 'foundation', line 520, column 6 to column 41)",
-  " (in 'foundation', line 519, column 11 to line 521, column 5)",
-  " (in 'foundation', line 518, column 6 to column 44)",
-  " (in 'foundation', line 517, column 26 to line 519, column 5)",
-  " (in 'foundation', line 517, column 4 to line 521, column 5)",
-  " (in 'foundation', line 506, column 16 to line 522, column 3)",
-  " (in 'foundation', line 506, column 2 to line 522, column 3)",
-  " (in 'foundation', line 526, column 1 to column 30)",
-  " (in 'foundation', line 525, column 21 to line 527, column 7)",
-  " (in 'foundation', line 525, column 6 to line 527, column 7)",
-  " (in 'foundation', line 524, column 16 to line 528, column 5)",
-  " (in 'foundation', line 524, column 4 to line 528, column 5)",
-  " (in 'foundation', line 530, column 23 to column 108)",
-  " (in 'foundation', line 530, column 6 to column 108)",
-  " (in 'foundation', line 529, column 13 to line 531, column 5)",
-  " (in 'foundation', line 529, column 4 to line 531, column 5)",
-  " (in 'foundation', line 532, column 16 to column 39)",
-  " (in 'foundation', line 532, column 4 to column 39)",
-  " (in 'foundation', line 523, column 20 to line 533, column 3)",
-  " (in 'foundation', line 523, column 2 to line 533, column 3)",
-  " (in 'foundation', line 534, column 19 to column 46)",
-  " (in 'foundation', line 534, column 2 to column 46)",
-  " (in 'foundation', line 535, column 18 to column 39)",
-  " (in 'foundation', line 535, column 2 to column 39)",
-  " (in 'foundation', line 662, column 4 to line 667, column 23)",
-  " (in 'foundation', line 661, column 31 to line 668, column 3)",
-  " (in 'foundation', line 661, column 2 to line 668, column 3)",
-  " (in 'foundation', line 670, column 4 to line 679, column 8)",
-  " (in 'foundation', line 669, column 31 to line 680, column 3)",
-  " (in 'foundation', line 669, column 2 to line 680, column 3)",
-  " (in 'foundation', line 683, column 6 to column 77)",
-  " (in 'foundation', line 682, column 19 to line 684, column 4)",
-  " (in 'foundation', line 682, column 3 to line 684, column 4)",
-  " (in 'foundation', line 686, column 6 to column 67)",
-  " (in 'foundation', line 685, column 20 to line 687, column 4)",
+  " (in 'foundation', line 435, column 2 to column 34)",
+  " (in 'foundation', line 436, column 2 to column 40)",
+  " (in 'foundation', line 437, column 2 to column 16)",
+  " (in 'foundation', line 439, column 2 to column 61)",
+  " (in 'foundation', line 440, column 2 to column 45)",
+  " (in 'foundation', line 441, column 2 to column 80)",
+  " (in 'foundation', line 442, column 2 to column 45)",
+  " (in 'foundation', line 443, column 2 to column 80)",
+  " (in 'foundation', line 446, column 2 to column 17)",
+  " (in 'foundation', line 447, column 2 to column 20)",
+  " (in 'foundation', line 448, column 2 to column 22)",
+  " (in 'foundation', line 449, column 2 to column 37)",
+  " (in 'foundation', line 450, column 2 to column 39)",
+  " (in 'foundation', line 452, column 2 to column 25)",
+  " (in 'foundation', line 453, column 2 to column 40)",
+  " (in 'foundation', line 455, column 2 to column 65)",
+  " (in 'foundation', line 457, column 4 to column 28)",
+  " (in 'foundation', line 458, column 2 to column 38)",
+  " (in 'foundation', line 459, column 2 to column 100)",
+  " (in 'foundation', line 460, column 2 to column 52)",
+  " (in 'foundation', line 464, column 2 to column 22)",
+  " (in 'foundation', line 465, column 2 to column 26)",
+  " (in 'foundation', line 466, column 2 to column 38)",
+  " (in 'foundation', line 468, column 2 to column 27)",
+  " (in 'foundation', line 469, column 2 to column 33)",
+  " (in 'foundation', line 471, column 2 to column 41)",
+  " (in 'foundation', line 473, column 2 to column 26)",
+  " (in 'foundation', line 474, column 2 to column 19)",
+  " (in 'foundation', line 663, column 2 to column 47)",
+  " (in 'foundation', line 475, column 14 to column 40)",
+  " (in 'foundation', line 475, column 2 to column 40)",
+  " (in 'foundation', line 476, column 32 to column 65)",
+  " (in 'foundation', line 476, column 13 to column 65)",
+  " (in 'foundation', line 476, column 2 to column 65)",
+  " (in 'foundation', line 477, column 36 to column 76)",
+  " (in 'foundation', line 477, column 16 to column 76)",
+  " (in 'foundation', line 477, column 2 to column 76)",
+  " (in 'foundation', line 478, column 12 to column 46)",
+  " (in 'foundation', line 478, column 2 to column 46)",
+  " (in 'foundation', line 480, column 4 to column 103)",
+  " (in 'foundation', line 481, column 11 to column 32)",
+  " (in 'foundation', line 481, column 4 to column 32)",
+  " (in 'foundation', line 482, column 4 to column 18)",
+  " (in 'foundation', line 479, column 17 to line 483, column 3)",
+  " (in 'foundation', line 479, column 2 to line 483, column 3)",
+  " (in 'foundation', line 485, column 4 to column 41)",
+  " (in 'foundation', line 486, column 4 to column 103)",
+  " (in 'foundation', line 487, column 11 to column 32)",
+  " (in 'foundation', line 487, column 4 to column 32)",
+  " (in 'foundation', line 488, column 4 to column 68)",
+  " (in 'foundation', line 484, column 17 to line 489, column 3)",
+  " (in 'foundation', line 484, column 2 to line 489, column 3)",
+  " (in 'foundation', line 491, column 4 to column 62)",
+  " (in 'foundation', line 492, column 4 to column 108)",
+  " (in 'foundation', line 493, column 11 to column 32)",
+  " (in 'foundation', line 493, column 4 to column 32)",
+  " (in 'foundation', line 494, column 4 to column 130)",
+  " (in 'foundation', line 490, column 17 to line 495, column 3)",
+  " (in 'foundation', line 490, column 2 to line 495, column 3)",
+  " (in 'foundation', line 500, column 6 to column 25)",
+  " (in 'foundation', line 499, column 11 to line 501, column 5)",
+  " (in 'foundation', line 498, column 6 to column 32)",
+  " (in 'foundation', line 497, column 19 to line 499, column 5)",
+  " (in 'foundation', line 497, column 4 to line 501, column 5)",
+  " (in 'foundation', line 502, column 4 to column 139)",
+  " (in 'foundation', line 503, column 4 to column 23)",
+  " (in 'foundation', line 504, column 4 to column 18)",
+  " (in 'foundation', line 496, column 11 to line 505, column 3)",
+  " (in 'foundation', line 496, column 2 to line 505, column 3)",
+  " (in 'foundation', line 508, column 4 to column 45)",
+  " (in 'foundation', line 511, column 1 to column 37)",
+  " (in 'foundation', line 510, column 21 to line 512, column 7)",
+  " (in 'foundation', line 510, column 6 to line 512, column 7)",
+  " (in 'foundation', line 509, column 16 to line 513, column 5)",
+  " (in 'foundation', line 509, column 4 to line 513, column 5)",
+  " (in 'foundation', line 515, column 18 to column 110)",
+  " (in 'foundation', line 515, column 1 to column 110)",
+  " (in 'foundation', line 514, column 13 to line 516, column 7)",
+  " (in 'foundation', line 514, column 4 to line 516, column 7)",
+  " (in 'foundation', line 517, column 16 to column 46)",
+  " (in 'foundation', line 517, column 4 to column 46)",
+  " (in 'foundation', line 521, column 6 to column 41)",
+  " (in 'foundation', line 520, column 11 to line 522, column 5)",
+  " (in 'foundation', line 519, column 6 to column 44)",
+  " (in 'foundation', line 518, column 26 to line 520, column 5)",
+  " (in 'foundation', line 518, column 4 to line 522, column 5)",
+  " (in 'foundation', line 507, column 16 to line 523, column 3)",
+  " (in 'foundation', line 507, column 2 to line 523, column 3)",
+  " (in 'foundation', line 527, column 1 to column 30)",
+  " (in 'foundation', line 526, column 21 to line 528, column 7)",
+  " (in 'foundation', line 526, column 6 to line 528, column 7)",
+  " (in 'foundation', line 525, column 16 to line 529, column 5)",
+  " (in 'foundation', line 525, column 4 to line 529, column 5)",
+  " (in 'foundation', line 531, column 23 to column 108)",
+  " (in 'foundation', line 531, column 6 to column 108)",
+  " (in 'foundation', line 530, column 13 to line 532, column 5)",
+  " (in 'foundation', line 530, column 4 to line 532, column 5)",
+  " (in 'foundation', line 533, column 16 to column 39)",
+  " (in 'foundation', line 533, column 4 to column 39)",
+  " (in 'foundation', line 524, column 20 to line 534, column 3)",
+  " (in 'foundation', line 524, column 2 to line 534, column 3)",
+  " (in 'foundation', line 535, column 19 to column 46)",
+  " (in 'foundation', line 535, column 2 to column 46)",
+  " (in 'foundation', line 536, column 18 to column 39)",
+  " (in 'foundation', line 536, column 2 to column 39)",
+  " (in 'foundation', line 665, column 4 to line 670, column 23)",
+  " (in 'foundation', line 664, column 31 to line 671, column 3)",
+  " (in 'foundation', line 664, column 2 to line 671, column 3)",
+  " (in 'foundation', line 673, column 4 to line 682, column 8)",
+  " (in 'foundation', line 672, column 31 to line 683, column 3)",
+  " (in 'foundation', line 672, column 2 to line 683, column 3)",
+  " (in 'foundation', line 686, column 6 to column 99)",
+  " (in 'foundation', line 685, column 19 to line 687, column 4)",
   " (in 'foundation', line 685, column 3 to line 687, column 4)",
-  " (in 'foundation', line 689, column 7 to column 55)",
-  " (in 'foundation', line 688, column 19 to line 690, column 3)",
-  " (in 'foundation', line 688, column 3 to line 690, column 3)",
-  " (in 'foundation', line 692, column 5 to column 65)",
+  " (in 'foundation', line 689, column 6 to column 89)",
+  " (in 'foundation', line 688, column 20 to line 690, column 4)",
+  " (in 'foundation', line 688, column 3 to line 690, column 4)",
+  " (in 'foundation', line 692, column 5 to column 75)",
   " (in 'foundation', line 691, column 19 to line 693, column 3)",
-  " (in 'foundation', line 691, column 2 to line 693, column 3)",
-  " (in 'foundation', line 681, column 17 to line 694, column 3)",
-  " (in 'foundation', line 681, column 2 to line 694, column 3)",
-  " (in 'foundation', line 539, column 8 to column 13)",
-  " (in 'foundation', line 539, column 22 to column 23)",
-  " (in 'foundation', line 539, column 2 to column 42)",
-  " (in 'foundation', line 540, column 2 to column 28)",
-  " (in 'foundation', line 541, column 2 to column 68)",
-  " (in 'foundation', line 542, column 14 to column 101)",
-  " (in 'foundation', line 542, column 2 to column 101)",
-  " (in 'foundation', line 543, column 17 to column 98)",
-  " (in 'foundation', line 543, column 2 to column 98)",
-  " (in 'foundation', line 544, column 18 to column 77)",
-  " (in 'foundation', line 544, column 2 to column 77)",
-  " (in 'foundation', line 563, column 1 to column 57)",
-  " (in 'foundation', line 564, column 23 to column 62)",
-  " (in 'foundation', line 564, column 1 to column 62)",
-  " (in 'foundation', line 565, column 1 to column 93)",
-  " (in 'foundation', line 566, column 1 to column 86)",
-  " (in 'foundation', line 562, column 25 to line 567, column 7)",
-  " (in 'foundation', line 562, column 6 to line 567, column 7)",
-  " (in 'foundation', line 561, column 11 to line 568, column 5)",
-  " (in 'foundation', line 549, column 15 to column 16)",
-  " (in 'foundation', line 549, column 8 to column 62)",
-  " (in 'foundation', line 550, column 8 to column 64)",
-  " (in 'foundation', line 551, column 23 to column 62)",
-  " (in 'foundation', line 551, column 1 to column 62)",
-  " (in 'foundation', line 552, column 1 to line 559, column 24)",
-  " (in 'foundation', line 548, column 25 to line 560, column 7)",
-  " (in 'foundation', line 548, column 6 to line 560, column 7)",
-  " (in 'foundation', line 547, column 20 to line 561, column 5)",
-  " (in 'foundation', line 547, column 4 to line 568, column 5)",
-  " (in 'foundation', line 569, column 6 to column 87)",
-  " (in 'foundation', line 570, column 6 to column 121)",
-  " (in 'foundation', line 546, column 13 to line 571, column 1)",
-  " (in 'foundation', line 546, column 2 to line 571, column 1)",
-  " (in 'foundation', line 574, column 4 to column 59)",
-  " (in 'foundation', line 575, column 4 to column 109)",
-  " (in 'foundation', line 573, column 14 to line 576, column 3)",
-  " (in 'foundation', line 573, column 2 to line 576, column 3)",
-  " (in 'foundation', line 579, column 20 to column 82)",
-  " (in 'foundation', line 579, column 4 to column 82)",
-  " (in 'foundation', line 580, column 21 to column 73)",
-  " (in 'foundation', line 580, column 4 to column 73)",
-  " (in 'foundation', line 582, column 6 to column 67)",
-  " (in 'foundation', line 583, column 28 to column 85)",
-  " (in 'foundation', line 583, column 6 to column 85)",
-  " (in 'foundation', line 581, column 20 to line 584, column 5)",
-  " (in 'foundation', line 581, column 4 to line 584, column 5)",
-  " (in 'foundation', line 585, column 21 to column 69)",
-  " (in 'foundation', line 585, column 4 to column 69)",
-  " (in 'foundation', line 578, column 19 to line 586, column 1)",
-  " (in 'foundation', line 578, column 2 to line 586, column 1)",
-  " (in 'foundation', line 590, column 6 to column 45)",
-  " (in 'foundation', line 591, column 21 to column 63)",
-  " (in 'foundation', line 591, column 6 to column 63)",
-  " (in 'foundation', line 589, column 19 to line 593, column 5)",
-  " (in 'foundation', line 589, column 4 to line 593, column 5)",
-  " (in 'foundation', line 594, column 4 to column 48)",
-  " (in 'foundation', line 595, column 4 to column 97)",
-  " (in 'foundation', line 596, column 11 to column 64)",
-  " (in 'foundation', line 596, column 4 to column 64)",
-  " (in 'foundation', line 588, column 12 to line 597, column 3)",
-  " (in 'foundation', line 588, column 2 to line 597, column 3)",
-  " (in 'foundation', line 600, column 4 to column 33)",
-  " (in 'foundation', line 601, column 4 to column 42)",
-  " (in 'foundation', line 602, column 4 to column 52)",
-  " (in 'foundation', line 603, column 4 to column 46)",
-  " (in 'foundation', line 604, column 4 to column 56)",
-  " (in 'foundation', line 605, column 4 to column 65)",
-  " (in 'foundation', line 599, column 11 to line 606, column 3)",
-  " (in 'foundation', line 599, column 2 to line 606, column 3)",
-  " (in 'foundation', line 609, column 4 to column 92)",
-  " (in 'foundation', line 611, column 6 to line 618, column 22)",
-  " (in 'foundation', line 610, column 41 to line 619, column 3)",
-  " (in 'foundation', line 610, column 4 to line 619, column 3)",
-  " (in 'foundation', line 621, column 6 to line 626, column 22)",
-  " (in 'foundation', line 620, column 27 to line 627, column 5)",
-  " (in 'foundation', line 620, column 4 to line 627, column 5)",
-  " (in 'foundation', line 608, column 11 to line 628, column 3)",
-  " (in 'foundation', line 608, column 2 to line 628, column 3)",
-  " (in 'foundation', line 631, column 2 to column 90)",
-  " (in 'foundation', line 633, column 4 to line 642, column 12)",
-  " (in 'foundation', line 632, column 39 to line 643, column 3)",
-  " (in 'foundation', line 632, column 2 to line 643, column 3)",
-  " (in 'foundation', line 645, column 4 to line 654, column 12)",
-  " (in 'foundation', line 644, column 25 to line 655, column 3)",
-  " (in 'foundation', line 644, column 2 to line 655, column 3)",
-  " (in 'foundation', line 630, column 9 to line 656, column 1)",
-  " (in 'foundation', line 630, column 0 to line 656, column 1)",
+  " (in 'foundation', line 691, column 3 to line 693, column 3)",
+  " (in 'foundation', line 695, column 4 to column 97)",
+  " (in 'foundation', line 694, column 19 to line 696, column 3)",
+  " (in 'foundation', line 694, column 2 to line 696, column 3)",
+  " (in 'foundation', line 684, column 21 to line 697, column 3)",
+  " (in 'foundation', line 684, column 2 to line 697, column 3)",
+  " (in 'foundation', line 540, column 8 to column 13)",
+  " (in 'foundation', line 540, column 22 to column 23)",
+  " (in 'foundation', line 540, column 2 to column 42)",
+  " (in 'foundation', line 541, column 2 to column 28)",
+  " (in 'foundation', line 542, column 2 to column 68)",
+  " (in 'foundation', line 543, column 14 to column 101)",
+  " (in 'foundation', line 543, column 2 to column 101)",
+  " (in 'foundation', line 544, column 17 to column 98)",
+  " (in 'foundation', line 544, column 2 to column 98)",
+  " (in 'foundation', line 545, column 18 to column 77)",
+  " (in 'foundation', line 545, column 2 to column 77)",
+  " (in 'foundation', line 564, column 1 to column 57)",
+  " (in 'foundation', line 565, column 23 to column 62)",
+  " (in 'foundation', line 565, column 1 to column 62)",
+  " (in 'foundation', line 566, column 1 to column 93)",
+  " (in 'foundation', line 567, column 1 to column 86)",
+  " (in 'foundation', line 563, column 25 to line 568, column 7)",
+  " (in 'foundation', line 563, column 6 to line 568, column 7)",
+  " (in 'foundation', line 562, column 11 to line 569, column 5)",
+  " (in 'foundation', line 550, column 15 to column 16)",
+  " (in 'foundation', line 550, column 8 to column 62)",
+  " (in 'foundation', line 551, column 8 to column 64)",
+  " (in 'foundation', line 552, column 23 to column 62)",
+  " (in 'foundation', line 552, column 1 to column 62)",
+  " (in 'foundation', line 553, column 1 to line 560, column 24)",
+  " (in 'foundation', line 549, column 25 to line 561, column 7)",
+  " (in 'foundation', line 549, column 6 to line 561, column 7)",
+  " (in 'foundation', line 548, column 20 to line 562, column 5)",
+  " (in 'foundation', line 548, column 4 to line 569, column 5)",
+  " (in 'foundation', line 570, column 6 to column 87)",
+  " (in 'foundation', line 571, column 6 to column 121)",
+  " (in 'foundation', line 547, column 13 to line 572, column 1)",
+  " (in 'foundation', line 547, column 2 to line 572, column 1)",
+  " (in 'foundation', line 575, column 4 to column 59)",
+  " (in 'foundation', line 576, column 4 to column 109)",
+  " (in 'foundation', line 574, column 14 to line 577, column 3)",
+  " (in 'foundation', line 574, column 2 to line 577, column 3)",
+  " (in 'foundation', line 580, column 20 to column 104)",
+  " (in 'foundation', line 580, column 4 to column 104)",
+  " (in 'foundation', line 581, column 21 to column 95)",
+  " (in 'foundation', line 581, column 4 to column 95)",
+  " (in 'foundation', line 583, column 6 to column 67)",
+  " (in 'foundation', line 584, column 28 to column 85)",
+  " (in 'foundation', line 584, column 6 to column 85)",
+  " (in 'foundation', line 582, column 20 to line 585, column 5)",
+  " (in 'foundation', line 582, column 4 to line 585, column 5)",
+  " (in 'foundation', line 587, column 6 to column 87)",
+  " (in 'foundation', line 586, column 21 to line 588, column 5)",
+  " (in 'foundation', line 586, column 4 to line 588, column 5)",
+  " (in 'foundation', line 579, column 19 to line 589, column 1)",
+  " (in 'foundation', line 579, column 2 to line 589, column 1)",
+  " (in 'foundation', line 593, column 6 to column 45)",
+  " (in 'foundation', line 594, column 21 to column 63)",
+  " (in 'foundation', line 594, column 6 to column 63)",
+  " (in 'foundation', line 592, column 19 to line 596, column 5)",
+  " (in 'foundation', line 592, column 4 to line 596, column 5)",
+  " (in 'foundation', line 597, column 4 to column 48)",
+  " (in 'foundation', line 598, column 4 to column 97)",
+  " (in 'foundation', line 599, column 11 to column 64)",
+  " (in 'foundation', line 599, column 4 to column 64)",
+  " (in 'foundation', line 591, column 12 to line 600, column 3)",
+  " (in 'foundation', line 591, column 2 to line 600, column 3)",
+  " (in 'foundation', line 603, column 4 to column 33)",
+  " (in 'foundation', line 604, column 4 to column 42)",
+  " (in 'foundation', line 605, column 4 to column 52)",
+  " (in 'foundation', line 606, column 4 to column 46)",
+  " (in 'foundation', line 607, column 4 to column 56)",
+  " (in 'foundation', line 608, column 4 to column 65)",
+  " (in 'foundation', line 602, column 11 to line 609, column 3)",
+  " (in 'foundation', line 602, column 2 to line 609, column 3)",
+  " (in 'foundation', line 612, column 4 to column 92)",
+  " (in 'foundation', line 614, column 6 to line 621, column 22)",
+  " (in 'foundation', line 613, column 41 to line 622, column 3)",
+  " (in 'foundation', line 613, column 4 to line 622, column 3)",
+  " (in 'foundation', line 624, column 6 to line 629, column 22)",
+  " (in 'foundation', line 623, column 27 to line 630, column 5)",
+  " (in 'foundation', line 623, column 4 to line 630, column 5)",
+  " (in 'foundation', line 611, column 11 to line 631, column 3)",
+  " (in 'foundation', line 611, column 2 to line 631, column 3)",
+  " (in 'foundation', line 634, column 2 to column 90)",
+  " (in 'foundation', line 636, column 4 to line 645, column 12)",
+  " (in 'foundation', line 635, column 39 to line 646, column 3)",
+  " (in 'foundation', line 635, column 2 to line 646, column 3)",
+  " (in 'foundation', line 648, column 4 to line 657, column 12)",
+  " (in 'foundation', line 647, column 25 to line 658, column 3)",
+  " (in 'foundation', line 647, column 2 to line 658, column 3)",
+  " (in 'foundation', line 633, column 9 to line 659, column 1)",
+  " (in 'foundation', line 633, column 0 to line 659, column 1)",
   " (in 'foundation', line 293, column 2 to column 30)",
   " (in 'foundation', line 295, column 2 to column 17)",
   " (in 'foundation', line 296, column 2 to column 24)",
@@ -259,191 +260,191 @@ static constexpr std::array<const char*, 527> locations_array__ =
   " (in 'foundation', line 300, column 2 to column 29)",
   " (in 'foundation', line 301, column 8 to column 13)",
   " (in 'foundation', line 301, column 2 to column 29)",
-  " (in 'foundation', line 302, column 2 to column 19)",
-  " (in 'foundation', line 304, column 9 to column 10)",
-  " (in 'foundation', line 304, column 2 to column 14)",
-  " (in 'foundation', line 305, column 8 to column 9)",
-  " (in 'foundation', line 305, column 2 to column 30)",
+  " (in 'foundation', line 303, column 2 to column 19)",
+  " (in 'foundation', line 305, column 9 to column 10)",
+  " (in 'foundation', line 305, column 2 to column 14)",
   " (in 'foundation', line 306, column 8 to column 9)",
-  " (in 'foundation', line 306, column 2 to column 31)",
-  " (in 'foundation', line 307, column 2 to column 34)",
-  " (in 'foundation', line 309, column 9 to column 10)",
-  " (in 'foundation', line 309, column 2 to column 25)",
-  " (in 'foundation', line 311, column 2 to column 19)",
-  " (in 'foundation', line 312, column 8 to column 21)",
-  " (in 'foundation', line 312, column 2 to column 34)",
-  " (in 'foundation', line 313, column 2 to column 26)",
-  " (in 'foundation', line 314, column 9 to column 19)",
-  " (in 'foundation', line 314, column 2 to column 25)",
-  " (in 'foundation', line 315, column 8 to column 18)",
-  " (in 'foundation', line 315, column 2 to column 28)",
-  " (in 'foundation', line 316, column 8 to column 23)",
-  " (in 'foundation', line 316, column 2 to column 33)",
-  " (in 'foundation', line 319, column 2 to column 23)",
-  " (in 'foundation', line 321, column 2 to column 22)",
-  " (in 'foundation', line 322, column 2 to column 21)",
-  " (in 'foundation', line 323, column 8 to column 13)",
-  " (in 'foundation', line 323, column 2 to column 46)",
-  " (in 'foundation', line 325, column 8 to column 27)",
-  " (in 'foundation', line 325, column 2 to column 52)",
-  " (in 'foundation', line 326, column 8 to column 25)",
-  " (in 'foundation', line 326, column 2 to column 49)",
-  " (in 'foundation', line 328, column 9 to column 10)",
-  " (in 'foundation', line 328, column 12 to column 31)",
-  " (in 'foundation', line 328, column 2 to column 39)",
-  " (in 'foundation', line 330, column 8 to column 13)",
-  " (in 'foundation', line 330, column 22 to column 23)",
-  " (in 'foundation', line 330, column 2 to column 30)",
+  " (in 'foundation', line 306, column 2 to column 30)",
+  " (in 'foundation', line 307, column 8 to column 9)",
+  " (in 'foundation', line 307, column 2 to column 31)",
+  " (in 'foundation', line 308, column 2 to column 34)",
+  " (in 'foundation', line 310, column 9 to column 10)",
+  " (in 'foundation', line 310, column 2 to column 25)",
+  " (in 'foundation', line 312, column 2 to column 19)",
+  " (in 'foundation', line 313, column 8 to column 21)",
+  " (in 'foundation', line 313, column 2 to column 34)",
+  " (in 'foundation', line 314, column 2 to column 26)",
+  " (in 'foundation', line 315, column 9 to column 19)",
+  " (in 'foundation', line 315, column 2 to column 25)",
+  " (in 'foundation', line 316, column 8 to column 18)",
+  " (in 'foundation', line 316, column 2 to column 28)",
+  " (in 'foundation', line 317, column 8 to column 23)",
+  " (in 'foundation', line 317, column 2 to column 33)",
+  " (in 'foundation', line 320, column 2 to column 23)",
+  " (in 'foundation', line 322, column 2 to column 22)",
+  " (in 'foundation', line 323, column 2 to column 21)",
+  " (in 'foundation', line 324, column 8 to column 13)",
+  " (in 'foundation', line 324, column 2 to column 46)",
+  " (in 'foundation', line 326, column 8 to column 27)",
+  " (in 'foundation', line 326, column 2 to column 52)",
+  " (in 'foundation', line 327, column 8 to column 25)",
+  " (in 'foundation', line 327, column 2 to column 49)",
+  " (in 'foundation', line 329, column 9 to column 10)",
+  " (in 'foundation', line 329, column 12 to column 31)",
+  " (in 'foundation', line 329, column 2 to column 39)",
   " (in 'foundation', line 331, column 8 to column 13)",
-  " (in 'foundation', line 331, column 31 to column 32)",
-  " (in 'foundation', line 331, column 2 to column 43)",
-  " (in 'foundation', line 333, column 9 to column 14)",
-  " (in 'foundation', line 333, column 2 to column 37)",
+  " (in 'foundation', line 331, column 22 to column 23)",
+  " (in 'foundation', line 331, column 2 to column 30)",
+  " (in 'foundation', line 332, column 8 to column 13)",
+  " (in 'foundation', line 332, column 31 to column 32)",
+  " (in 'foundation', line 332, column 2 to column 43)",
   " (in 'foundation', line 334, column 9 to column 14)",
-  " (in 'foundation', line 334, column 2 to column 36)",
+  " (in 'foundation', line 334, column 2 to column 37)",
   " (in 'foundation', line 335, column 9 to column 14)",
-  " (in 'foundation', line 335, column 2 to column 40)",
+  " (in 'foundation', line 335, column 2 to column 36)",
   " (in 'foundation', line 336, column 9 to column 14)",
-  " (in 'foundation', line 336, column 2 to column 37)",
+  " (in 'foundation', line 336, column 2 to column 40)",
   " (in 'foundation', line 337, column 9 to column 14)",
   " (in 'foundation', line 337, column 2 to column 37)",
   " (in 'foundation', line 338, column 9 to column 14)",
-  " (in 'foundation', line 338, column 2 to column 43)",
+  " (in 'foundation', line 338, column 2 to column 37)",
   " (in 'foundation', line 339, column 9 to column 14)",
-  " (in 'foundation', line 339, column 2 to column 40)",
-  " (in 'foundation', line 340, column 2 to column 28)",
-  " (in 'foundation', line 342, column 2 to column 34)",
-  " (in 'foundation', line 343, column 2 to column 28)",
-  " (in 'foundation', line 344, column 2 to column 12)",
-  " (in 'foundation', line 345, column 2 to column 9)",
-  " (in 'foundation', line 346, column 9 to column 14)",
-  " (in 'foundation', line 346, column 2 to column 21)",
-  " (in 'foundation', line 347, column 8 to column 13)",
-  " (in 'foundation', line 347, column 2 to column 24)",
+  " (in 'foundation', line 339, column 2 to column 43)",
+  " (in 'foundation', line 340, column 9 to column 14)",
+  " (in 'foundation', line 340, column 2 to column 40)",
+  " (in 'foundation', line 341, column 2 to column 28)",
+  " (in 'foundation', line 343, column 2 to column 34)",
+  " (in 'foundation', line 344, column 2 to column 28)",
+  " (in 'foundation', line 345, column 2 to column 12)",
+  " (in 'foundation', line 346, column 2 to column 9)",
+  " (in 'foundation', line 347, column 9 to column 14)",
+  " (in 'foundation', line 347, column 2 to column 21)",
   " (in 'foundation', line 348, column 8 to column 13)",
   " (in 'foundation', line 348, column 2 to column 24)",
-  " (in 'foundation', line 349, column 8 to column 10)",
-  " (in 'foundation', line 349, column 2 to column 21)",
-  " (in 'foundation', line 350, column 9 to column 10)",
-  " (in 'foundation', line 350, column 2 to column 22)",
-  " (in 'foundation', line 351, column 2 to column 25)",
-  " (in 'foundation', line 352, column 9 to column 10)",
-  " (in 'foundation', line 352, column 2 to column 19)",
-  " (in 'foundation', line 354, column 2 to column 30)",
-  " (in 'foundation', line 355, column 2 to column 21)",
-  " (in 'foundation', line 356, column 8 to column 9)",
-  " (in 'foundation', line 356, column 2 to column 39)",
-  " (in 'foundation', line 358, column 2 to column 24)",
-  " (in 'foundation', line 359, column 2 to column 27)",
-  " (in 'foundation', line 360, column 9 to column 20)",
-  " (in 'foundation', line 360, column 2 to column 42)",
-  " (in 'foundation', line 361, column 18 to column 29)",
-  " (in 'foundation', line 361, column 2 to column 48)",
-  " (in 'foundation', line 363, column 2 to column 28)",
-  " (in 'foundation', line 364, column 2 to column 23)",
-  " (in 'foundation', line 365, column 2 to column 24)",
-  " (in 'foundation', line 367, column 2 to column 28)",
-  " (in 'foundation', line 368, column 2 to column 17)",
-  " (in 'foundation', line 369, column 8 to column 9)",
-  " (in 'foundation', line 369, column 2 to column 26)",
+  " (in 'foundation', line 349, column 8 to column 13)",
+  " (in 'foundation', line 349, column 2 to column 24)",
+  " (in 'foundation', line 350, column 8 to column 10)",
+  " (in 'foundation', line 350, column 2 to column 21)",
+  " (in 'foundation', line 351, column 9 to column 10)",
+  " (in 'foundation', line 351, column 2 to column 22)",
+  " (in 'foundation', line 352, column 2 to column 25)",
+  " (in 'foundation', line 353, column 9 to column 10)",
+  " (in 'foundation', line 353, column 2 to column 19)",
+  " (in 'foundation', line 355, column 2 to column 30)",
+  " (in 'foundation', line 356, column 2 to column 21)",
+  " (in 'foundation', line 357, column 8 to column 9)",
+  " (in 'foundation', line 357, column 2 to column 39)",
+  " (in 'foundation', line 359, column 2 to column 24)",
+  " (in 'foundation', line 360, column 2 to column 27)",
+  " (in 'foundation', line 361, column 9 to column 20)",
+  " (in 'foundation', line 361, column 2 to column 42)",
+  " (in 'foundation', line 362, column 18 to column 29)",
+  " (in 'foundation', line 362, column 2 to column 48)",
+  " (in 'foundation', line 364, column 2 to column 28)",
+  " (in 'foundation', line 365, column 2 to column 23)",
+  " (in 'foundation', line 366, column 2 to column 24)",
+  " (in 'foundation', line 368, column 2 to column 28)",
+  " (in 'foundation', line 369, column 2 to column 17)",
   " (in 'foundation', line 370, column 8 to column 9)",
-  " (in 'foundation', line 370, column 2 to column 25)",
-  " (in 'foundation', line 371, column 2 to column 17)",
-  " (in 'foundation', line 372, column 9 to column 10)",
-  " (in 'foundation', line 372, column 12 to column 13)",
+  " (in 'foundation', line 370, column 2 to column 26)",
+  " (in 'foundation', line 371, column 8 to column 9)",
+  " (in 'foundation', line 371, column 2 to column 25)",
   " (in 'foundation', line 372, column 2 to column 17)",
-  " (in 'foundation', line 373, column 2 to column 23)",
-  " (in 'foundation', line 374, column 8 to column 15)",
-  " (in 'foundation', line 374, column 2 to column 45)",
+  " (in 'foundation', line 373, column 9 to column 10)",
+  " (in 'foundation', line 373, column 12 to column 13)",
+  " (in 'foundation', line 373, column 2 to column 17)",
+  " (in 'foundation', line 374, column 2 to column 23)",
   " (in 'foundation', line 375, column 8 to column 15)",
   " (in 'foundation', line 375, column 2 to column 45)",
-  " (in 'foundation', line 376, column 9 to column 16)",
-  " (in 'foundation', line 376, column 2 to column 25)",
-  " (in 'foundation', line 377, column 8 to column 9)",
-  " (in 'foundation', line 377, column 2 to column 41)",
-  " (in 'foundation', line 378, column 9 to column 10)",
-  " (in 'foundation', line 378, column 2 to column 34)",
-  " (in 'foundation', line 380, column 2 to column 19)",
-  " (in 'foundation', line 381, column 9 to column 10)",
-  " (in 'foundation', line 381, column 12 to column 15)",
-  " (in 'foundation', line 381, column 2 to column 20)",
-  " (in 'foundation', line 382, column 2 to column 29)",
-  " (in 'foundation', line 383, column 2 to column 27)",
-  " (in 'foundation', line 384, column 2 to column 24)",
-  " (in 'foundation', line 386, column 2 to column 29)",
-  " (in 'foundation', line 387, column 2 to column 27)",
-  " (in 'foundation', line 389, column 2 to column 13)",
-  " (in 'foundation', line 390, column 2 to column 9)",
-  " (in 'foundation', line 391, column 9 to column 15)",
-  " (in 'foundation', line 391, column 2 to column 23)",
-  " (in 'foundation', line 392, column 8 to column 14)",
-  " (in 'foundation', line 392, column 2 to column 26)",
-  " (in 'foundation', line 393, column 8 to column 13)",
-  " (in 'foundation', line 393, column 2 to column 25)",
-  " (in 'foundation', line 394, column 8 to column 10)",
-  " (in 'foundation', line 394, column 2 to column 21)",
-  " (in 'foundation', line 395, column 9 to column 10)",
-  " (in 'foundation', line 395, column 2 to column 26)",
-  " (in 'foundation', line 396, column 2 to column 29)",
-  " (in 'foundation', line 397, column 2 to column 27)",
-  " (in 'foundation', line 401, column 2 to column 27)",
-  " (in 'foundation', line 403, column 2 to column 35)",
-  " (in 'foundation', line 404, column 2 to column 34)",
+  " (in 'foundation', line 376, column 8 to column 15)",
+  " (in 'foundation', line 376, column 2 to column 45)",
+  " (in 'foundation', line 377, column 9 to column 16)",
+  " (in 'foundation', line 377, column 2 to column 25)",
+  " (in 'foundation', line 378, column 8 to column 9)",
+  " (in 'foundation', line 378, column 2 to column 41)",
+  " (in 'foundation', line 379, column 9 to column 10)",
+  " (in 'foundation', line 379, column 2 to column 34)",
+  " (in 'foundation', line 381, column 2 to column 19)",
+  " (in 'foundation', line 382, column 9 to column 10)",
+  " (in 'foundation', line 382, column 12 to column 15)",
+  " (in 'foundation', line 382, column 2 to column 20)",
+  " (in 'foundation', line 383, column 2 to column 29)",
+  " (in 'foundation', line 384, column 2 to column 27)",
+  " (in 'foundation', line 385, column 2 to column 24)",
+  " (in 'foundation', line 387, column 2 to column 29)",
+  " (in 'foundation', line 388, column 2 to column 27)",
+  " (in 'foundation', line 390, column 2 to column 13)",
+  " (in 'foundation', line 391, column 2 to column 9)",
+  " (in 'foundation', line 392, column 9 to column 15)",
+  " (in 'foundation', line 392, column 2 to column 23)",
+  " (in 'foundation', line 393, column 8 to column 14)",
+  " (in 'foundation', line 393, column 2 to column 26)",
+  " (in 'foundation', line 394, column 8 to column 13)",
+  " (in 'foundation', line 394, column 2 to column 25)",
+  " (in 'foundation', line 395, column 8 to column 10)",
+  " (in 'foundation', line 395, column 2 to column 21)",
+  " (in 'foundation', line 396, column 9 to column 10)",
+  " (in 'foundation', line 396, column 2 to column 26)",
+  " (in 'foundation', line 397, column 2 to column 29)",
+  " (in 'foundation', line 398, column 2 to column 27)",
+  " (in 'foundation', line 402, column 2 to column 27)",
+  " (in 'foundation', line 404, column 2 to column 35)",
   " (in 'foundation', line 405, column 2 to column 34)",
-  " (in 'foundation', line 406, column 2 to column 35)",
-  " (in 'foundation', line 407, column 2 to column 40)",
-  " (in 'foundation', line 408, column 2 to column 33)",
-  " (in 'foundation', line 409, column 2 to column 34)",
-  " (in 'foundation', line 410, column 2 to column 22)",
+  " (in 'foundation', line 406, column 2 to column 34)",
+  " (in 'foundation', line 407, column 2 to column 35)",
+  " (in 'foundation', line 408, column 2 to column 40)",
+  " (in 'foundation', line 409, column 2 to column 33)",
+  " (in 'foundation', line 410, column 2 to column 34)",
   " (in 'foundation', line 411, column 2 to column 22)",
-  " (in 'foundation', line 412, column 2 to column 28)",
-  " (in 'foundation', line 413, column 2 to column 27)",
+  " (in 'foundation', line 412, column 2 to column 22)",
+  " (in 'foundation', line 413, column 2 to column 28)",
   " (in 'foundation', line 414, column 2 to column 27)",
-  " (in 'foundation', line 415, column 2 to column 28)",
-  " (in 'foundation', line 416, column 2 to column 48)",
-  " (in 'foundation', line 417, column 2 to column 25)",
-  " (in 'foundation', line 418, column 2 to column 38)",
-  " (in 'foundation', line 419, column 2 to column 26)",
-  " (in 'foundation', line 420, column 2 to column 21)",
-  " (in 'foundation', line 424, column 9 to column 10)",
-  " (in 'foundation', line 425, column 9 to column 21)",
-  " (in 'foundation', line 426, column 8 to column 20)",
-  " (in 'foundation', line 427, column 9 to column 25)",
-  " (in 'foundation', line 428, column 8 to column 17)",
+  " (in 'foundation', line 415, column 2 to column 27)",
+  " (in 'foundation', line 416, column 2 to column 28)",
+  " (in 'foundation', line 417, column 2 to column 48)",
+  " (in 'foundation', line 418, column 2 to column 25)",
+  " (in 'foundation', line 419, column 2 to column 38)",
+  " (in 'foundation', line 420, column 2 to column 26)",
+  " (in 'foundation', line 421, column 2 to column 21)",
+  " (in 'foundation', line 425, column 9 to column 10)",
+  " (in 'foundation', line 426, column 9 to column 21)",
+  " (in 'foundation', line 427, column 8 to column 20)",
+  " (in 'foundation', line 428, column 9 to column 25)",
   " (in 'foundation', line 429, column 8 to column 17)",
-  " (in 'foundation', line 431, column 8 to column 19)",
+  " (in 'foundation', line 430, column 8 to column 17)",
   " (in 'foundation', line 432, column 8 to column 19)",
-  " (in 'foundation', line 433, column 18 to column 21)",
+  " (in 'foundation', line 433, column 8 to column 19)",
   " (in 'foundation', line 434, column 18 to column 21)",
-  " (in 'foundation', line 435, column 8 to column 19)",
-  " (in 'foundation', line 436, column 9 to column 12)",
-  " (in 'foundation', line 438, column 9 to column 48)",
-  " (in 'foundation', line 439, column 8 to column 19)",
+  " (in 'foundation', line 435, column 18 to column 21)",
+  " (in 'foundation', line 436, column 8 to column 19)",
+  " (in 'foundation', line 437, column 9 to column 12)",
+  " (in 'foundation', line 439, column 9 to column 48)",
   " (in 'foundation', line 440, column 8 to column 19)",
   " (in 'foundation', line 441, column 8 to column 19)",
   " (in 'foundation', line 442, column 8 to column 19)",
-  " (in 'foundation', line 446, column 9 to column 12)",
-  " (in 'foundation', line 447, column 9 to column 15)",
-  " (in 'foundation', line 448, column 8 to column 18)",
-  " (in 'foundation', line 449, column 8 to column 17)",
-  " (in 'foundation', line 451, column 9 to column 14)",
-  " (in 'foundation', line 452, column 8 to column 14)",
-  " (in 'foundation', line 454, column 8 to column 13)",
-  " (in 'foundation', line 454, column 55 to column 56)",
-  " (in 'foundation', line 456, column 11 to column 16)",
-  " (in 'foundation', line 457, column 18 to column 23)",
-  " (in 'foundation', line 458, column 61 to column 83)",
-  " (in 'foundation', line 459, column 18 to column 40)",
-  " (in 'foundation', line 463, column 9 to column 12)",
-  " (in 'foundation', line 464, column 9 to column 20)",
-  " (in 'foundation', line 465, column 8 to column 19)",
-  " (in 'foundation', line 467, column 9 to column 21)",
-  " (in 'foundation', line 468, column 9 to column 25)",
-  " (in 'foundation', line 470, column 9 to column 25)",
-  " (in 'foundation', line 472, column 9 to column 10)",
-  " (in 'foundation', line 472, column 12 to column 18)",
+  " (in 'foundation', line 443, column 8 to column 19)",
+  " (in 'foundation', line 447, column 9 to column 12)",
+  " (in 'foundation', line 448, column 9 to column 15)",
+  " (in 'foundation', line 449, column 8 to column 18)",
+  " (in 'foundation', line 450, column 8 to column 17)",
+  " (in 'foundation', line 452, column 9 to column 14)",
+  " (in 'foundation', line 453, column 8 to column 14)",
+  " (in 'foundation', line 455, column 8 to column 13)",
+  " (in 'foundation', line 455, column 55 to column 56)",
+  " (in 'foundation', line 457, column 11 to column 16)",
+  " (in 'foundation', line 458, column 18 to column 23)",
+  " (in 'foundation', line 459, column 61 to column 83)",
+  " (in 'foundation', line 460, column 18 to column 40)",
+  " (in 'foundation', line 464, column 9 to column 12)",
+  " (in 'foundation', line 465, column 9 to column 20)",
+  " (in 'foundation', line 466, column 8 to column 19)",
+  " (in 'foundation', line 468, column 9 to column 21)",
+  " (in 'foundation', line 469, column 9 to column 25)",
+  " (in 'foundation', line 471, column 9 to column 25)",
   " (in 'foundation', line 473, column 9 to column 10)",
-  " (in 'foundation', line 660, column 9 to column 33)",
+  " (in 'foundation', line 473, column 12 to column 18)",
+  " (in 'foundation', line 474, column 9 to column 10)",
+  " (in 'foundation', line 663, column 9 to column 37)",
   " (in 'foundation', line 17, column 2 to column 74)",
   " (in 'foundation', line 18, column 2 to column 35)",
   " (in 'foundation', line 19, column 9 to column 12)",
@@ -765,25 +766,25 @@ rhs_prior(const int& dev, const T1__& z_arg__, const T2__& aux1_global,
   (void) DUMMY_VAR__;
   try {
     local_scalar_t__ tau = DUMMY_VAR__;
-    current_statement__ = 416;
+    current_statement__ = 417;
     tau = (((aux1_global * stan::math::sqrt(aux2_global)) * scale_global) *
       error_scale);
     local_scalar_t__ c = DUMMY_VAR__;
-    current_statement__ = 417;
-    c = (slab_scale * stan::math::sqrt(caux));
     current_statement__ = 418;
+    c = (slab_scale * stan::math::sqrt(caux));
+    current_statement__ = 419;
     stan::math::validate_non_negative_index("lambda", "dev", dev);
     Eigen::Matrix<local_scalar_t__,-1,1> lambda =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(dev, DUMMY_VAR__);
-    current_statement__ = 419;
+    current_statement__ = 420;
     stan::model::assign(lambda,
       stan::math::elt_multiply(aux1_local, stan::math::sqrt(aux2_local)),
       "assigning variable lambda");
-    current_statement__ = 420;
+    current_statement__ = 421;
     stan::math::validate_non_negative_index("lambda_tilde", "dev", dev);
     Eigen::Matrix<local_scalar_t__,-1,1> lambda_tilde =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(dev, DUMMY_VAR__);
-    current_statement__ = 421;
+    current_statement__ = 422;
     stan::model::assign(lambda_tilde,
       stan::math::sqrt(
         stan::math::elt_divide(
@@ -793,7 +794,7 @@ rhs_prior(const int& dev, const T1__& z_arg__, const T2__& aux1_global,
             stan::math::multiply(stan::math::square(tau),
               stan::math::square(lambda))))),
       "assigning variable lambda_tilde");
-    current_statement__ = 422;
+    current_statement__ = 423;
     return stan::math::multiply(stan::math::elt_multiply(z, lambda_tilde),
              tau);
   } catch (const std::exception& e) {
@@ -833,46 +834,46 @@ sar_normal_lpdf(const T0__& y_arg__, const T1__& mu_arg__, const T2__& sigma,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 424;
+    current_statement__ = 425;
     stan::math::validate_non_negative_index("z", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> z =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 425;
+    current_statement__ = 426;
     stan::model::assign(z, stan::math::subtract(y, mu),
       "assigning variable z");
     local_scalar_t__ tau = DUMMY_VAR__;
-    current_statement__ = 426;
-    tau = (1 / stan::math::pow(sigma, 2));
     current_statement__ = 427;
+    tau = (1 / stan::math::pow(sigma, 2));
+    current_statement__ = 428;
     stan::math::validate_non_negative_index("ImrhoW", "num_elements(ImW)",
       stan::math::num_elements(ImW));
     Eigen::Matrix<local_scalar_t__,-1,1> ImrhoW =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(stan::math::num_elements(
                                                        ImW), DUMMY_VAR__);
-    current_statement__ = 428;
-    stan::model::assign(ImrhoW, ImW, "assigning variable ImrhoW");
     current_statement__ = 429;
+    stan::model::assign(ImrhoW, ImW, "assigning variable ImrhoW");
+    current_statement__ = 430;
     stan::math::validate_non_negative_index("ImrhoWz", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> ImrhoWz =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
     local_scalar_t__ zVz = DUMMY_VAR__;
     local_scalar_t__ ldet_V = DUMMY_VAR__;
-    current_statement__ = 432;
+    current_statement__ = 433;
     ldet_V = ((2 *
       stan::math::sum(stan::math::log1m(stan::math::multiply(rho, lambda))))
       - ((2 * n) * stan::math::log(sigma)));
-    current_statement__ = 433;
+    current_statement__ = 434;
     stan::model::assign(ImrhoW,
       stan::math::multiply(rho,
         stan::model::rvalue(ImW, "ImW", stan::model::index_multi(Widx))),
       "assigning variable ImrhoW", stan::model::index_multi(Widx));
-    current_statement__ = 434;
+    current_statement__ = 435;
     stan::model::assign(ImrhoWz,
       stan::math::csr_matrix_times_vector(n, n, ImrhoW, ImW_v, ImW_u, z),
       "assigning variable ImrhoWz");
-    current_statement__ = 435;
-    zVz = (tau * stan::math::dot_self(ImrhoWz));
     current_statement__ = 436;
+    zVz = (tau * stan::math::dot_self(ImrhoWz));
+    current_statement__ = 437;
     return (0.5 * (((-n * stan::math::log((2 * stan::math::pi()))) + ldet_V)
            - zVz));
   } catch (const std::exception& e) {
@@ -920,56 +921,56 @@ car_normal_lpdf(const T0__& y_arg__, const T1__& mu_arg__, const T2__& tau,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 438;
+    current_statement__ = 439;
     stan::math::validate_non_negative_index("z", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> z =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 439;
+    current_statement__ = 440;
     stan::model::assign(z, stan::math::subtract(y, mu),
       "assigning variable z");
-    current_statement__ = 440;
+    current_statement__ = 441;
     stan::math::validate_non_negative_index("ImrhoC", "num_elements(ImC)",
       stan::math::num_elements(ImC));
     Eigen::Matrix<local_scalar_t__,-1,1> ImrhoC =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(stan::math::num_elements(
                                                        ImC), DUMMY_VAR__);
-    current_statement__ = 441;
-    stan::model::assign(ImrhoC, ImC, "assigning variable ImrhoC");
     current_statement__ = 442;
+    stan::model::assign(ImrhoC, ImC, "assigning variable ImrhoC");
+    current_statement__ = 443;
     stan::math::validate_non_negative_index("zMinv", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> zMinv =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 443;
+    current_statement__ = 444;
     stan::model::assign(zMinv,
       stan::math::elt_multiply(
         stan::math::multiply((1 / stan::math::pow(tau, 2)), z), D_inv),
       "assigning variable zMinv");
-    current_statement__ = 444;
+    current_statement__ = 445;
     stan::math::validate_non_negative_index("ImrhoCz", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> ImrhoCz =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 446;
+    current_statement__ = 447;
     stan::math::validate_non_negative_index("ldet_ImrhoC", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> ldet_ImrhoC =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 448;
+    current_statement__ = 449;
     stan::model::assign(ImrhoC,
       stan::math::multiply(rho,
         stan::model::rvalue(ImC, "ImC", stan::model::index_multi(Cidx))),
       "assigning variable ImrhoC", stan::model::index_multi(Cidx));
-    current_statement__ = 449;
+    current_statement__ = 450;
     stan::model::assign(ImrhoCz,
       stan::math::csr_matrix_times_vector(n, n, ImrhoC, ImC_v, ImC_u, z),
       "assigning variable ImrhoCz");
-    current_statement__ = 451;
+    current_statement__ = 452;
     for (int i = 1; i <= n; ++i) {
-      current_statement__ = 450;
+      current_statement__ = 451;
       stan::model::assign(ldet_ImrhoC,
         stan::math::log1m((rho *
           stan::model::rvalue(lambda, "lambda", stan::model::index_uni(i)))),
         "assigning variable ldet_ImrhoC", stan::model::index_uni(i));
     }
-    current_statement__ = 452;
+    current_statement__ = 453;
     return (0.5 * (((((-n * stan::math::log((2 * stan::math::pi()))) - ((2 *
            n) * stan::math::log(tau))) + log_det_D_inv) +
            stan::math::sum(ldet_ImrhoC)) -
@@ -1019,34 +1020,34 @@ wcar_normal_lpdf(const T0__& y_arg__, const T1__& mu_arg__, const T2__& tau,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 454;
+    current_statement__ = 455;
     stan::math::validate_non_negative_index("z", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> z =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 455;
+    current_statement__ = 456;
     stan::model::assign(z, stan::math::subtract(y, mu),
       "assigning variable z");
     local_scalar_t__ ztDz = DUMMY_VAR__;
     local_scalar_t__ ztAz = DUMMY_VAR__;
-    current_statement__ = 458;
+    current_statement__ = 459;
     stan::math::validate_non_negative_index("ldet_ImrhoC", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> ldet_ImrhoC =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
-    current_statement__ = 460;
+    current_statement__ = 461;
     ztDz = stan::math::multiply(
              stan::math::transpose(stan::math::elt_multiply(z, D_inv)), z);
-    current_statement__ = 461;
+    current_statement__ = 462;
     ztAz = stan::math::multiply(stan::math::transpose(z),
              stan::math::csr_matrix_times_vector(n, n, A_w, A_v, A_u, z));
-    current_statement__ = 463;
+    current_statement__ = 464;
     for (int i = 1; i <= n; ++i) {
-      current_statement__ = 462;
+      current_statement__ = 463;
       stan::model::assign(ldet_ImrhoC,
         stan::math::log1m((rho *
           stan::model::rvalue(lambda, "lambda", stan::model::index_uni(i)))),
         "assigning variable ldet_ImrhoC", stan::model::index_uni(i));
     }
-    current_statement__ = 464;
+    current_statement__ = 465;
     return (0.5 * (((((-n * stan::math::log((2 * stan::math::pi()))) - ((2 *
            n) * stan::math::log(tau))) + log_det_D_inv) +
            stan::math::sum(ldet_ImrhoC)) - ((1 / stan::math::pow(tau, 2)) *
@@ -1096,13 +1097,13 @@ auto_normal_lpdf(const T0__& y_arg__, const T1__& mu_arg__, const T2__& tau,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 470;
+    current_statement__ = 471;
     if (WCAR) {
-      current_statement__ = 468;
+      current_statement__ = 469;
       return wcar_normal_lpdf<false>(y, mu, tau, rho, Ax_w, Ax_v, Ax_u,
                D_inv, log_det_D_inv, lambda, n, pstream__);
     } else {
-      current_statement__ = 466;
+      current_statement__ = 467;
       return car_normal_lpdf<false>(y, mu, tau, rho, Ax_w, Ax_v, Ax_u, Cidx,
                D_inv, log_det_D_inv, lambda, n, pstream__);
     }
@@ -1130,19 +1131,19 @@ icar_normal_lpdf(const T0__& phi_arg__, const T1__& spatial_scale,
   try {
     local_scalar_t__ lp = DUMMY_VAR__;
     int pos = std::numeric_limits<int>::min();
-    current_statement__ = 473;
-    pos = 1;
     current_statement__ = 474;
+    pos = 1;
+    current_statement__ = 475;
     lp = (-0.5 *
       stan::math::dot_self(
         stan::math::subtract(
           stan::model::rvalue(phi, "phi", stan::model::index_multi(node1)),
           stan::model::rvalue(phi, "phi", stan::model::index_multi(node2)))));
-    current_statement__ = 489;
+    current_statement__ = 490;
     if (has_theta) {
-      current_statement__ = 487;
+      current_statement__ = 488;
       for (int j = 1; j <= k; ++j) {
-        current_statement__ = 484;
+        current_statement__ = 485;
         lp = (lp +
           stan::math::normal_lpdf<false>(
             stan::math::sum(
@@ -1153,19 +1154,19 @@ icar_normal_lpdf(const T0__& phi_arg__, const T1__& spatial_scale,
                       stan::model::index_uni(j)))))), 0, (0.001 *
             stan::model::rvalue(group_size, "group_size",
               stan::model::index_uni(j)))));
-        current_statement__ = 485;
+        current_statement__ = 486;
         pos = (pos +
           stan::model::rvalue(group_size, "group_size",
             stan::model::index_uni(j)));
       }
     } else {
-      current_statement__ = 482;
+      current_statement__ = 483;
       for (int j = 1; j <= k; ++j) {
-        current_statement__ = 479;
+        current_statement__ = 480;
         if (stan::math::logical_gt(
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)), 1)) {
-          current_statement__ = 477;
+          current_statement__ = 478;
           lp = (lp +
             stan::math::normal_lpdf<false>(
               stan::math::sum(
@@ -1177,7 +1178,7 @@ icar_normal_lpdf(const T0__& phi_arg__, const T1__& spatial_scale,
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)))));
         } else {
-          current_statement__ = 475;
+          current_statement__ = 476;
           lp = (lp +
             stan::math::normal_lpdf<false>(
               stan::model::rvalue(phi, "phi",
@@ -1186,13 +1187,13 @@ icar_normal_lpdf(const T0__& phi_arg__, const T1__& spatial_scale,
                     stan::model::rvalue(group_size, "group_size",
                       stan::model::index_uni(j))))), 0, spatial_scale));
         }
-        current_statement__ = 480;
+        current_statement__ = 481;
         pos = (pos +
           stan::model::rvalue(group_size, "group_size",
             stan::model::index_uni(j)));
       }
     }
-    current_statement__ = 490;
+    current_statement__ = 491;
     return lp;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1224,16 +1225,16 @@ make_phi(const T0__& phi_tilde_arg__, const T1__& phi_scale, const T2__& rho,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 492;
+    current_statement__ = 493;
     stan::math::validate_non_negative_index("phi", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> phi =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
     int pos = std::numeric_limits<int>::min();
-    current_statement__ = 494;
+    current_statement__ = 495;
     pos = 1;
-    current_statement__ = 498;
+    current_statement__ = 499;
     for (int j = 1; j <= k; ++j) {
-      current_statement__ = 495;
+      current_statement__ = 496;
       stan::model::assign(phi,
         stan::math::multiply(((phi_scale * stan::math::sqrt(rho)) *
           stan::model::rvalue(inv_sqrt_scale_factor, "inv_sqrt_scale_factor",
@@ -1247,12 +1248,12 @@ make_phi(const T0__& phi_tilde_arg__, const T1__& phi_scale, const T2__& rho,
           stan::math::segment(group_idx, pos,
             stan::model::rvalue(group_size, "group_size",
               stan::model::index_uni(j)))));
-      current_statement__ = 496;
+      current_statement__ = 497;
       pos = (pos +
         stan::model::rvalue(group_size, "group_size",
           stan::model::index_uni(j)));
     }
-    current_statement__ = 499;
+    current_statement__ = 500;
     return phi;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1280,20 +1281,20 @@ convolve_bym(const T0__& phi_arg__, const T1__& theta_arg__, const int& n,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 501;
+    current_statement__ = 502;
     stan::math::validate_non_negative_index("convolution", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> convolution =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
     int pos = std::numeric_limits<int>::min();
-    current_statement__ = 503;
+    current_statement__ = 504;
     pos = 1;
-    current_statement__ = 511;
+    current_statement__ = 512;
     for (int j = 1; j <= k; ++j) {
-      current_statement__ = 508;
+      current_statement__ = 509;
       if (stan::math::logical_eq(
             stan::model::rvalue(group_size, "group_size",
               stan::model::index_uni(j)), 1)) {
-        current_statement__ = 506;
+        current_statement__ = 507;
         stan::model::assign(convolution,
           stan::model::rvalue(theta, "theta",
             stan::model::index_multi(
@@ -1306,7 +1307,7 @@ convolve_bym(const T0__& phi_arg__, const T1__& theta_arg__, const int& n,
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)))));
       } else {
-        current_statement__ = 504;
+        current_statement__ = 505;
         stan::model::assign(convolution,
           stan::math::add(
             stan::model::rvalue(phi, "phi",
@@ -1325,12 +1326,12 @@ convolve_bym(const T0__& phi_arg__, const T1__& theta_arg__, const int& n,
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)))));
       }
-      current_statement__ = 509;
+      current_statement__ = 510;
       pos = (pos +
         stan::model::rvalue(group_size, "group_size",
           stan::model::index_uni(j)));
     }
-    current_statement__ = 512;
+    current_statement__ = 513;
     return convolution;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1368,20 +1369,20 @@ convolve_bym2(const T0__& phi_tilde_arg__, const T1__& theta_tilde_arg__,
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 514;
+    current_statement__ = 515;
     stan::math::validate_non_negative_index("convolution", "n", n);
     Eigen::Matrix<local_scalar_t__,-1,1> convolution =
       Eigen::Matrix<local_scalar_t__,-1,1>::Constant(n, DUMMY_VAR__);
     int pos = std::numeric_limits<int>::min();
-    current_statement__ = 516;
+    current_statement__ = 517;
     pos = 1;
-    current_statement__ = 524;
+    current_statement__ = 525;
     for (int j = 1; j <= k; ++j) {
-      current_statement__ = 521;
+      current_statement__ = 522;
       if (stan::math::logical_eq(
             stan::model::rvalue(group_size, "group_size",
               stan::model::index_uni(j)), 1)) {
-        current_statement__ = 519;
+        current_statement__ = 520;
         stan::model::assign(convolution,
           stan::math::multiply(spatial_scale,
             stan::model::rvalue(theta_tilde, "theta_tilde",
@@ -1395,7 +1396,7 @@ convolve_bym2(const T0__& phi_tilde_arg__, const T1__& theta_tilde_arg__,
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)))));
       } else {
-        current_statement__ = 517;
+        current_statement__ = 518;
         stan::model::assign(convolution,
           stan::math::multiply(spatial_scale,
             stan::math::add(
@@ -1419,12 +1420,12 @@ convolve_bym2(const T0__& phi_tilde_arg__, const T1__& theta_tilde_arg__,
               stan::model::rvalue(group_size, "group_size",
                 stan::model::index_uni(j)))));
       }
-      current_statement__ = 522;
+      current_statement__ = 523;
       pos = (pos +
         stan::model::rvalue(group_size, "group_size",
           stan::model::index_uni(j)));
     }
-    current_statement__ = 525;
+    current_statement__ = 526;
     return convolution;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -1598,73 +1599,73 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 222;
+      current_statement__ = 223;
       context__.validate_dims("data initialization", "family", "int",
         std::vector<size_t>{});
       family = std::numeric_limits<int>::min();
-      current_statement__ = 222;
-      family = context__.vals_i("family")[(1 - 1)];
-      current_statement__ = 222;
-      stan::math::check_greater_or_equal(function__, "family", family, 0);
-      current_statement__ = 222;
-      stan::math::check_less_or_equal(function__, "family", family, 6);
       current_statement__ = 223;
+      family = context__.vals_i("family")[(1 - 1)];
+      current_statement__ = 223;
+      stan::math::check_greater_or_equal(function__, "family", family, 0);
+      current_statement__ = 223;
+      stan::math::check_less_or_equal(function__, "family", family, 6);
+      current_statement__ = 224;
       context__.validate_dims("data initialization", "n", "int",
         std::vector<size_t>{});
       n = std::numeric_limits<int>::min();
-      current_statement__ = 223;
-      n = context__.vals_i("n")[(1 - 1)];
-      current_statement__ = 223;
-      stan::math::check_greater_or_equal(function__, "n", n, 0);
       current_statement__ = 224;
+      n = context__.vals_i("n")[(1 - 1)];
+      current_statement__ = 224;
+      stan::math::check_greater_or_equal(function__, "n", n, 0);
+      current_statement__ = 225;
       context__.validate_dims("data initialization", "center_x", "int",
         std::vector<size_t>{});
       center_x = std::numeric_limits<int>::min();
-      current_statement__ = 224;
-      center_x = context__.vals_i("center_x")[(1 - 1)];
-      current_statement__ = 224;
-      stan::math::check_greater_or_equal(function__, "center_x", center_x, 0);
       current_statement__ = 225;
+      center_x = context__.vals_i("center_x")[(1 - 1)];
+      current_statement__ = 225;
+      stan::math::check_greater_or_equal(function__, "center_x", center_x, 0);
+      current_statement__ = 226;
       context__.validate_dims("data initialization", "n_mis", "int",
         std::vector<size_t>{});
       n_mis = std::numeric_limits<int>::min();
-      current_statement__ = 225;
-      n_mis = context__.vals_i("n_mis")[(1 - 1)];
-      current_statement__ = 225;
-      stan::math::check_greater_or_equal(function__, "n_mis", n_mis, 0);
       current_statement__ = 226;
+      n_mis = context__.vals_i("n_mis")[(1 - 1)];
+      current_statement__ = 226;
+      stan::math::check_greater_or_equal(function__, "n_mis", n_mis, 0);
+      current_statement__ = 227;
       context__.validate_dims("data initialization", "n_obs", "int",
         std::vector<size_t>{});
       n_obs = std::numeric_limits<int>::min();
-      current_statement__ = 226;
-      n_obs = context__.vals_i("n_obs")[(1 - 1)];
-      current_statement__ = 226;
-      stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
       current_statement__ = 227;
-      stan::math::validate_non_negative_index("y_mis_idx", "n_mis", n_mis);
+      n_obs = context__.vals_i("n_obs")[(1 - 1)];
+      current_statement__ = 227;
+      stan::math::check_greater_or_equal(function__, "n_obs", n_obs, 0);
       current_statement__ = 228;
+      stan::math::validate_non_negative_index("y_mis_idx", "n_mis", n_mis);
+      current_statement__ = 229;
       context__.validate_dims("data initialization", "y_mis_idx", "int",
         std::vector<size_t>{static_cast<size_t>(n_mis)});
       y_mis_idx = std::vector<int>(n_mis, std::numeric_limits<int>::min());
-      current_statement__ = 228;
-      y_mis_idx = context__.vals_i("y_mis_idx");
       current_statement__ = 229;
-      stan::math::validate_non_negative_index("y_obs_idx", "n_obs", n_obs);
+      y_mis_idx = context__.vals_i("y_mis_idx");
       current_statement__ = 230;
+      stan::math::validate_non_negative_index("y_obs_idx", "n_obs", n_obs);
+      current_statement__ = 231;
       context__.validate_dims("data initialization", "y_obs_idx", "int",
         std::vector<size_t>{static_cast<size_t>(n_obs)});
       y_obs_idx = std::vector<int>(n_obs, std::numeric_limits<int>::min());
-      current_statement__ = 230;
-      y_obs_idx = context__.vals_i("y_obs_idx");
       current_statement__ = 231;
+      y_obs_idx = context__.vals_i("y_obs_idx");
+      current_statement__ = 232;
       context__.validate_dims("data initialization", "censor_point", "int",
         std::vector<size_t>{});
       censor_point = std::numeric_limits<int>::min();
-      current_statement__ = 231;
-      censor_point = context__.vals_i("censor_point")[(1 - 1)];
       current_statement__ = 232;
-      stan::math::validate_non_negative_index("y", "n", n);
+      censor_point = context__.vals_i("censor_point")[(1 - 1)];
       current_statement__ = 233;
+      stan::math::validate_non_negative_index("y", "n", n);
+      current_statement__ = 234;
       context__.validate_dims("data initialization", "y", "double",
         std::vector<size_t>{static_cast<size_t>(n)});
       y_data__ = Eigen::Matrix<double,-1,1>::Constant(n,
@@ -1672,53 +1673,53 @@ public:
       new (&y) Eigen::Map<Eigen::Matrix<double,-1,1>>(y_data__.data(), n);
       {
         std::vector<local_scalar_t__> y_flat__;
-        current_statement__ = 233;
+        current_statement__ = 234;
         y_flat__ = context__.vals_r("y");
-        current_statement__ = 233;
+        current_statement__ = 234;
         pos__ = 1;
-        current_statement__ = 233;
+        current_statement__ = 234;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 233;
+          current_statement__ = 234;
           stan::model::assign(y, y_flat__[(pos__ - 1)],
             "assigning variable y", stan::model::index_uni(sym1__));
-          current_statement__ = 233;
+          current_statement__ = 234;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 234;
-      stan::math::validate_non_negative_index("y_int", "n", n);
       current_statement__ = 235;
+      stan::math::validate_non_negative_index("y_int", "n", n);
+      current_statement__ = 236;
       context__.validate_dims("data initialization", "y_int", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       y_int = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 235;
-      y_int = context__.vals_i("y_int");
-      current_statement__ = 235;
-      stan::math::check_greater_or_equal(function__, "y_int", y_int, 0);
       current_statement__ = 236;
-      stan::math::validate_non_negative_index("trials", "n", n);
+      y_int = context__.vals_i("y_int");
+      current_statement__ = 236;
+      stan::math::check_greater_or_equal(function__, "y_int", y_int, 0);
       current_statement__ = 237;
+      stan::math::validate_non_negative_index("trials", "n", n);
+      current_statement__ = 238;
       context__.validate_dims("data initialization", "trials", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       trials = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 237;
-      trials = context__.vals_i("trials");
-      current_statement__ = 237;
-      stan::math::check_greater_or_equal(function__, "trials", trials, 0);
       current_statement__ = 238;
+      trials = context__.vals_i("trials");
+      current_statement__ = 238;
+      stan::math::check_greater_or_equal(function__, "trials", trials, 0);
+      current_statement__ = 239;
       context__.validate_dims("data initialization", "prior_only", "int",
         std::vector<size_t>{});
       prior_only = std::numeric_limits<int>::min();
-      current_statement__ = 238;
+      current_statement__ = 239;
       prior_only = context__.vals_i("prior_only")[(1 - 1)];
-      current_statement__ = 238;
+      current_statement__ = 239;
       stan::math::check_greater_or_equal(function__, "prior_only",
         prior_only, 0);
-      current_statement__ = 238;
-      stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 239;
-      stan::math::validate_non_negative_index("input_offset", "n", n);
+      stan::math::check_less_or_equal(function__, "prior_only", prior_only, 1);
       current_statement__ = 240;
+      stan::math::validate_non_negative_index("input_offset", "n", n);
+      current_statement__ = 241;
       context__.validate_dims("data initialization", "input_offset",
         "double", std::vector<size_t>{static_cast<size_t>(n)});
       input_offset_data__ = Eigen::Matrix<double,-1,1>::Constant(n,
@@ -1727,49 +1728,49 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(input_offset_data__.data(), n);
       {
         std::vector<local_scalar_t__> input_offset_flat__;
-        current_statement__ = 240;
+        current_statement__ = 241;
         input_offset_flat__ = context__.vals_r("input_offset");
-        current_statement__ = 240;
+        current_statement__ = 241;
         pos__ = 1;
-        current_statement__ = 240;
+        current_statement__ = 241;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 240;
+          current_statement__ = 241;
           stan::model::assign(input_offset, input_offset_flat__[(pos__ - 1)],
             "assigning variable input_offset", stan::model::index_uni(sym1__));
-          current_statement__ = 240;
+          current_statement__ = 241;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 241;
+      current_statement__ = 242;
       context__.validate_dims("data initialization", "dwx", "int",
         std::vector<size_t>{});
       dwx = std::numeric_limits<int>::min();
-      current_statement__ = 241;
-      dwx = context__.vals_i("dwx")[(1 - 1)];
-      current_statement__ = 241;
-      stan::math::check_greater_or_equal(function__, "dwx", dwx, 0);
       current_statement__ = 242;
+      dwx = context__.vals_i("dwx")[(1 - 1)];
+      current_statement__ = 242;
+      stan::math::check_greater_or_equal(function__, "dwx", dwx, 0);
+      current_statement__ = 243;
       stan::math::validate_non_negative_index("wx_idx", "dwx ? dwx : 1",
         (dwx ? dwx : 1));
-      current_statement__ = 243;
+      current_statement__ = 244;
       context__.validate_dims("data initialization", "wx_idx", "int",
         std::vector<size_t>{static_cast<size_t>((dwx ? dwx : 1))});
       wx_idx = std::vector<int>((dwx ? dwx : 1),
                  std::numeric_limits<int>::min());
-      current_statement__ = 243;
-      wx_idx = context__.vals_i("wx_idx");
       current_statement__ = 244;
+      wx_idx = context__.vals_i("wx_idx");
+      current_statement__ = 245;
       context__.validate_dims("data initialization", "dw_nonzero", "int",
         std::vector<size_t>{});
       dw_nonzero = std::numeric_limits<int>::min();
-      current_statement__ = 244;
+      current_statement__ = 245;
       dw_nonzero = context__.vals_i("dw_nonzero")[(1 - 1)];
-      current_statement__ = 244;
+      current_statement__ = 245;
       stan::math::check_greater_or_equal(function__, "dw_nonzero",
         dw_nonzero, 0);
-      current_statement__ = 245;
-      stan::math::validate_non_negative_index("W_w", "dw_nonzero", dw_nonzero);
       current_statement__ = 246;
+      stan::math::validate_non_negative_index("W_w", "dw_nonzero", dw_nonzero);
+      current_statement__ = 247;
       context__.validate_dims("data initialization", "W_w", "double",
         std::vector<size_t>{static_cast<size_t>(dw_nonzero)});
       W_w_data__ = Eigen::Matrix<double,-1,1>::Constant(dw_nonzero,
@@ -1778,104 +1779,104 @@ public:
         dw_nonzero);
       {
         std::vector<local_scalar_t__> W_w_flat__;
-        current_statement__ = 246;
+        current_statement__ = 247;
         W_w_flat__ = context__.vals_r("W_w");
-        current_statement__ = 246;
+        current_statement__ = 247;
         pos__ = 1;
-        current_statement__ = 246;
+        current_statement__ = 247;
         for (int sym1__ = 1; sym1__ <= dw_nonzero; ++sym1__) {
-          current_statement__ = 246;
+          current_statement__ = 247;
           stan::model::assign(W_w, W_w_flat__[(pos__ - 1)],
             "assigning variable W_w", stan::model::index_uni(sym1__));
-          current_statement__ = 246;
+          current_statement__ = 247;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 247;
-      stan::math::validate_non_negative_index("W_v", "dw_nonzero", dw_nonzero);
       current_statement__ = 248;
+      stan::math::validate_non_negative_index("W_v", "dw_nonzero", dw_nonzero);
+      current_statement__ = 249;
       context__.validate_dims("data initialization", "W_v", "int",
         std::vector<size_t>{static_cast<size_t>(dw_nonzero)});
       W_v = std::vector<int>(dw_nonzero, std::numeric_limits<int>::min());
-      current_statement__ = 248;
-      W_v = context__.vals_i("W_v");
       current_statement__ = 249;
+      W_v = context__.vals_i("W_v");
+      current_statement__ = 250;
       stan::math::validate_non_negative_index("W_u", "dwx ? n + 1 : 1",
         (dwx ? (n + 1) : 1));
-      current_statement__ = 250;
+      current_statement__ = 251;
       context__.validate_dims("data initialization", "W_u", "int",
         std::vector<size_t>{static_cast<size_t>((dwx ? (n + 1) : 1))});
       W_u = std::vector<int>((dwx ? (n + 1) : 1),
               std::numeric_limits<int>::min());
-      current_statement__ = 250;
-      W_u = context__.vals_i("W_u");
       current_statement__ = 251;
+      W_u = context__.vals_i("W_u");
+      current_statement__ = 252;
       context__.validate_dims("data initialization", "bounds", "double",
         std::vector<size_t>{static_cast<size_t>(2)});
       bounds = std::vector<double>(2,
                  std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 251;
-      bounds = context__.vals_r("bounds");
       current_statement__ = 252;
+      bounds = context__.vals_r("bounds");
+      current_statement__ = 253;
       context__.validate_dims("data initialization", "dx_obs", "int",
         std::vector<size_t>{});
       dx_obs = std::numeric_limits<int>::min();
-      current_statement__ = 252;
-      dx_obs = context__.vals_i("dx_obs")[(1 - 1)];
-      current_statement__ = 252;
-      stan::math::check_greater_or_equal(function__, "dx_obs", dx_obs, 0);
       current_statement__ = 253;
+      dx_obs = context__.vals_i("dx_obs")[(1 - 1)];
+      current_statement__ = 253;
+      stan::math::check_greater_or_equal(function__, "dx_obs", dx_obs, 0);
+      current_statement__ = 254;
       context__.validate_dims("data initialization", "dx_me", "int",
         std::vector<size_t>{});
       dx_me = std::numeric_limits<int>::min();
-      current_statement__ = 253;
-      dx_me = context__.vals_i("dx_me")[(1 - 1)];
-      current_statement__ = 253;
-      stan::math::check_greater_or_equal(function__, "dx_me", dx_me, 0);
       current_statement__ = 254;
-      stan::math::validate_non_negative_index("use_logit", "dx_me", dx_me);
+      dx_me = context__.vals_i("dx_me")[(1 - 1)];
+      current_statement__ = 254;
+      stan::math::check_greater_or_equal(function__, "dx_me", dx_me, 0);
       current_statement__ = 255;
+      stan::math::validate_non_negative_index("use_logit", "dx_me", dx_me);
+      current_statement__ = 256;
       context__.validate_dims("data initialization", "use_logit", "int",
         std::vector<size_t>{static_cast<size_t>(dx_me)});
       use_logit = std::vector<int>(dx_me, std::numeric_limits<int>::min());
-      current_statement__ = 255;
+      current_statement__ = 256;
       use_logit = context__.vals_i("use_logit");
-      current_statement__ = 255;
+      current_statement__ = 256;
       stan::math::check_greater_or_equal(function__, "use_logit", use_logit,
         0);
-      current_statement__ = 255;
-      stan::math::check_less_or_equal(function__, "use_logit", use_logit, 1);
       current_statement__ = 256;
+      stan::math::check_less_or_equal(function__, "use_logit", use_logit, 1);
+      current_statement__ = 257;
       stan::math::validate_non_negative_index("x_obs_idx",
         "dx_obs ? dx_obs : 1", (dx_obs ? dx_obs : 1));
-      current_statement__ = 257;
+      current_statement__ = 258;
       context__.validate_dims("data initialization", "x_obs_idx", "int",
         std::vector<size_t>{static_cast<size_t>((dx_obs ? dx_obs : 1))});
       x_obs_idx = std::vector<int>((dx_obs ? dx_obs : 1),
                     std::numeric_limits<int>::min());
-      current_statement__ = 257;
+      current_statement__ = 258;
       x_obs_idx = context__.vals_i("x_obs_idx");
-      current_statement__ = 257;
+      current_statement__ = 258;
       stan::math::check_greater_or_equal(function__, "x_obs_idx", x_obs_idx,
         0);
-      current_statement__ = 258;
+      current_statement__ = 259;
       stan::math::validate_non_negative_index("x_me_idx",
         "dx_me ? dx_me : 1", (dx_me ? dx_me : 1));
-      current_statement__ = 259;
+      current_statement__ = 260;
       context__.validate_dims("data initialization", "x_me_idx", "int",
         std::vector<size_t>{static_cast<size_t>((dx_me ? dx_me : 1))});
       x_me_idx = std::vector<int>((dx_me ? dx_me : 1),
                    std::numeric_limits<int>::min());
-      current_statement__ = 259;
-      x_me_idx = context__.vals_i("x_me_idx");
-      current_statement__ = 259;
-      stan::math::check_greater_or_equal(function__, "x_me_idx", x_me_idx, 0);
       current_statement__ = 260;
-      stan::math::validate_non_negative_index("x_obs", "n", n);
+      x_me_idx = context__.vals_i("x_me_idx");
+      current_statement__ = 260;
+      stan::math::check_greater_or_equal(function__, "x_me_idx", x_me_idx, 0);
       current_statement__ = 261;
+      stan::math::validate_non_negative_index("x_obs", "n", n);
+      current_statement__ = 262;
       stan::math::validate_non_negative_index("x_obs", "dx_obs ? dx_obs : 0",
         (dx_obs ? dx_obs : 0));
-      current_statement__ = 262;
+      current_statement__ = 263;
       context__.validate_dims("data initialization", "x_obs", "double",
         std::vector<size_t>{static_cast<size_t>(n),
           static_cast<size_t>((dx_obs ? dx_obs : 0))});
@@ -1887,28 +1888,28 @@ public:
         (dx_obs ? dx_obs : 0));
       {
         std::vector<local_scalar_t__> x_obs_flat__;
-        current_statement__ = 262;
+        current_statement__ = 263;
         x_obs_flat__ = context__.vals_r("x_obs");
-        current_statement__ = 262;
+        current_statement__ = 263;
         pos__ = 1;
-        current_statement__ = 262;
+        current_statement__ = 263;
         for (int sym1__ = 1; sym1__ <= (dx_obs ? dx_obs : 0); ++sym1__) {
-          current_statement__ = 262;
+          current_statement__ = 263;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 262;
+            current_statement__ = 263;
             stan::model::assign(x_obs, x_obs_flat__[(pos__ - 1)],
               "assigning variable x_obs", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 262;
+            current_statement__ = 263;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 263;
-      stan::math::validate_non_negative_index("x_me", "dx_me", dx_me);
       current_statement__ = 264;
-      stan::math::validate_non_negative_index("x_me", "n", n);
+      stan::math::validate_non_negative_index("x_me", "dx_me", dx_me);
       current_statement__ = 265;
+      stan::math::validate_non_negative_index("x_me", "n", n);
+      current_statement__ = 266;
       context__.validate_dims("data initialization", "x_me", "double",
         std::vector<size_t>{static_cast<size_t>(dx_me),
           static_cast<size_t>(n)});
@@ -1917,28 +1918,28 @@ public:
                  std::numeric_limits<double>::quiet_NaN()));
       {
         std::vector<local_scalar_t__> x_me_flat__;
-        current_statement__ = 265;
+        current_statement__ = 266;
         x_me_flat__ = context__.vals_r("x_me");
-        current_statement__ = 265;
+        current_statement__ = 266;
         pos__ = 1;
-        current_statement__ = 265;
+        current_statement__ = 266;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 265;
+          current_statement__ = 266;
           for (int sym2__ = 1; sym2__ <= dx_me; ++sym2__) {
-            current_statement__ = 265;
+            current_statement__ = 266;
             stan::model::assign(x_me, x_me_flat__[(pos__ - 1)],
               "assigning variable x_me", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 265;
+            current_statement__ = 266;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 266;
-      stan::math::validate_non_negative_index("sigma_me", "dx_me", dx_me);
       current_statement__ = 267;
-      stan::math::validate_non_negative_index("sigma_me", "n", n);
+      stan::math::validate_non_negative_index("sigma_me", "dx_me", dx_me);
       current_statement__ = 268;
+      stan::math::validate_non_negative_index("sigma_me", "n", n);
+      current_statement__ = 269;
       context__.validate_dims("data initialization", "sigma_me", "double",
         std::vector<size_t>{static_cast<size_t>(dx_me),
           static_cast<size_t>(n)});
@@ -1947,29 +1948,29 @@ public:
                      std::numeric_limits<double>::quiet_NaN()));
       {
         std::vector<local_scalar_t__> sigma_me_flat__;
-        current_statement__ = 268;
+        current_statement__ = 269;
         sigma_me_flat__ = context__.vals_r("sigma_me");
-        current_statement__ = 268;
+        current_statement__ = 269;
         pos__ = 1;
-        current_statement__ = 268;
+        current_statement__ = 269;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 268;
+          current_statement__ = 269;
           for (int sym2__ = 1; sym2__ <= dx_me; ++sym2__) {
-            current_statement__ = 268;
+            current_statement__ = 269;
             stan::model::assign(sigma_me, sigma_me_flat__[(pos__ - 1)],
               "assigning variable sigma_me", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 268;
+            current_statement__ = 269;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 268;
-      stan::math::check_greater_or_equal(function__, "sigma_me", sigma_me, 0);
       current_statement__ = 269;
+      stan::math::check_greater_or_equal(function__, "sigma_me", sigma_me, 0);
+      current_statement__ = 270;
       stan::math::validate_non_negative_index("prior_nux_true_alpha",
         "dx_me", dx_me);
-      current_statement__ = 270;
+      current_statement__ = 271;
       context__.validate_dims("data initialization", "prior_nux_true_alpha",
         "double", std::vector<size_t>{static_cast<size_t>(dx_me)});
       prior_nux_true_alpha_data__ = Eigen::Matrix<double,-1,1>::Constant(dx_me,
@@ -1979,25 +1980,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_nux_true_alpha_flat__;
-        current_statement__ = 270;
+        current_statement__ = 271;
         prior_nux_true_alpha_flat__ = context__.vals_r("prior_nux_true_alpha");
-        current_statement__ = 270;
+        current_statement__ = 271;
         pos__ = 1;
-        current_statement__ = 270;
+        current_statement__ = 271;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 270;
+          current_statement__ = 271;
           stan::model::assign(prior_nux_true_alpha,
             prior_nux_true_alpha_flat__[(pos__ - 1)],
             "assigning variable prior_nux_true_alpha",
             stan::model::index_uni(sym1__));
-          current_statement__ = 270;
+          current_statement__ = 271;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 271;
+      current_statement__ = 272;
       stan::math::validate_non_negative_index("prior_nux_true_beta", "dx_me",
         dx_me);
-      current_statement__ = 272;
+      current_statement__ = 273;
       context__.validate_dims("data initialization", "prior_nux_true_beta",
         "double", std::vector<size_t>{static_cast<size_t>(dx_me)});
       prior_nux_true_beta_data__ = Eigen::Matrix<double,-1,1>::Constant(dx_me,
@@ -2007,25 +2008,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_nux_true_beta_flat__;
-        current_statement__ = 272;
+        current_statement__ = 273;
         prior_nux_true_beta_flat__ = context__.vals_r("prior_nux_true_beta");
-        current_statement__ = 272;
+        current_statement__ = 273;
         pos__ = 1;
-        current_statement__ = 272;
+        current_statement__ = 273;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 272;
+          current_statement__ = 273;
           stan::model::assign(prior_nux_true_beta,
             prior_nux_true_beta_flat__[(pos__ - 1)],
             "assigning variable prior_nux_true_beta",
             stan::model::index_uni(sym1__));
-          current_statement__ = 272;
+          current_statement__ = 273;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 273;
+      current_statement__ = 274;
       stan::math::validate_non_negative_index("prior_mux_true_location",
         "dx_me", dx_me);
-      current_statement__ = 274;
+      current_statement__ = 275;
       context__.validate_dims("data initialization",
         "prior_mux_true_location", "double",
         std::vector<size_t>{static_cast<size_t>(dx_me)});
@@ -2037,25 +2038,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_mux_true_location_flat__;
-        current_statement__ = 274;
+        current_statement__ = 275;
         prior_mux_true_location_flat__ = context__.vals_r("prior_mux_true_location");
-        current_statement__ = 274;
+        current_statement__ = 275;
         pos__ = 1;
-        current_statement__ = 274;
+        current_statement__ = 275;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 274;
+          current_statement__ = 275;
           stan::model::assign(prior_mux_true_location,
             prior_mux_true_location_flat__[(pos__ - 1)],
             "assigning variable prior_mux_true_location",
             stan::model::index_uni(sym1__));
-          current_statement__ = 274;
+          current_statement__ = 275;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 275;
+      current_statement__ = 276;
       stan::math::validate_non_negative_index("prior_mux_true_scale",
         "dx_me", dx_me);
-      current_statement__ = 276;
+      current_statement__ = 277;
       context__.validate_dims("data initialization", "prior_mux_true_scale",
         "double", std::vector<size_t>{static_cast<size_t>(dx_me)});
       prior_mux_true_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(dx_me,
@@ -2065,25 +2066,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_mux_true_scale_flat__;
-        current_statement__ = 276;
+        current_statement__ = 277;
         prior_mux_true_scale_flat__ = context__.vals_r("prior_mux_true_scale");
-        current_statement__ = 276;
+        current_statement__ = 277;
         pos__ = 1;
-        current_statement__ = 276;
+        current_statement__ = 277;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 276;
+          current_statement__ = 277;
           stan::model::assign(prior_mux_true_scale,
             prior_mux_true_scale_flat__[(pos__ - 1)],
             "assigning variable prior_mux_true_scale",
             stan::model::index_uni(sym1__));
-          current_statement__ = 276;
+          current_statement__ = 277;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 277;
+      current_statement__ = 278;
       stan::math::validate_non_negative_index("prior_sigmax_true_df",
         "dx_me", dx_me);
-      current_statement__ = 278;
+      current_statement__ = 279;
       context__.validate_dims("data initialization", "prior_sigmax_true_df",
         "double", std::vector<size_t>{static_cast<size_t>(dx_me)});
       prior_sigmax_true_df_data__ = Eigen::Matrix<double,-1,1>::Constant(dx_me,
@@ -2093,25 +2094,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_sigmax_true_df_flat__;
-        current_statement__ = 278;
+        current_statement__ = 279;
         prior_sigmax_true_df_flat__ = context__.vals_r("prior_sigmax_true_df");
-        current_statement__ = 278;
+        current_statement__ = 279;
         pos__ = 1;
-        current_statement__ = 278;
+        current_statement__ = 279;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 278;
+          current_statement__ = 279;
           stan::model::assign(prior_sigmax_true_df,
             prior_sigmax_true_df_flat__[(pos__ - 1)],
             "assigning variable prior_sigmax_true_df",
             stan::model::index_uni(sym1__));
-          current_statement__ = 278;
+          current_statement__ = 279;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 279;
+      current_statement__ = 280;
       stan::math::validate_non_negative_index("prior_sigmax_true_location",
         "dx_me", dx_me);
-      current_statement__ = 280;
+      current_statement__ = 281;
       context__.validate_dims("data initialization",
         "prior_sigmax_true_location", "double",
         std::vector<size_t>{static_cast<size_t>(dx_me)});
@@ -2123,25 +2124,25 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_sigmax_true_location_flat__;
-        current_statement__ = 280;
+        current_statement__ = 281;
         prior_sigmax_true_location_flat__ = context__.vals_r("prior_sigmax_true_location");
-        current_statement__ = 280;
+        current_statement__ = 281;
         pos__ = 1;
-        current_statement__ = 280;
+        current_statement__ = 281;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 280;
+          current_statement__ = 281;
           stan::model::assign(prior_sigmax_true_location,
             prior_sigmax_true_location_flat__[(pos__ - 1)],
             "assigning variable prior_sigmax_true_location",
             stan::model::index_uni(sym1__));
-          current_statement__ = 280;
+          current_statement__ = 281;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 281;
+      current_statement__ = 282;
       stan::math::validate_non_negative_index("prior_sigmax_true_scale",
         "dx_me", dx_me);
-      current_statement__ = 282;
+      current_statement__ = 283;
       context__.validate_dims("data initialization",
         "prior_sigmax_true_scale", "double",
         std::vector<size_t>{static_cast<size_t>(dx_me)});
@@ -2153,22 +2154,22 @@ public:
         dx_me);
       {
         std::vector<local_scalar_t__> prior_sigmax_true_scale_flat__;
-        current_statement__ = 282;
+        current_statement__ = 283;
         prior_sigmax_true_scale_flat__ = context__.vals_r("prior_sigmax_true_scale");
-        current_statement__ = 282;
+        current_statement__ = 283;
         pos__ = 1;
-        current_statement__ = 282;
+        current_statement__ = 283;
         for (int sym1__ = 1; sym1__ <= dx_me; ++sym1__) {
-          current_statement__ = 282;
+          current_statement__ = 283;
           stan::model::assign(prior_sigmax_true_scale,
             prior_sigmax_true_scale_flat__[(pos__ - 1)],
             "assigning variable prior_sigmax_true_scale",
             stan::model::index_uni(sym1__));
-          current_statement__ = 282;
+          current_statement__ = 283;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 283;
+      current_statement__ = 284;
       context__.validate_dims("data initialization", "prior_rhox_true",
         "double", std::vector<size_t>{static_cast<size_t>(2)});
       prior_rhox_true_data__ = Eigen::Matrix<double,-1,1>::Constant(2,
@@ -2178,56 +2179,56 @@ public:
         2);
       {
         std::vector<local_scalar_t__> prior_rhox_true_flat__;
-        current_statement__ = 283;
+        current_statement__ = 284;
         prior_rhox_true_flat__ = context__.vals_r("prior_rhox_true");
-        current_statement__ = 283;
+        current_statement__ = 284;
         pos__ = 1;
-        current_statement__ = 283;
+        current_statement__ = 284;
         for (int sym1__ = 1; sym1__ <= 2; ++sym1__) {
-          current_statement__ = 283;
+          current_statement__ = 284;
           stan::model::assign(prior_rhox_true, prior_rhox_true_flat__[(pos__
             - 1)], "assigning variable prior_rhox_true",
             stan::model::index_uni(sym1__));
-          current_statement__ = 283;
+          current_statement__ = 284;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 284;
+      current_statement__ = 285;
       context__.validate_dims("data initialization", "spatial_me", "int",
         std::vector<size_t>{});
       spatial_me = std::numeric_limits<int>::min();
-      current_statement__ = 284;
+      current_statement__ = 285;
       spatial_me = context__.vals_i("spatial_me")[(1 - 1)];
-      current_statement__ = 284;
+      current_statement__ = 285;
       stan::math::check_greater_or_equal(function__, "spatial_me",
         spatial_me, 0);
-      current_statement__ = 284;
-      stan::math::check_less_or_equal(function__, "spatial_me", spatial_me, 1);
       current_statement__ = 285;
+      stan::math::check_less_or_equal(function__, "spatial_me", spatial_me, 1);
+      current_statement__ = 286;
       context__.validate_dims("data initialization", "WCAR", "int",
         std::vector<size_t>{});
       WCAR = std::numeric_limits<int>::min();
-      current_statement__ = 285;
-      WCAR = context__.vals_i("WCAR")[(1 - 1)];
-      current_statement__ = 285;
-      stan::math::check_greater_or_equal(function__, "WCAR", WCAR, 0);
-      current_statement__ = 285;
-      stan::math::check_less_or_equal(function__, "WCAR", WCAR, 1);
       current_statement__ = 286;
+      WCAR = context__.vals_i("WCAR")[(1 - 1)];
+      current_statement__ = 286;
+      stan::math::check_greater_or_equal(function__, "WCAR", WCAR, 0);
+      current_statement__ = 286;
+      stan::math::check_less_or_equal(function__, "WCAR", WCAR, 1);
+      current_statement__ = 287;
       context__.validate_dims("data initialization", "nAx_w", "int",
         std::vector<size_t>{});
       nAx_w = std::numeric_limits<int>::min();
-      current_statement__ = 286;
-      nAx_w = context__.vals_i("nAx_w")[(1 - 1)];
       current_statement__ = 287;
+      nAx_w = context__.vals_i("nAx_w")[(1 - 1)];
+      current_statement__ = 288;
       context__.validate_dims("data initialization", "nC", "int",
         std::vector<size_t>{});
       nC = std::numeric_limits<int>::min();
-      current_statement__ = 287;
-      nC = context__.vals_i("nC")[(1 - 1)];
       current_statement__ = 288;
-      stan::math::validate_non_negative_index("Ax_w", "nAx_w", nAx_w);
+      nC = context__.vals_i("nC")[(1 - 1)];
       current_statement__ = 289;
+      stan::math::validate_non_negative_index("Ax_w", "nAx_w", nAx_w);
+      current_statement__ = 290;
       context__.validate_dims("data initialization", "Ax_w", "double",
         std::vector<size_t>{static_cast<size_t>(nAx_w)});
       Ax_w_data__ = Eigen::Matrix<double,-1,1>::Constant(nAx_w,
@@ -2236,46 +2237,46 @@ public:
         nAx_w);
       {
         std::vector<local_scalar_t__> Ax_w_flat__;
-        current_statement__ = 289;
+        current_statement__ = 290;
         Ax_w_flat__ = context__.vals_r("Ax_w");
-        current_statement__ = 289;
+        current_statement__ = 290;
         pos__ = 1;
-        current_statement__ = 289;
+        current_statement__ = 290;
         for (int sym1__ = 1; sym1__ <= nAx_w; ++sym1__) {
-          current_statement__ = 289;
+          current_statement__ = 290;
           stan::model::assign(Ax_w, Ax_w_flat__[(pos__ - 1)],
             "assigning variable Ax_w", stan::model::index_uni(sym1__));
-          current_statement__ = 289;
+          current_statement__ = 290;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 290;
-      stan::math::validate_non_negative_index("Ax_v", "nAx_w", nAx_w);
       current_statement__ = 291;
+      stan::math::validate_non_negative_index("Ax_v", "nAx_w", nAx_w);
+      current_statement__ = 292;
       context__.validate_dims("data initialization", "Ax_v", "int",
         std::vector<size_t>{static_cast<size_t>(nAx_w)});
       Ax_v = std::vector<int>(nAx_w, std::numeric_limits<int>::min());
-      current_statement__ = 291;
-      Ax_v = context__.vals_i("Ax_v");
       current_statement__ = 292;
-      stan::math::validate_non_negative_index("Ax_u", "n + 1", (n + 1));
+      Ax_v = context__.vals_i("Ax_v");
       current_statement__ = 293;
+      stan::math::validate_non_negative_index("Ax_u", "n + 1", (n + 1));
+      current_statement__ = 294;
       context__.validate_dims("data initialization", "Ax_u", "int",
         std::vector<size_t>{static_cast<size_t>((n + 1))});
       Ax_u = std::vector<int>((n + 1), std::numeric_limits<int>::min());
-      current_statement__ = 293;
-      Ax_u = context__.vals_i("Ax_u");
       current_statement__ = 294;
-      stan::math::validate_non_negative_index("Cidx", "nC", nC);
+      Ax_u = context__.vals_i("Ax_u");
       current_statement__ = 295;
+      stan::math::validate_non_negative_index("Cidx", "nC", nC);
+      current_statement__ = 296;
       context__.validate_dims("data initialization", "Cidx", "int",
         std::vector<size_t>{static_cast<size_t>(nC)});
       Cidx = std::vector<int>(nC, std::numeric_limits<int>::min());
-      current_statement__ = 295;
-      Cidx = context__.vals_i("Cidx");
       current_statement__ = 296;
-      stan::math::validate_non_negative_index("Delta_inv", "n", n);
+      Cidx = context__.vals_i("Cidx");
       current_statement__ = 297;
+      stan::math::validate_non_negative_index("Delta_inv", "n", n);
+      current_statement__ = 298;
       context__.validate_dims("data initialization", "Delta_inv", "double",
         std::vector<size_t>{static_cast<size_t>(n)});
       Delta_inv_data__ = Eigen::Matrix<double,-1,1>::Constant(n,
@@ -2284,28 +2285,28 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(Delta_inv_data__.data(), n);
       {
         std::vector<local_scalar_t__> Delta_inv_flat__;
-        current_statement__ = 297;
+        current_statement__ = 298;
         Delta_inv_flat__ = context__.vals_r("Delta_inv");
-        current_statement__ = 297;
+        current_statement__ = 298;
         pos__ = 1;
-        current_statement__ = 297;
+        current_statement__ = 298;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 297;
+          current_statement__ = 298;
           stan::model::assign(Delta_inv, Delta_inv_flat__[(pos__ - 1)],
             "assigning variable Delta_inv", stan::model::index_uni(sym1__));
-          current_statement__ = 297;
+          current_statement__ = 298;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 298;
+      current_statement__ = 299;
       context__.validate_dims("data initialization", "log_det_Delta_inv",
         "double", std::vector<size_t>{});
       log_det_Delta_inv = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 298;
-      log_det_Delta_inv = context__.vals_r("log_det_Delta_inv")[(1 - 1)];
       current_statement__ = 299;
-      stan::math::validate_non_negative_index("lambda", "n", n);
+      log_det_Delta_inv = context__.vals_r("log_det_Delta_inv")[(1 - 1)];
       current_statement__ = 300;
+      stan::math::validate_non_negative_index("lambda", "n", n);
+      current_statement__ = 301;
       context__.validate_dims("data initialization", "lambda", "double",
         std::vector<size_t>{static_cast<size_t>(n)});
       lambda_data__ = Eigen::Matrix<double,-1,1>::Constant(n,
@@ -2314,50 +2315,50 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(lambda_data__.data(), n);
       {
         std::vector<local_scalar_t__> lambda_flat__;
-        current_statement__ = 300;
+        current_statement__ = 301;
         lambda_flat__ = context__.vals_r("lambda");
-        current_statement__ = 300;
+        current_statement__ = 301;
         pos__ = 1;
-        current_statement__ = 300;
+        current_statement__ = 301;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 300;
+          current_statement__ = 301;
           stan::model::assign(lambda, lambda_flat__[(pos__ - 1)],
             "assigning variable lambda", stan::model::index_uni(sym1__));
-          current_statement__ = 300;
+          current_statement__ = 301;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 301;
+      current_statement__ = 302;
       context__.validate_dims("data initialization", "has_re", "int",
         std::vector<size_t>{});
       has_re = std::numeric_limits<int>::min();
-      current_statement__ = 301;
-      has_re = context__.vals_i("has_re")[(1 - 1)];
-      current_statement__ = 301;
-      stan::math::check_greater_or_equal(function__, "has_re", has_re, 0);
-      current_statement__ = 301;
-      stan::math::check_less_or_equal(function__, "has_re", has_re, 1);
       current_statement__ = 302;
+      has_re = context__.vals_i("has_re")[(1 - 1)];
+      current_statement__ = 302;
+      stan::math::check_greater_or_equal(function__, "has_re", has_re, 0);
+      current_statement__ = 302;
+      stan::math::check_less_or_equal(function__, "has_re", has_re, 1);
+      current_statement__ = 303;
       context__.validate_dims("data initialization", "n_ids", "int",
         std::vector<size_t>{});
       n_ids = std::numeric_limits<int>::min();
-      current_statement__ = 302;
-      n_ids = context__.vals_i("n_ids")[(1 - 1)];
-      current_statement__ = 302;
-      stan::math::check_greater_or_equal(function__, "n_ids", n_ids, 0);
       current_statement__ = 303;
-      stan::math::validate_non_negative_index("id", "n", n);
+      n_ids = context__.vals_i("n_ids")[(1 - 1)];
+      current_statement__ = 303;
+      stan::math::check_greater_or_equal(function__, "n_ids", n_ids, 0);
       current_statement__ = 304;
+      stan::math::validate_non_negative_index("id", "n", n);
+      current_statement__ = 305;
       context__.validate_dims("data initialization", "id", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       id = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 304;
-      id = context__.vals_i("id");
-      current_statement__ = 304;
-      stan::math::check_greater_or_equal(function__, "id", id, 0);
-      current_statement__ = 304;
-      stan::math::check_less_or_equal(function__, "id", id, n_ids);
       current_statement__ = 305;
+      id = context__.vals_i("id");
+      current_statement__ = 305;
+      stan::math::check_greater_or_equal(function__, "id", id, 0);
+      current_statement__ = 305;
+      stan::math::check_less_or_equal(function__, "id", id, n_ids);
+      current_statement__ = 306;
       context__.validate_dims("data initialization", "prior_alpha", "double",
         std::vector<size_t>{static_cast<size_t>(2)});
       prior_alpha_data__ = Eigen::Matrix<double,-1,1>::Constant(2,
@@ -2366,32 +2367,32 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(prior_alpha_data__.data(), 2);
       {
         std::vector<local_scalar_t__> prior_alpha_flat__;
-        current_statement__ = 305;
+        current_statement__ = 306;
         prior_alpha_flat__ = context__.vals_r("prior_alpha");
-        current_statement__ = 305;
+        current_statement__ = 306;
         pos__ = 1;
-        current_statement__ = 305;
+        current_statement__ = 306;
         for (int sym1__ = 1; sym1__ <= 2; ++sym1__) {
-          current_statement__ = 305;
+          current_statement__ = 306;
           stan::model::assign(prior_alpha, prior_alpha_flat__[(pos__ - 1)],
             "assigning variable prior_alpha", stan::model::index_uni(sym1__));
-          current_statement__ = 305;
+          current_statement__ = 306;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 306;
+      current_statement__ = 307;
       context__.validate_dims("data initialization", "dbeta_prior", "int",
         std::vector<size_t>{});
       dbeta_prior = std::numeric_limits<int>::min();
-      current_statement__ = 306;
+      current_statement__ = 307;
       dbeta_prior = context__.vals_i("dbeta_prior")[(1 - 1)];
-      current_statement__ = 306;
+      current_statement__ = 307;
       stan::math::check_greater_or_equal(function__, "dbeta_prior",
         dbeta_prior, 0);
-      current_statement__ = 307;
+      current_statement__ = 308;
       stan::math::validate_non_negative_index("prior_beta_location",
         "dbeta_prior", dbeta_prior);
-      current_statement__ = 308;
+      current_statement__ = 309;
       context__.validate_dims("data initialization", "prior_beta_location",
         "double", std::vector<size_t>{static_cast<size_t>(dbeta_prior)});
       prior_beta_location_data__ = Eigen::Matrix<double,-1,1>::Constant(dbeta_prior,
@@ -2401,25 +2402,25 @@ public:
         dbeta_prior);
       {
         std::vector<local_scalar_t__> prior_beta_location_flat__;
-        current_statement__ = 308;
+        current_statement__ = 309;
         prior_beta_location_flat__ = context__.vals_r("prior_beta_location");
-        current_statement__ = 308;
+        current_statement__ = 309;
         pos__ = 1;
-        current_statement__ = 308;
+        current_statement__ = 309;
         for (int sym1__ = 1; sym1__ <= dbeta_prior; ++sym1__) {
-          current_statement__ = 308;
+          current_statement__ = 309;
           stan::model::assign(prior_beta_location,
             prior_beta_location_flat__[(pos__ - 1)],
             "assigning variable prior_beta_location",
             stan::model::index_uni(sym1__));
-          current_statement__ = 308;
+          current_statement__ = 309;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 309;
+      current_statement__ = 310;
       stan::math::validate_non_negative_index("prior_beta_scale",
         "dbeta_prior", dbeta_prior);
-      current_statement__ = 310;
+      current_statement__ = 311;
       context__.validate_dims("data initialization", "prior_beta_scale",
         "double", std::vector<size_t>{static_cast<size_t>(dbeta_prior)});
       prior_beta_scale_data__ = Eigen::Matrix<double,-1,1>::Constant(dbeta_prior,
@@ -2429,25 +2430,25 @@ public:
         dbeta_prior);
       {
         std::vector<local_scalar_t__> prior_beta_scale_flat__;
-        current_statement__ = 310;
+        current_statement__ = 311;
         prior_beta_scale_flat__ = context__.vals_r("prior_beta_scale");
-        current_statement__ = 310;
+        current_statement__ = 311;
         pos__ = 1;
-        current_statement__ = 310;
+        current_statement__ = 311;
         for (int sym1__ = 1; sym1__ <= dbeta_prior; ++sym1__) {
-          current_statement__ = 310;
+          current_statement__ = 311;
           stan::model::assign(prior_beta_scale,
             prior_beta_scale_flat__[(pos__ - 1)],
             "assigning variable prior_beta_scale",
             stan::model::index_uni(sym1__));
-          current_statement__ = 310;
+          current_statement__ = 311;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 310;
+      current_statement__ = 311;
       stan::math::check_greater_or_equal(function__, "prior_beta_scale",
         prior_beta_scale, 0);
-      current_statement__ = 311;
+      current_statement__ = 312;
       context__.validate_dims("data initialization", "prior_alpha_tau",
         "double", std::vector<size_t>{static_cast<size_t>(3)});
       prior_alpha_tau_data__ = Eigen::Matrix<double,-1,1>::Constant(3,
@@ -2457,21 +2458,21 @@ public:
         3);
       {
         std::vector<local_scalar_t__> prior_alpha_tau_flat__;
-        current_statement__ = 311;
+        current_statement__ = 312;
         prior_alpha_tau_flat__ = context__.vals_r("prior_alpha_tau");
-        current_statement__ = 311;
+        current_statement__ = 312;
         pos__ = 1;
-        current_statement__ = 311;
+        current_statement__ = 312;
         for (int sym1__ = 1; sym1__ <= 3; ++sym1__) {
-          current_statement__ = 311;
+          current_statement__ = 312;
           stan::model::assign(prior_alpha_tau, prior_alpha_tau_flat__[(pos__
             - 1)], "assigning variable prior_alpha_tau",
             stan::model::index_uni(sym1__));
-          current_statement__ = 311;
+          current_statement__ = 312;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 312;
+      current_statement__ = 313;
       context__.validate_dims("data initialization", "prior_t_nu", "double",
         std::vector<size_t>{static_cast<size_t>(2)});
       prior_t_nu_data__ = Eigen::Matrix<double,-1,1>::Constant(2,
@@ -2480,20 +2481,20 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(prior_t_nu_data__.data(), 2);
       {
         std::vector<local_scalar_t__> prior_t_nu_flat__;
-        current_statement__ = 312;
+        current_statement__ = 313;
         prior_t_nu_flat__ = context__.vals_r("prior_t_nu");
-        current_statement__ = 312;
+        current_statement__ = 313;
         pos__ = 1;
-        current_statement__ = 312;
+        current_statement__ = 313;
         for (int sym1__ = 1; sym1__ <= 2; ++sym1__) {
-          current_statement__ = 312;
+          current_statement__ = 313;
           stan::model::assign(prior_t_nu, prior_t_nu_flat__[(pos__ - 1)],
             "assigning variable prior_t_nu", stan::model::index_uni(sym1__));
-          current_statement__ = 312;
+          current_statement__ = 313;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 313;
+      current_statement__ = 314;
       context__.validate_dims("data initialization", "prior_sigma", "double",
         std::vector<size_t>{static_cast<size_t>(3)});
       prior_sigma_data__ = Eigen::Matrix<double,-1,1>::Constant(3,
@@ -2502,66 +2503,66 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(prior_sigma_data__.data(), 3);
       {
         std::vector<local_scalar_t__> prior_sigma_flat__;
-        current_statement__ = 313;
+        current_statement__ = 314;
         prior_sigma_flat__ = context__.vals_r("prior_sigma");
-        current_statement__ = 313;
+        current_statement__ = 314;
         pos__ = 1;
-        current_statement__ = 313;
+        current_statement__ = 314;
         for (int sym1__ = 1; sym1__ <= 3; ++sym1__) {
-          current_statement__ = 313;
+          current_statement__ = 314;
           stan::model::assign(prior_sigma, prior_sigma_flat__[(pos__ - 1)],
             "assigning variable prior_sigma", stan::model::index_uni(sym1__));
-          current_statement__ = 313;
+          current_statement__ = 314;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 314;
+      current_statement__ = 315;
       context__.validate_dims("data initialization", "type", "int",
         std::vector<size_t>{});
       type = std::numeric_limits<int>::min();
-      current_statement__ = 314;
-      type = context__.vals_i("type")[(1 - 1)];
-      current_statement__ = 314;
-      stan::math::check_greater_or_equal(function__, "type", type, 0);
-      current_statement__ = 314;
-      stan::math::check_less_or_equal(function__, "type", type, 3);
       current_statement__ = 315;
+      type = context__.vals_i("type")[(1 - 1)];
+      current_statement__ = 315;
+      stan::math::check_greater_or_equal(function__, "type", type, 0);
+      current_statement__ = 315;
+      stan::math::check_less_or_equal(function__, "type", type, 3);
+      current_statement__ = 316;
       context__.validate_dims("data initialization", "k", "int",
         std::vector<size_t>{});
       k = std::numeric_limits<int>::min();
-      current_statement__ = 315;
-      k = context__.vals_i("k")[(1 - 1)];
-      current_statement__ = 315;
-      stan::math::check_greater_or_equal(function__, "k", k, 1);
       current_statement__ = 316;
-      stan::math::validate_non_negative_index("group_size", "k", k);
+      k = context__.vals_i("k")[(1 - 1)];
+      current_statement__ = 316;
+      stan::math::check_greater_or_equal(function__, "k", k, 1);
       current_statement__ = 317;
+      stan::math::validate_non_negative_index("group_size", "k", k);
+      current_statement__ = 318;
       context__.validate_dims("data initialization", "group_size", "int",
         std::vector<size_t>{static_cast<size_t>(k)});
       group_size = std::vector<int>(k, std::numeric_limits<int>::min());
-      current_statement__ = 317;
-      group_size = context__.vals_i("group_size");
       current_statement__ = 318;
-      stan::math::validate_non_negative_index("group_idx", "n", n);
+      group_size = context__.vals_i("group_size");
       current_statement__ = 319;
+      stan::math::validate_non_negative_index("group_idx", "n", n);
+      current_statement__ = 320;
       context__.validate_dims("data initialization", "group_idx", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       group_idx = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 319;
-      group_idx = context__.vals_i("group_idx");
       current_statement__ = 320;
+      group_idx = context__.vals_i("group_idx");
+      current_statement__ = 321;
       context__.validate_dims("data initialization", "m", "int",
         std::vector<size_t>{});
       m = std::numeric_limits<int>::min();
-      current_statement__ = 320;
-      m = context__.vals_i("m")[(1 - 1)];
-      current_statement__ = 320;
-      stan::math::check_greater_or_equal(function__, "m", m, 0);
       current_statement__ = 321;
-      stan::math::validate_non_negative_index("A", "n", n);
+      m = context__.vals_i("m")[(1 - 1)];
+      current_statement__ = 321;
+      stan::math::check_greater_or_equal(function__, "m", m, 0);
       current_statement__ = 322;
-      stan::math::validate_non_negative_index("A", "m", m);
+      stan::math::validate_non_negative_index("A", "n", n);
       current_statement__ = 323;
+      stan::math::validate_non_negative_index("A", "m", m);
+      current_statement__ = 324;
       context__.validate_dims("data initialization", "A", "double",
         std::vector<size_t>{static_cast<size_t>(n), static_cast<size_t>(m)});
       A_data__ = Eigen::Matrix<double,-1,-1>::Constant(n, m,
@@ -2569,58 +2570,58 @@ public:
       new (&A) Eigen::Map<Eigen::Matrix<double,-1,-1>>(A_data__.data(), n, m);
       {
         std::vector<local_scalar_t__> A_flat__;
-        current_statement__ = 323;
+        current_statement__ = 324;
         A_flat__ = context__.vals_r("A");
-        current_statement__ = 323;
+        current_statement__ = 324;
         pos__ = 1;
-        current_statement__ = 323;
+        current_statement__ = 324;
         for (int sym1__ = 1; sym1__ <= m; ++sym1__) {
-          current_statement__ = 323;
+          current_statement__ = 324;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 323;
+            current_statement__ = 324;
             stan::model::assign(A, A_flat__[(pos__ - 1)],
               "assigning variable A", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 323;
+            current_statement__ = 324;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 324;
+      current_statement__ = 325;
       context__.validate_dims("data initialization", "n_edges", "int",
         std::vector<size_t>{});
       n_edges = std::numeric_limits<int>::min();
-      current_statement__ = 324;
-      n_edges = context__.vals_i("n_edges")[(1 - 1)];
-      current_statement__ = 324;
-      stan::math::check_greater_or_equal(function__, "n_edges", n_edges, 1);
       current_statement__ = 325;
-      stan::math::validate_non_negative_index("node1", "n_edges", n_edges);
+      n_edges = context__.vals_i("n_edges")[(1 - 1)];
+      current_statement__ = 325;
+      stan::math::check_greater_or_equal(function__, "n_edges", n_edges, 1);
       current_statement__ = 326;
+      stan::math::validate_non_negative_index("node1", "n_edges", n_edges);
+      current_statement__ = 327;
       context__.validate_dims("data initialization", "node1", "int",
         std::vector<size_t>{static_cast<size_t>(n_edges)});
       node1 = std::vector<int>(n_edges, std::numeric_limits<int>::min());
-      current_statement__ = 326;
-      node1 = context__.vals_i("node1");
-      current_statement__ = 326;
-      stan::math::check_greater_or_equal(function__, "node1", node1, 1);
-      current_statement__ = 326;
-      stan::math::check_less_or_equal(function__, "node1", node1, n);
       current_statement__ = 327;
-      stan::math::validate_non_negative_index("node2", "n_edges", n_edges);
+      node1 = context__.vals_i("node1");
+      current_statement__ = 327;
+      stan::math::check_greater_or_equal(function__, "node1", node1, 1);
+      current_statement__ = 327;
+      stan::math::check_less_or_equal(function__, "node1", node1, n);
       current_statement__ = 328;
+      stan::math::validate_non_negative_index("node2", "n_edges", n_edges);
+      current_statement__ = 329;
       context__.validate_dims("data initialization", "node2", "int",
         std::vector<size_t>{static_cast<size_t>(n_edges)});
       node2 = std::vector<int>(n_edges, std::numeric_limits<int>::min());
-      current_statement__ = 328;
-      node2 = context__.vals_i("node2");
-      current_statement__ = 328;
-      stan::math::check_greater_or_equal(function__, "node2", node2, 1);
-      current_statement__ = 328;
-      stan::math::check_less_or_equal(function__, "node2", node2, n);
       current_statement__ = 329;
-      stan::math::validate_non_negative_index("weight", "n_edges", n_edges);
+      node2 = context__.vals_i("node2");
+      current_statement__ = 329;
+      stan::math::check_greater_or_equal(function__, "node2", node2, 1);
+      current_statement__ = 329;
+      stan::math::check_less_or_equal(function__, "node2", node2, n);
       current_statement__ = 330;
+      stan::math::validate_non_negative_index("weight", "n_edges", n_edges);
+      current_statement__ = 331;
       context__.validate_dims("data initialization", "weight", "double",
         std::vector<size_t>{static_cast<size_t>(n_edges)});
       weight_data__ = Eigen::Matrix<double,-1,1>::Constant(n_edges,
@@ -2629,34 +2630,34 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(weight_data__.data(), n_edges);
       {
         std::vector<local_scalar_t__> weight_flat__;
-        current_statement__ = 330;
+        current_statement__ = 331;
         weight_flat__ = context__.vals_r("weight");
-        current_statement__ = 330;
+        current_statement__ = 331;
         pos__ = 1;
-        current_statement__ = 330;
+        current_statement__ = 331;
         for (int sym1__ = 1; sym1__ <= n_edges; ++sym1__) {
-          current_statement__ = 330;
+          current_statement__ = 331;
           stan::model::assign(weight, weight_flat__[(pos__ - 1)],
             "assigning variable weight", stan::model::index_uni(sym1__));
-          current_statement__ = 330;
+          current_statement__ = 331;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 331;
-      stan::math::validate_non_negative_index("comp_id", "n", n);
       current_statement__ = 332;
+      stan::math::validate_non_negative_index("comp_id", "n", n);
+      current_statement__ = 333;
       context__.validate_dims("data initialization", "comp_id", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       comp_id = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 332;
-      comp_id = context__.vals_i("comp_id");
-      current_statement__ = 332;
-      stan::math::check_greater_or_equal(function__, "comp_id", comp_id, 1);
-      current_statement__ = 332;
-      stan::math::check_less_or_equal(function__, "comp_id", comp_id, k);
       current_statement__ = 333;
-      stan::math::validate_non_negative_index("inv_sqrt_scale_factor", "k", k);
+      comp_id = context__.vals_i("comp_id");
+      current_statement__ = 333;
+      stan::math::check_greater_or_equal(function__, "comp_id", comp_id, 1);
+      current_statement__ = 333;
+      stan::math::check_less_or_equal(function__, "comp_id", comp_id, k);
       current_statement__ = 334;
+      stan::math::validate_non_negative_index("inv_sqrt_scale_factor", "k", k);
+      current_statement__ = 335;
       context__.validate_dims("data initialization", "inv_sqrt_scale_factor",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
       inv_sqrt_scale_factor_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
@@ -2666,34 +2667,34 @@ public:
         k);
       {
         std::vector<local_scalar_t__> inv_sqrt_scale_factor_flat__;
-        current_statement__ = 334;
+        current_statement__ = 335;
         inv_sqrt_scale_factor_flat__ = context__.vals_r("inv_sqrt_scale_factor");
-        current_statement__ = 334;
+        current_statement__ = 335;
         pos__ = 1;
-        current_statement__ = 334;
+        current_statement__ = 335;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 334;
+          current_statement__ = 335;
           stan::model::assign(inv_sqrt_scale_factor,
             inv_sqrt_scale_factor_flat__[(pos__ - 1)],
             "assigning variable inv_sqrt_scale_factor",
             stan::model::index_uni(sym1__));
-          current_statement__ = 334;
+          current_statement__ = 335;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 335;
+      current_statement__ = 336;
       context__.validate_dims("data initialization", "dev", "int",
         std::vector<size_t>{});
       dev = std::numeric_limits<int>::min();
-      current_statement__ = 335;
-      dev = context__.vals_i("dev")[(1 - 1)];
-      current_statement__ = 335;
-      stan::math::check_greater_or_equal(function__, "dev", dev, 0);
       current_statement__ = 336;
-      stan::math::validate_non_negative_index("EV", "n", n);
+      dev = context__.vals_i("dev")[(1 - 1)];
+      current_statement__ = 336;
+      stan::math::check_greater_or_equal(function__, "dev", dev, 0);
       current_statement__ = 337;
-      stan::math::validate_non_negative_index("EV", "dev", dev);
+      stan::math::validate_non_negative_index("EV", "n", n);
       current_statement__ = 338;
+      stan::math::validate_non_negative_index("EV", "dev", dev);
+      current_statement__ = 339;
       context__.validate_dims("data initialization", "EV", "double",
         std::vector<size_t>{static_cast<size_t>(n), static_cast<size_t>(dev)});
       EV_data__ = Eigen::Matrix<double,-1,-1>::Constant(n, dev,
@@ -2702,81 +2703,81 @@ public:
         dev);
       {
         std::vector<local_scalar_t__> EV_flat__;
-        current_statement__ = 338;
+        current_statement__ = 339;
         EV_flat__ = context__.vals_r("EV");
-        current_statement__ = 338;
+        current_statement__ = 339;
         pos__ = 1;
-        current_statement__ = 338;
+        current_statement__ = 339;
         for (int sym1__ = 1; sym1__ <= dev; ++sym1__) {
-          current_statement__ = 338;
+          current_statement__ = 339;
           for (int sym2__ = 1; sym2__ <= n; ++sym2__) {
-            current_statement__ = 338;
+            current_statement__ = 339;
             stan::model::assign(EV, EV_flat__[(pos__ - 1)],
               "assigning variable EV", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 338;
+            current_statement__ = 339;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 339;
+      current_statement__ = 340;
       context__.validate_dims("data initialization", "global_scale",
         "double", std::vector<size_t>{});
       global_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 339;
+      current_statement__ = 340;
       global_scale = context__.vals_r("global_scale")[(1 - 1)];
-      current_statement__ = 339;
+      current_statement__ = 340;
       stan::math::check_greater_or_equal(function__, "global_scale",
         global_scale, 0);
-      current_statement__ = 340;
+      current_statement__ = 341;
       context__.validate_dims("data initialization", "slab_scale", "double",
         std::vector<size_t>{});
       slab_scale = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 340;
+      current_statement__ = 341;
       slab_scale = context__.vals_r("slab_scale")[(1 - 1)];
-      current_statement__ = 340;
+      current_statement__ = 341;
       stan::math::check_greater_or_equal(function__, "slab_scale",
         slab_scale, 0);
-      current_statement__ = 341;
+      current_statement__ = 342;
       context__.validate_dims("data initialization", "slab_df", "double",
         std::vector<size_t>{});
       slab_df = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 341;
-      slab_df = context__.vals_r("slab_df")[(1 - 1)];
-      current_statement__ = 341;
-      stan::math::check_greater_or_equal(function__, "slab_df", slab_df, 0);
       current_statement__ = 342;
+      slab_df = context__.vals_r("slab_df")[(1 - 1)];
+      current_statement__ = 342;
+      stan::math::check_greater_or_equal(function__, "slab_df", slab_df, 0);
+      current_statement__ = 343;
       context__.validate_dims("data initialization", "car_rho_lims",
         "double", std::vector<size_t>{static_cast<size_t>(2)});
       car_rho_lims = std::vector<double>(2,
                        std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 342;
-      car_rho_lims = context__.vals_r("car_rho_lims");
       current_statement__ = 343;
+      car_rho_lims = context__.vals_r("car_rho_lims");
+      current_statement__ = 344;
       context__.validate_dims("data initialization", "car", "int",
         std::vector<size_t>{});
       car = std::numeric_limits<int>::min();
-      current_statement__ = 343;
-      car = context__.vals_i("car")[(1 - 1)];
-      current_statement__ = 343;
-      stan::math::check_greater_or_equal(function__, "car", car, 0);
-      current_statement__ = 343;
-      stan::math::check_less_or_equal(function__, "car", car, 1);
       current_statement__ = 344;
+      car = context__.vals_i("car")[(1 - 1)];
+      current_statement__ = 344;
+      stan::math::check_greater_or_equal(function__, "car", car, 0);
+      current_statement__ = 344;
+      stan::math::check_less_or_equal(function__, "car", car, 1);
+      current_statement__ = 345;
       context__.validate_dims("data initialization", "nImW_w", "int",
         std::vector<size_t>{});
       nImW_w = std::numeric_limits<int>::min();
-      current_statement__ = 344;
-      nImW_w = context__.vals_i("nImW_w")[(1 - 1)];
       current_statement__ = 345;
+      nImW_w = context__.vals_i("nImW_w")[(1 - 1)];
+      current_statement__ = 346;
       context__.validate_dims("data initialization", "nW", "int",
         std::vector<size_t>{});
       nW = std::numeric_limits<int>::min();
-      current_statement__ = 345;
-      nW = context__.vals_i("nW")[(1 - 1)];
       current_statement__ = 346;
-      stan::math::validate_non_negative_index("ImW_w", "nImW_w", nImW_w);
+      nW = context__.vals_i("nW")[(1 - 1)];
       current_statement__ = 347;
+      stan::math::validate_non_negative_index("ImW_w", "nImW_w", nImW_w);
+      current_statement__ = 348;
       context__.validate_dims("data initialization", "ImW_w", "double",
         std::vector<size_t>{static_cast<size_t>(nImW_w)});
       ImW_w_data__ = Eigen::Matrix<double,-1,1>::Constant(nImW_w,
@@ -2785,46 +2786,46 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(ImW_w_data__.data(), nImW_w);
       {
         std::vector<local_scalar_t__> ImW_w_flat__;
-        current_statement__ = 347;
+        current_statement__ = 348;
         ImW_w_flat__ = context__.vals_r("ImW_w");
-        current_statement__ = 347;
+        current_statement__ = 348;
         pos__ = 1;
-        current_statement__ = 347;
+        current_statement__ = 348;
         for (int sym1__ = 1; sym1__ <= nImW_w; ++sym1__) {
-          current_statement__ = 347;
+          current_statement__ = 348;
           stan::model::assign(ImW_w, ImW_w_flat__[(pos__ - 1)],
             "assigning variable ImW_w", stan::model::index_uni(sym1__));
-          current_statement__ = 347;
+          current_statement__ = 348;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 348;
-      stan::math::validate_non_negative_index("ImW_v", "nImW_w", nImW_w);
       current_statement__ = 349;
+      stan::math::validate_non_negative_index("ImW_v", "nImW_w", nImW_w);
+      current_statement__ = 350;
       context__.validate_dims("data initialization", "ImW_v", "int",
         std::vector<size_t>{static_cast<size_t>(nImW_w)});
       ImW_v = std::vector<int>(nImW_w, std::numeric_limits<int>::min());
-      current_statement__ = 349;
-      ImW_v = context__.vals_i("ImW_v");
       current_statement__ = 350;
-      stan::math::validate_non_negative_index("ImW_u", "n + 1", (n + 1));
+      ImW_v = context__.vals_i("ImW_v");
       current_statement__ = 351;
+      stan::math::validate_non_negative_index("ImW_u", "n + 1", (n + 1));
+      current_statement__ = 352;
       context__.validate_dims("data initialization", "ImW_u", "int",
         std::vector<size_t>{static_cast<size_t>((n + 1))});
       ImW_u = std::vector<int>((n + 1), std::numeric_limits<int>::min());
-      current_statement__ = 351;
-      ImW_u = context__.vals_i("ImW_u");
       current_statement__ = 352;
-      stan::math::validate_non_negative_index("Widx", "nW", nW);
+      ImW_u = context__.vals_i("ImW_u");
       current_statement__ = 353;
+      stan::math::validate_non_negative_index("Widx", "nW", nW);
+      current_statement__ = 354;
       context__.validate_dims("data initialization", "Widx", "int",
         std::vector<size_t>{static_cast<size_t>(nW)});
       Widx = std::vector<int>(nW, std::numeric_limits<int>::min());
-      current_statement__ = 353;
-      Widx = context__.vals_i("Widx");
       current_statement__ = 354;
-      stan::math::validate_non_negative_index("eigenvalues_w", "n", n);
+      Widx = context__.vals_i("Widx");
       current_statement__ = 355;
+      stan::math::validate_non_negative_index("eigenvalues_w", "n", n);
+      current_statement__ = 356;
       context__.validate_dims("data initialization", "eigenvalues_w",
         "double", std::vector<size_t>{static_cast<size_t>(n)});
       eigenvalues_w_data__ = Eigen::Matrix<double,-1,1>::Constant(n,
@@ -2834,309 +2835,309 @@ public:
         n);
       {
         std::vector<local_scalar_t__> eigenvalues_w_flat__;
-        current_statement__ = 355;
+        current_statement__ = 356;
         eigenvalues_w_flat__ = context__.vals_r("eigenvalues_w");
-        current_statement__ = 355;
+        current_statement__ = 356;
         pos__ = 1;
-        current_statement__ = 355;
+        current_statement__ = 356;
         for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-          current_statement__ = 355;
+          current_statement__ = 356;
           stan::model::assign(eigenvalues_w, eigenvalues_w_flat__[(pos__ -
             1)], "assigning variable eigenvalues_w",
             stan::model::index_uni(sym1__));
-          current_statement__ = 355;
+          current_statement__ = 356;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 356;
+      current_statement__ = 357;
       context__.validate_dims("data initialization", "sar_rho_lims",
         "double", std::vector<size_t>{static_cast<size_t>(2)});
       sar_rho_lims = std::vector<double>(2,
                        std::numeric_limits<double>::quiet_NaN());
-      current_statement__ = 356;
-      sar_rho_lims = context__.vals_r("sar_rho_lims");
       current_statement__ = 357;
+      sar_rho_lims = context__.vals_r("sar_rho_lims");
+      current_statement__ = 358;
       context__.validate_dims("data initialization", "sar", "int",
         std::vector<size_t>{});
       sar = std::numeric_limits<int>::min();
-      current_statement__ = 357;
+      current_statement__ = 358;
       sar = context__.vals_i("sar")[(1 - 1)];
-      current_statement__ = 357;
+      current_statement__ = 358;
       stan::math::check_greater_or_equal(function__, "sar", sar, 0);
-      current_statement__ = 357;
+      current_statement__ = 358;
       stan::math::check_less_or_equal(function__, "sar", sar, 1);
-      current_statement__ = 358;
-      has_theta = std::numeric_limits<int>::min();
-      current_statement__ = 358;
-      has_theta = stan::math::logical_gt(type, 1);
       current_statement__ = 359;
-      is_gaussian = std::numeric_limits<int>::min();
+      has_theta = std::numeric_limits<int>::min();
+      current_statement__ = 359;
+      has_theta = stan::math::logical_gt(type, 1);
       current_statement__ = 360;
-      is_student = std::numeric_limits<int>::min();
+      is_gaussian = std::numeric_limits<int>::min();
       current_statement__ = 361;
-      is_poisson = std::numeric_limits<int>::min();
+      is_student = std::numeric_limits<int>::min();
       current_statement__ = 362;
-      is_binomial = std::numeric_limits<int>::min();
+      is_poisson = std::numeric_limits<int>::min();
       current_statement__ = 363;
-      is_auto_gaussian = std::numeric_limits<int>::min();
+      is_binomial = std::numeric_limits<int>::min();
       current_statement__ = 364;
-      has_sigma = std::numeric_limits<int>::min();
+      is_auto_gaussian = std::numeric_limits<int>::min();
       current_statement__ = 365;
-      has_offset = std::numeric_limits<int>::min();
+      has_sigma = std::numeric_limits<int>::min();
       current_statement__ = 366;
-      dx_all = std::numeric_limits<int>::min();
+      has_offset = std::numeric_limits<int>::min();
       current_statement__ = 367;
-      has_me = std::numeric_limits<int>::min();
+      dx_all = std::numeric_limits<int>::min();
       current_statement__ = 368;
-      is_gaussian = stan::math::logical_eq(family, 1);
+      has_me = std::numeric_limits<int>::min();
       current_statement__ = 369;
-      is_student = stan::math::logical_eq(family, 2);
+      is_gaussian = stan::math::logical_eq(family, 1);
       current_statement__ = 370;
-      is_poisson = stan::math::logical_eq(family, 3);
+      is_student = stan::math::logical_eq(family, 2);
       current_statement__ = 371;
-      is_binomial = stan::math::logical_eq(family, 4);
+      is_poisson = stan::math::logical_eq(family, 3);
       current_statement__ = 372;
+      is_binomial = stan::math::logical_eq(family, 4);
+      current_statement__ = 373;
       is_auto_gaussian = (stan::math::primitive_value(
                             stan::math::logical_eq(family, 5))
         || stan::math::primitive_value(stan::math::logical_eq(family, 6)));
-      current_statement__ = 373;
-      has_sigma = stan::math::logical_lt(family, 3);
       current_statement__ = 374;
-      has_offset = stan::math::logical_neq(stan::math::sum(input_offset), 0);
+      has_sigma = stan::math::logical_lt(family, 3);
       current_statement__ = 375;
-      dx_all = (dx_obs + dx_me);
+      has_offset = stan::math::logical_neq(stan::math::sum(input_offset), 0);
       current_statement__ = 376;
+      dx_all = (dx_obs + dx_me);
+      current_statement__ = 377;
       has_me = stan::math::logical_gt(dx_me, 0);
-      current_statement__ = 359;
+      current_statement__ = 360;
       stan::math::check_greater_or_equal(function__, "is_gaussian",
         is_gaussian, 0);
-      current_statement__ = 359;
+      current_statement__ = 360;
       stan::math::check_less_or_equal(function__, "is_gaussian", is_gaussian,
         1);
-      current_statement__ = 360;
+      current_statement__ = 361;
       stan::math::check_greater_or_equal(function__, "is_student",
         is_student, 0);
-      current_statement__ = 360;
-      stan::math::check_less_or_equal(function__, "is_student", is_student, 1);
       current_statement__ = 361;
+      stan::math::check_less_or_equal(function__, "is_student", is_student, 1);
+      current_statement__ = 362;
       stan::math::check_greater_or_equal(function__, "is_poisson",
         is_poisson, 0);
-      current_statement__ = 361;
-      stan::math::check_less_or_equal(function__, "is_poisson", is_poisson, 1);
       current_statement__ = 362;
+      stan::math::check_less_or_equal(function__, "is_poisson", is_poisson, 1);
+      current_statement__ = 363;
       stan::math::check_greater_or_equal(function__, "is_binomial",
         is_binomial, 0);
-      current_statement__ = 362;
+      current_statement__ = 363;
       stan::math::check_less_or_equal(function__, "is_binomial", is_binomial,
         1);
-      current_statement__ = 363;
+      current_statement__ = 364;
       stan::math::check_greater_or_equal(function__, "is_auto_gaussian",
         is_auto_gaussian, 0);
-      current_statement__ = 363;
+      current_statement__ = 364;
       stan::math::check_less_or_equal(function__, "is_auto_gaussian",
         is_auto_gaussian, 1);
-      current_statement__ = 364;
+      current_statement__ = 365;
       stan::math::check_greater_or_equal(function__, "has_sigma", has_sigma,
         0);
-      current_statement__ = 364;
-      stan::math::check_less_or_equal(function__, "has_sigma", has_sigma, 1);
       current_statement__ = 365;
+      stan::math::check_less_or_equal(function__, "has_sigma", has_sigma, 1);
+      current_statement__ = 366;
       stan::math::check_greater_or_equal(function__, "has_offset",
         has_offset, 0);
-      current_statement__ = 365;
-      stan::math::check_less_or_equal(function__, "has_offset", has_offset, 1);
       current_statement__ = 366;
-      stan::math::check_greater_or_equal(function__, "dx_all", dx_all, 0);
+      stan::math::check_less_or_equal(function__, "has_offset", has_offset, 1);
       current_statement__ = 367;
+      stan::math::check_greater_or_equal(function__, "dx_all", dx_all, 0);
+      current_statement__ = 368;
       stan::math::check_greater_or_equal(function__, "has_me", has_me, 0);
-      current_statement__ = 377;
+      current_statement__ = 378;
       stan::math::validate_non_negative_index("alpha_phi", "m", m);
-      current_statement__ = 378;
+      current_statement__ = 379;
       phi_tilde_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 378;
+      current_statement__ = 379;
       phi_tilde_1dim__ = (type ? n : 0);
-      current_statement__ = 378;
+      current_statement__ = 379;
       stan::math::validate_non_negative_index("phi_tilde", "type ? n : 0",
         phi_tilde_1dim__);
-      current_statement__ = 379;
+      current_statement__ = 380;
       spatial_scale_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 379;
+      current_statement__ = 380;
       spatial_scale_1dim__ = (type ? 1 : 0);
-      current_statement__ = 379;
+      current_statement__ = 380;
       stan::math::validate_non_negative_index("spatial_scale",
         "type ? 1 : 0", spatial_scale_1dim__);
-      current_statement__ = 380;
+      current_statement__ = 381;
       theta_tilde_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 380;
+      current_statement__ = 381;
       theta_tilde_1dim__ = (stan::math::logical_gt(type, 1) ? n : 0);
-      current_statement__ = 380;
+      current_statement__ = 381;
       stan::math::validate_non_negative_index("theta_tilde",
         "type > 1 ? n : 0", theta_tilde_1dim__);
-      current_statement__ = 381;
+      current_statement__ = 382;
       theta_scale_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 381;
+      current_statement__ = 382;
       theta_scale_1dim__ = stan::math::logical_eq(type, 2);
-      current_statement__ = 381;
+      current_statement__ = 382;
       stan::math::validate_non_negative_index("theta_scale", "type == 2",
         theta_scale_1dim__);
-      current_statement__ = 382;
+      current_statement__ = 383;
       rho_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 382;
+      current_statement__ = 383;
       rho_1dim__ = stan::math::logical_eq(type, 3);
-      current_statement__ = 382;
+      current_statement__ = 383;
       stan::math::validate_non_negative_index("rho", "type == 3", rho_1dim__);
-      current_statement__ = 383;
+      current_statement__ = 384;
       aux1_global_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 383;
+      current_statement__ = 384;
       aux1_global_1dim__ = (dev ? 1 : 0);
-      current_statement__ = 383;
+      current_statement__ = 384;
       stan::math::validate_non_negative_index("aux1_global", "dev ? 1 : 0",
         aux1_global_1dim__);
-      current_statement__ = 384;
+      current_statement__ = 385;
       aux2_global_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 384;
+      current_statement__ = 385;
       aux2_global_1dim__ = (dev ? 1 : 0);
-      current_statement__ = 384;
+      current_statement__ = 385;
       stan::math::validate_non_negative_index("aux2_global", "dev ? 1 : 0",
         aux2_global_1dim__);
-      current_statement__ = 385;
-      stan::math::validate_non_negative_index("aux1_local", "dev", dev);
       current_statement__ = 386;
+      stan::math::validate_non_negative_index("aux1_local", "dev", dev);
+      current_statement__ = 387;
       stan::math::validate_non_negative_index("aux2_local", "dev", dev);
-      current_statement__ = 387;
+      current_statement__ = 388;
       caux_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 387;
+      current_statement__ = 388;
       caux_1dim__ = (dev ? 1 : 0);
-      current_statement__ = 387;
+      current_statement__ = 388;
       stan::math::validate_non_negative_index("caux", "dev ? 1 : 0",
         caux_1dim__);
-      current_statement__ = 388;
+      current_statement__ = 389;
       stan::math::validate_non_negative_index("z", "dev", dev);
-      current_statement__ = 389;
+      current_statement__ = 390;
       log_lambda_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 389;
+      current_statement__ = 390;
       log_lambda_1dim__ = ((stan::math::primitive_value(
                               (stan::math::primitive_value(car) ||
                               stan::math::primitive_value(sar)))
         &&
         stan::math::primitive_value(
           stan::math::logical_negation(is_auto_gaussian))) ? n : 0);
-      current_statement__ = 389;
+      current_statement__ = 390;
       stan::math::validate_non_negative_index("log_lambda",
         "(car || sar) && !is_auto_gaussian ? n : 0", log_lambda_1dim__);
-      current_statement__ = 390;
+      current_statement__ = 391;
       car_scale_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 390;
+      current_statement__ = 391;
       car_scale_1dim__ = (car ? 1 : 0);
-      current_statement__ = 390;
+      current_statement__ = 391;
       stan::math::validate_non_negative_index("car_scale", "car ? 1 : 0",
         car_scale_1dim__);
-      current_statement__ = 391;
+      current_statement__ = 392;
       car_rho_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 391;
+      current_statement__ = 392;
       car_rho_1dim__ = (car ? 1 : 0);
-      current_statement__ = 391;
+      current_statement__ = 392;
       stan::math::validate_non_negative_index("car_rho", "car ? 1 : 0",
         car_rho_1dim__);
-      current_statement__ = 392;
+      current_statement__ = 393;
       sar_scale_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 392;
+      current_statement__ = 393;
       sar_scale_1dim__ = (sar ? 1 : 0);
-      current_statement__ = 392;
+      current_statement__ = 393;
       stan::math::validate_non_negative_index("sar_scale", "sar ? 1 : 0",
         sar_scale_1dim__);
-      current_statement__ = 393;
+      current_statement__ = 394;
       sar_rho_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 393;
+      current_statement__ = 394;
       sar_rho_1dim__ = (sar ? 1 : 0);
-      current_statement__ = 393;
+      current_statement__ = 394;
       stan::math::validate_non_negative_index("sar_rho", "sar ? 1 : 0",
         sar_rho_1dim__);
-      current_statement__ = 394;
-      stan::math::validate_non_negative_index("gamma", "dwx", dwx);
       current_statement__ = 395;
-      stan::math::validate_non_negative_index("beta", "dx_all", dx_all);
+      stan::math::validate_non_negative_index("gamma", "dwx", dwx);
       current_statement__ = 396;
-      stan::math::validate_non_negative_index("nu", "is_student", is_student);
+      stan::math::validate_non_negative_index("beta", "dx_all", dx_all);
       current_statement__ = 397;
-      stan::math::validate_non_negative_index("sigma", "has_sigma", has_sigma);
+      stan::math::validate_non_negative_index("nu", "is_student", is_student);
       current_statement__ = 398;
-      stan::math::validate_non_negative_index("alpha_re", "n_ids", n_ids);
+      stan::math::validate_non_negative_index("sigma", "has_sigma", has_sigma);
       current_statement__ = 399;
-      stan::math::validate_non_negative_index("alpha_tau", "has_re", has_re);
+      stan::math::validate_non_negative_index("alpha_re", "n_ids", n_ids);
       current_statement__ = 400;
-      stan::math::validate_non_negative_index("x_true", "dx_me", dx_me);
+      stan::math::validate_non_negative_index("alpha_tau", "has_re", has_re);
       current_statement__ = 401;
-      stan::math::validate_non_negative_index("x_true", "n", n);
+      stan::math::validate_non_negative_index("x_true", "dx_me", dx_me);
       current_statement__ = 402;
-      stan::math::validate_non_negative_index("mu_x_true", "dx_me", dx_me);
+      stan::math::validate_non_negative_index("x_true", "n", n);
       current_statement__ = 403;
+      stan::math::validate_non_negative_index("mu_x_true", "dx_me", dx_me);
+      current_statement__ = 404;
       stan::math::validate_non_negative_index("sigma_x_true", "dx_me", dx_me);
-      current_statement__ = 404;
+      current_statement__ = 405;
       car_rho_x_true_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 404;
+      current_statement__ = 405;
       car_rho_x_true_1dim__ = (spatial_me ? dx_me : 0);
-      current_statement__ = 404;
+      current_statement__ = 405;
       stan::math::validate_non_negative_index("car_rho_x_true",
         "spatial_me ? dx_me : 0", car_rho_x_true_1dim__);
-      current_statement__ = 405;
+      current_statement__ = 406;
       nu_x_true_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 405;
+      current_statement__ = 406;
       nu_x_true_1dim__ = (spatial_me ? 0 : dx_me);
-      current_statement__ = 405;
+      current_statement__ = 406;
       stan::math::validate_non_negative_index("nu_x_true",
         "spatial_me ? 0 : dx_me", nu_x_true_1dim__);
-      current_statement__ = 406;
+      current_statement__ = 407;
       stan::math::validate_non_negative_index("beta_ev", "dev", dev);
-      current_statement__ = 407;
+      current_statement__ = 408;
       esf_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 407;
+      current_statement__ = 408;
       esf_1dim__ = (dev ? n : 0);
-      current_statement__ = 407;
+      current_statement__ = 408;
       stan::math::validate_non_negative_index("esf", "dev ? n : 0",
         esf_1dim__);
-      current_statement__ = 408;
+      current_statement__ = 409;
       error_scale_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 408;
+      current_statement__ = 409;
       error_scale_1dim__ = (dev ? 1 : 0);
-      current_statement__ = 408;
+      current_statement__ = 409;
       stan::math::validate_non_negative_index("error_scale", "dev ? 1 : 0",
         error_scale_1dim__);
-      current_statement__ = 409;
+      current_statement__ = 410;
       phi_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 409;
+      current_statement__ = 410;
       phi_1dim__ = (type ? n : 0);
-      current_statement__ = 409;
+      current_statement__ = 410;
       stan::math::validate_non_negative_index("phi", "type ? n : 0",
         phi_1dim__);
-      current_statement__ = 410;
+      current_statement__ = 411;
       theta_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 410;
+      current_statement__ = 411;
       theta_1dim__ = (stan::math::logical_gt(type, 1) ? n : 0);
-      current_statement__ = 410;
+      current_statement__ = 411;
       stan::math::validate_non_negative_index("theta", "type > 1 ? n : 0",
         theta_1dim__);
-      current_statement__ = 411;
+      current_statement__ = 412;
       log_lambda_mu_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 411;
+      current_statement__ = 412;
       log_lambda_mu_1dim__ = ((stan::math::primitive_value(car) ||
         stan::math::primitive_value(sar)) ? n : 0);
-      current_statement__ = 411;
+      current_statement__ = 412;
       stan::math::validate_non_negative_index("log_lambda_mu",
         "car || sar ? n : 0", log_lambda_mu_1dim__);
-      current_statement__ = 412;
-      stan::math::validate_non_negative_index("x_all", "n", n);
       current_statement__ = 413;
-      stan::math::validate_non_negative_index("x_all", "dx_all", dx_all);
+      stan::math::validate_non_negative_index("x_all", "n", n);
       current_statement__ = 414;
+      stan::math::validate_non_negative_index("x_all", "dx_all", dx_all);
+      current_statement__ = 415;
       stan::math::validate_non_negative_index("fitted", "n", n);
-      current_statement__ = 415;
+      current_statement__ = 416;
       log_lik_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 415;
-      log_lik_1dim__ = (is_auto_gaussian ? 1 : n);
-      current_statement__ = 415;
+      current_statement__ = 416;
+      log_lik_1dim__ = (is_auto_gaussian ? 1 : n_obs);
+      current_statement__ = 416;
       stan::math::validate_non_negative_index("log_lik",
-        "is_auto_gaussian ? 1 : n", log_lik_1dim__);
+        "is_auto_gaussian ? 1 : n_obs", log_lik_1dim__);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -3812,21 +3813,29 @@ public:
                            stan::model::rvalue(prior_alpha_tau,
                              "prior_alpha_tau", stan::model::index_uni(3))));
         }
-        current_statement__ = 184;
+        current_statement__ = 185;
         if (stan::math::logical_negation(prior_only)) {
           current_statement__ = 173;
           if (is_student) {
             current_statement__ = 172;
-            lp_accum__.add(stan::math::student_t_lpdf<false>(y,
+            lp_accum__.add(stan::math::student_t_lpdf<false>(
+                             stan::model::rvalue(y, "y",
+                               stan::model::index_multi(y_obs_idx)),
                              stan::model::rvalue(nu, "nu",
-                               stan::model::index_uni(1)), fitted,
+                               stan::model::index_uni(1)),
+                             stan::model::rvalue(fitted, "fitted",
+                               stan::model::index_multi(y_obs_idx)),
                              stan::model::rvalue(sigma, "sigma",
                                stan::model::index_uni(has_sigma))));
           }
           current_statement__ = 175;
           if (is_gaussian) {
             current_statement__ = 174;
-            lp_accum__.add(stan::math::normal_lpdf<false>(y, fitted,
+            lp_accum__.add(stan::math::normal_lpdf<false>(
+                             stan::model::rvalue(y, "y",
+                               stan::model::index_multi(y_obs_idx)),
+                             stan::model::rvalue(fitted, "fitted",
+                               stan::model::index_multi(y_obs_idx)),
                              stan::model::rvalue(sigma, "sigma",
                                stan::model::index_uni(has_sigma))));
           }
@@ -3846,71 +3855,76 @@ public:
                                  stan::model::index_multi(y_mis_idx))));
             }
           }
-          current_statement__ = 182;
+          current_statement__ = 183;
           if (is_binomial) {
             current_statement__ = 181;
-            lp_accum__.add(stan::math::binomial_lpmf<false>(y_int, trials,
-                             fitted));
+            lp_accum__.add(stan::math::binomial_lpmf<false>(
+                             stan::model::rvalue(y_int, "y_int",
+                               stan::model::index_multi(y_obs_idx)),
+                             stan::model::rvalue(trials, "trials",
+                               stan::model::index_multi(y_obs_idx)),
+                             stan::model::rvalue(fitted, "fitted",
+                               stan::model::index_multi(y_obs_idx))));
           }
         }
-        current_statement__ = 195;
+        current_statement__ = 196;
         if (type) {
-          current_statement__ = 189;
+          current_statement__ = 190;
           if (has_theta) {
-            current_statement__ = 185;
+            current_statement__ = 186;
             lp_accum__.add(stan::math::std_normal_lpdf<false>(theta_tilde));
-            current_statement__ = 187;
+            current_statement__ = 188;
             if (stan::math::logical_eq(type, 2)) {
-              current_statement__ = 186;
+              current_statement__ = 187;
               lp_accum__.add(stan::math::std_normal_lpdf<false>(
                                stan::model::rvalue(theta_scale,
                                  "theta_scale", stan::model::index_uni(1))));
             }
           }
-          current_statement__ = 190;
+          current_statement__ = 191;
           lp_accum__.add(stan::math::std_normal_lpdf<false>(
                            stan::model::rvalue(spatial_scale,
                              "spatial_scale", stan::model::index_uni(1))));
-          current_statement__ = 191;
+          current_statement__ = 192;
           lp_accum__.add(icar_normal_lpdf<propto__>(phi_tilde,
                            stan::model::rvalue(spatial_scale,
                              "spatial_scale", stan::model::index_uni(1)),
                            node1, node2, k, group_size, group_idx, has_theta,
                            pstream__));
-          current_statement__ = 193;
+          current_statement__ = 194;
           if (m) {
-            current_statement__ = 192;
+            current_statement__ = 193;
             lp_accum__.add(stan::math::normal_lpdf<false>(alpha_phi, 0,
                              stan::model::rvalue(prior_alpha, "prior_alpha",
                                stan::model::index_uni(2))));
           }
         }
-        current_statement__ = 203;
+        current_statement__ = 204;
         if (dev) {
-          current_statement__ = 196;
-          lp_accum__.add(stan::math::std_normal_lpdf<false>(z));
           current_statement__ = 197;
-          lp_accum__.add(stan::math::std_normal_lpdf<false>(aux1_local));
+          lp_accum__.add(stan::math::std_normal_lpdf<false>(z));
           current_statement__ = 198;
+          lp_accum__.add(stan::math::std_normal_lpdf<false>(aux1_local));
+          current_statement__ = 199;
           lp_accum__.add(stan::math::inv_gamma_lpdf<false>(aux2_local, 0.5,
                            0.5));
-          current_statement__ = 199;
+          current_statement__ = 200;
           lp_accum__.add(stan::math::std_normal_lpdf<false>(
                            stan::model::rvalue(aux1_global, "aux1_global",
                              stan::model::index_uni(1))));
-          current_statement__ = 200;
+          current_statement__ = 201;
           lp_accum__.add(stan::math::inv_gamma_lpdf<false>(
                            stan::model::rvalue(aux2_global, "aux2_global",
                              stan::model::index_uni(1)), 0.5, 0.5));
-          current_statement__ = 201;
+          current_statement__ = 202;
           lp_accum__.add(stan::math::inv_gamma_lpdf<false>(
                            stan::model::rvalue(caux, "caux",
                              stan::model::index_uni(1)), (0.5 * slab_df),
                            (0.5 * slab_df)));
         }
-        current_statement__ = 212;
+        current_statement__ = 213;
         if (car) {
-          current_statement__ = 204;
+          current_statement__ = 205;
           lp_accum__.add(stan::math::student_t_lpdf<false>(
                            stan::model::rvalue(car_scale, "car_scale",
                              stan::model::index_uni(1)),
@@ -3920,11 +3934,11 @@ public:
                              stan::model::index_uni(2)),
                            stan::model::rvalue(prior_sigma, "prior_sigma",
                              stan::model::index_uni(3))));
-          current_statement__ = 207;
+          current_statement__ = 208;
           if ((stan::math::primitive_value(is_auto_gaussian) &&
               stan::math::primitive_value(
                 stan::math::logical_negation(prior_only)))) {
-            current_statement__ = 205;
+            current_statement__ = 206;
             lp_accum__.add(auto_normal_lpdf<false>(y, fitted,
                              stan::model::rvalue(car_scale, "car_scale",
                                stan::model::index_uni(1)),
@@ -3933,9 +3947,9 @@ public:
                              Cidx, Delta_inv, log_det_Delta_inv, lambda, n,
                              WCAR, pstream__));
           }
-          current_statement__ = 210;
+          current_statement__ = 211;
           if (stan::math::logical_negation(is_auto_gaussian)) {
-            current_statement__ = 208;
+            current_statement__ = 209;
             lp_accum__.add(auto_normal_lpdf<false>(log_lambda, log_lambda_mu,
                              stan::model::rvalue(car_scale, "car_scale",
                                stan::model::index_uni(1)),
@@ -3945,9 +3959,9 @@ public:
                              WCAR, pstream__));
           }
         }
-        current_statement__ = 221;
+        current_statement__ = 222;
         if (sar) {
-          current_statement__ = 213;
+          current_statement__ = 214;
           lp_accum__.add(stan::math::student_t_lpdf<false>(
                            stan::model::rvalue(sar_scale, "sar_scale",
                              stan::model::index_uni(1)),
@@ -3957,11 +3971,11 @@ public:
                              stan::model::index_uni(2)),
                            stan::model::rvalue(prior_sigma, "prior_sigma",
                              stan::model::index_uni(3))));
-          current_statement__ = 216;
+          current_statement__ = 217;
           if ((stan::math::primitive_value(is_auto_gaussian) &&
               stan::math::primitive_value(
                 stan::math::logical_negation(prior_only)))) {
-            current_statement__ = 214;
+            current_statement__ = 215;
             lp_accum__.add(sar_normal_lpdf<false>(y, fitted,
                              stan::model::rvalue(sar_scale, "sar_scale",
                                stan::model::index_uni(1)),
@@ -3969,9 +3983,9 @@ public:
                                stan::model::index_uni(1)), ImW_w, ImW_v,
                              ImW_u, Widx, eigenvalues_w, n, pstream__));
           }
-          current_statement__ = 219;
+          current_statement__ = 220;
           if (stan::math::logical_negation(is_auto_gaussian)) {
-            current_statement__ = 217;
+            current_statement__ = 218;
             lp_accum__.add(sar_normal_lpdf<false>(log_lambda, log_lambda_mu,
                              stan::model::rvalue(sar_scale, "sar_scale",
                                stan::model::index_uni(1)),
@@ -4593,15 +4607,21 @@ public:
           "assigning variable log_lik", stan::model::index_uni(1));
       }
       current_statement__ = 134;
-      for (int i = 1; i <= n; ++i) {
+      for (int i = 1; i <= n_obs; ++i) {
         current_statement__ = 123;
         if (is_student) {
           current_statement__ = 121;
           stan::model::assign(log_lik,
             stan::math::student_t_lpdf<false>(
-              stan::model::rvalue(y, "y", stan::model::index_uni(i)),
+              stan::model::rvalue(y, "y",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
               stan::model::rvalue(nu, "nu", stan::model::index_uni(1)),
-              stan::model::rvalue(fitted, "fitted", stan::model::index_uni(i)),
+              stan::model::rvalue(fitted, "fitted",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
               stan::model::rvalue(sigma, "sigma",
                 stan::model::index_uni(has_sigma))),
             "assigning variable log_lik", stan::model::index_uni(i));
@@ -4611,8 +4631,14 @@ public:
           current_statement__ = 124;
           stan::model::assign(log_lik,
             stan::math::normal_lpdf<false>(
-              stan::model::rvalue(y, "y", stan::model::index_uni(i)),
-              stan::model::rvalue(fitted, "fitted", stan::model::index_uni(i)),
+              stan::model::rvalue(y, "y",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
+              stan::model::rvalue(fitted, "fitted",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
               stan::model::rvalue(sigma, "sigma",
                 stan::model::index_uni(has_sigma))),
             "assigning variable log_lik", stan::model::index_uni(i));
@@ -4622,8 +4648,14 @@ public:
           current_statement__ = 127;
           stan::model::assign(log_lik,
             stan::math::poisson_lpmf<false>(
-              stan::model::rvalue(y_int, "y_int", stan::model::index_uni(i)),
-              stan::model::rvalue(fitted, "fitted", stan::model::index_uni(i))),
+              stan::model::rvalue(y_int, "y_int",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
+              stan::model::rvalue(fitted, "fitted",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i))))),
             "assigning variable log_lik", stan::model::index_uni(i));
         }
         current_statement__ = 132;
@@ -4631,9 +4663,18 @@ public:
           current_statement__ = 130;
           stan::model::assign(log_lik,
             stan::math::binomial_lpmf<false>(
-              stan::model::rvalue(y_int, "y_int", stan::model::index_uni(i)),
-              stan::model::rvalue(trials, "trials", stan::model::index_uni(i)),
-              stan::model::rvalue(fitted, "fitted", stan::model::index_uni(i))),
+              stan::model::rvalue(y_int, "y_int",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
+              stan::model::rvalue(trials, "trials",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i)))),
+              stan::model::rvalue(fitted, "fitted",
+                stan::model::index_uni(
+                  stan::model::rvalue(y_obs_idx, "y_obs_idx",
+                    stan::model::index_uni(i))))),
             "assigning variable log_lik", stan::model::index_uni(i));
         }
       }
