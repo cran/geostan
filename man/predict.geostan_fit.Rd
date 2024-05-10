@@ -7,7 +7,7 @@
 \method{predict}{geostan_fit}(
   object,
   newdata,
-  alpha = mean(as.matrix(object, pars = "intercept")),
+  alpha = as.matrix(object, pars = "intercept"),
   center = object$x_center,
   summary = TRUE,
   type = c("link", "response"),
@@ -19,11 +19,11 @@
 
 \item{newdata}{A data frame in which to look for variables with which to predict, presumably for the purpose of viewing marginal effects. Note that if the model formula includes an offset term, \code{newdata} must contain the offset. Note also that any spatially-lagged covariate terms will be ignored if they were provided using the \code{slx} argument. If covariates in the model were centered using the \code{centerx} argument, the \code{predict.geostan_fit} method will automatically center the predictors in \code{newdata} using the values stored in \code{object$x_center}. If \code{newdata} is missing, the fitted values of the model will be returned.}
 
-\item{alpha}{A single numeric value or a numeric vector with length equal to \code{nrow(newdata)}; \code{alpha} serves as the intercept in the linear predictor. The default is to use the posterior mean of the intercept. Even if \code{type = "response"}, this needs to be provided on the scale of the linear predictor.}
+\item{alpha}{An N-by-1 matrix of MCMC samples for the intercept; this is provided by default. However, this argument might be used if there is a need to incorporate the spatial trend term, in which case it may be thought of as a spatially-varying intercept. If used, note that the intercept needs to be provided on the scale of the linear predictor.}
 
-\item{center}{May be a vector of numeric values or a logical scalar to pass to \code{\link[base]{scale}}. Defaults to using \code{object$x_center}. If the model was fit using \code{centerx = TRUE}, then covariates were centered and their mean values are stored in \code{object$x_center} and the \code{predict} method will use them to automatically center \code{newdata}; if the model was fit with \code{centerx = FALSE}, then \code{object$x_center = FALSE} and \code{newdata} will not be centered.}
+\item{center}{Optional vector of numeric values or a logical scalar to pass to \code{\link[base]{scale}}. Defaults to using \code{object$x_center}. If the model was fit using \code{centerx = TRUE}, then covariates were centered and their mean values are stored in \code{object$x_center} and the \code{predict} method will use them to automatically center \code{newdata}; if the model was fit with \code{centerx = FALSE}, then \code{object$x_center = FALSE} and \code{newdata} will not be centered.}
 
-\item{summary}{Logical; should the values be summarized with the mean, standard deviation and quantiles (\code{probs = c(.025, .2, .5, .8, .975)}) for each observation? Otherwise a matrix containing samples from the posterior distribution at each observation is returned.}
+\item{summary}{If \code{FALSE}, a matrix containing samples from the posterior distribution at each observation is returned. The default, \code{TRUE}, will summarize results by providing an estimate (mean) and credible interval (formed by taking quantiles of the MCMC samples).}
 
 \item{type}{By default, results from \code{predict} are on the scale of the linear predictor (\verb{type = "link")}). The alternative (\code{type = "response"}) is on the scale of the response variable. For example, the default return values for a Poisson model on the log scale, and using \code{type = "response"} will return the original scale of the outcome variable (by exponentiating the log values).}
 
@@ -36,11 +36,11 @@ If \code{summary = FALSE}, a matrix of samples is returned. If \code{summary = T
 Obtain predicted values from a fitted model by providing new covariate values.
 }
 \details{
-The purpose of the predict method is to explore marginal effects of (combinations of) covariates. The method sets the intercept equal to its posterior mean (i.e., \code{alpha = mean(as.matrix(object, pars = "intercept"))}); the only source of uncertainty in the results is the posterior distribution of the coefficients, which can be obtained using \code{Beta = as.matrix(object, pars = "beta")}.
+The purpose of the predict method is to explore marginal effects of (combinations of) covariates.
 
-The model formula will be taken from \code{object$formula}, and then a model matrix will be created by passing \code{newdata} to the \link[stats]{model.frame} function (as in: \code{model.frame(newdata, object$formula}).
+The model formula will be taken from \code{object$formula}, and then a model matrix will be created by passing \code{newdata} to the \link[stats]{model.frame} function (as in: \code{model.frame(newdata, object$formula}). Parameters are taken from \code{as.matrix(object, pars = c("intercept", "beta"))}.
 
-Be aware that in generalized linear models (such as Poisson and Binomial models) marginal effects of each covariate are sensitive to the level of other covariates in the model. If the model includes any spatially-lagged covariates (introduced using the \code{slx} argument) or a spatial autocorrelation term (for example, you used a spatial CAR, SAR, or ESF model), these terms will essentially be fixed at zero for the purposes of calculating marginal effects. If you want to change this, you can introduce spatial trend values by specifying a varying intercept using the \code{alpha} argument.
+Be aware that in generalized linear models (such as Poisson and Binomial models) marginal effects plots on the response scale may be sensitive to the level of other covariates in the model. If the model includes any spatially-lagged covariates (introduced using the \code{slx} argument) or a spatial autocorrelation term (for example, you used a spatial CAR, SAR, or ESF model), these terms will essentially be fixed at zero for the purposes of calculating marginal effects. If you want to change this, you can introduce spatial trend values by specifying a varying intercept using the \code{alpha} argument.
 }
 \examples{
 data(georgia)

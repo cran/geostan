@@ -4,7 +4,7 @@
 \alias{sp_diag}
 \alias{sp_diag.geostan_fit}
 \alias{sp_diag.numeric}
-\title{Spatial data diagnostics}
+\title{Visual displays of spatial data and spatial models}
 \usage{
 sp_diag(y, shape, ...)
 

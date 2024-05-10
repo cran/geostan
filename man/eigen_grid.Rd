@@ -2,7 +2,7 @@
 % Please edit documentation in R/raster-analysis.R
 \name{eigen_grid}
 \alias{eigen_grid}
-\title{Eigenvalues of a spatial weights matrix: raster analysis}
+\title{Eigenvalues of a spatial weights matrix: for spatial regression with raster data}
 \source{
 Griffith, Daniel A. (2000). Eigenfunction properties and approximations of selected incidence matrices employed in spatial analyses. \emph{Linear Algebra and its Applications} 321 (1-3): 95-112. \doi{10.1016/S0024-3795(00)00031-8}.
 }

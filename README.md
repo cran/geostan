@@ -44,16 +44,17 @@ Using your R console, you can install **geostan** from CRAN:
 install.packages("geostan")
 ```
 
-You can install the latest version from the package github repository:
+Or, you can install the latest version from the package github
+repository:
 
 ``` r
 if (!require('devtools')) install.packages('devtools')
 devtools::install_github("connordonegan/geostan")
 ```
 
-If you are using Windows, you may need to install
-[Rtools](https://cran.r-project.org/bin/windows/Rtools/) first. To
-install Rtools:
+If you are using Windows and installing with `install_github`, you may
+need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+first (this is not needed when installing from CRAN). To install Rtools:
 
 1.  Visit the Rtools site:
     <https://cran.r-project.org/bin/windows/Rtools/>
@@ -180,8 +181,8 @@ print(fit)
 #> Spatial method (outcome):  CAR 
 #> Likelihood function:  poisson 
 #> Link function:  log 
-#> Residual Moran Coefficient:  0.002382 
-#> WAIC:  1228.61 
+#> Residual Moran Coefficient:  0.00123875 
+#> WAIC:  1228.29 
 #> Observations:  156 
 #> Data models (ME): none
 #> Inference for Stan model: foundation.
@@ -189,11 +190,11 @@ print(fit)
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean    sd   2.5%    20%    50%    80%  97.5% n_eff  Rhat
-#> intercept -4.677   0.003 0.099 -4.855 -4.734 -4.676 -4.615 -4.498  1384 1.002
-#> car_rho    0.926   0.001 0.057  0.781  0.886  0.940  0.974  0.996  2921 1.001
-#> car_scale  0.457   0.001 0.034  0.395  0.428  0.455  0.485  0.526  3929 1.000
+#> intercept -4.666   0.007 0.143 -4.840 -4.729 -4.672 -4.616 -4.484   461 1.006
+#> car_rho    0.924   0.001 0.059  0.778  0.884  0.937  0.973  0.996  3086 1.001
+#> car_scale  0.456   0.001 0.036  0.390  0.427  0.454  0.485  0.533  3776 1.000
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue Apr 16 08:16:01 2024.
+#> Samples were drawn using NUTS(diag_e) at Tue Apr 16 08:52:52 2024.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
@@ -209,19 +210,19 @@ mortality_est <- fitted(fit) * 10e3
 county_name <- georgia$NAME
 head( cbind(county_name, mortality_est) )
 #>           county_name      mean        sd      2.5%       20%       50%
-#> fitted[1]       Crisp 101.70572  9.498562  83.97063  93.70448 101.24639
-#> fitted[2]     Candler 137.39050 16.606716 106.86044 123.51343 136.32448
-#> fitted[3]      Barrow  94.24360  6.351406  82.25888  88.85746  94.05780
-#> fitted[4]      DeKalb  59.76307  1.544278  56.72223  58.42850  59.78620
-#> fitted[5]    Columbia  53.31970  3.321858  47.13175  50.44742  53.30227
-#> fitted[6]        Cobb  54.12199  1.467704  51.33636  52.85897  54.10105
+#> fitted[1]       Crisp 101.64998  9.384722  84.24670  93.71233 101.29406
+#> fitted[2]     Candler 137.17952 16.264992 107.11368 123.59204 136.39838
+#> fitted[3]      Barrow  94.22368  6.126884  82.75981  89.00941  94.11519
+#> fitted[4]      DeKalb  59.76170  1.595148  56.68882  58.40064  59.76835
+#> fitted[5]    Columbia  53.36728  3.265343  47.21909  50.61056  53.33728
+#> fitted[6]        Cobb  54.13621  1.545304  51.09988  52.81882  54.11181
 #>                 80%     97.5%
-#> fitted[1] 109.56469 121.40981
-#> fitted[2] 150.82533 173.49393
-#> fitted[3]  99.61073 107.25586
-#> fitted[4]  61.08625  62.79658
-#> fitted[5]  56.12651  59.92468
-#> fitted[6]  55.34254  57.02782
+#> fitted[1] 109.51372 120.80189
+#> fitted[2] 150.22007 171.23752
+#> fitted[3]  99.29052 106.43936
+#> fitted[4]  61.09047  62.90342
+#> fitted[5]  56.01686  60.00058
+#> fitted[6]  55.46060  57.14337
 ```
 
 The mortality estimates are stored in the column named “mean”, and the

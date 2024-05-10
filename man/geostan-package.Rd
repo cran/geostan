@@ -25,3 +25,21 @@ Morris, M., Wheeler-Martin, K., Simpson, D., Mooney, S. J., Gelman, A., & DiMagg
 
 Stan Development Team (2019). RStan: the R interface to Stan. R package version 2.19.2. \url{https://mc-stan.org}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://connordonegan.github.io/geostan/}
+  \item Report bugs at \url{https://github.com/ConnorDonegan/geostan/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Connor Donegan \email{connor.donegan@gmail.com} (\href{https://orcid.org/0000-0002-9698-5443}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Mitzi Morris [contributor]
+  \item Amy Tims [contributor]
+}
+
+}
