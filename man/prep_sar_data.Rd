@@ -4,13 +4,15 @@
 \alias{prep_sar_data}
 \title{Prepare data for a simultaneous autoregressive (SAR) model}
 \usage{
-prep_sar_data(W)
+prep_sar_data(W, quiet = FALSE)
 }
 \arguments{
 \item{W}{Spatial weights matrix, typically row-standardized.}
+
+\item{quiet}{Controls printing behavior. By default, \code{quiet = FALSE} and the range of permissible values for the spatial dependence parameter is printed to the console.}
 }
 \value{
-list of data to add to a Stan data list:
+Return's a list of data required as input for geostan's SAR models, as implemented in Stan. The list contains:
 
 \describe{
 \item{ImW_w}{Numeric vector containing the non-zero elements of matrix \eqn{(I - W)}.}
@@ -25,13 +27,13 @@ list of data to add to a Stan data list:
 \item{rho_min}{Minimum permissible value of \eqn{\rho} (\code{1/min(eigenvalues_w)}).}
 \item{rho_max}{Maximum permissible value of \eqn{\rho} (\code{1/max(eigenvalues_w)}.}
 }
-The function will also print the range of permissible \eqn{\rho} values to the console.
+The function will also print the range of permissible \eqn{\rho} values to the console (unless \code{quiet = TRUE}).
 }
 \description{
 Given a spatial weights matrix \eqn{W}, this function prepares data for the simultaneous autoregressive (SAR) model (a.k.a spatial error model (SEM)) in Stan. This is used internally by \code{\link[geostan]{stan_sar}}, and may also be used for building custom SAR models in Stan.
 }
 \details{
-This is used internally to prepare data for \code{\link[geostan]{stan_sar}} models. It can also be helpful for fitting custom SAR models in Stan (outside of \code{geostan}).
+This is used internally to prepare data for \code{\link[geostan]{stan_sar}} models. It can also be helpful for fitting custom SAR models in Stan (outside of \code{geostan}), as described in the geostan vignette on custom spatial models.
 }
 \examples{
 data(georgia)

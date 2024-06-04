@@ -28,6 +28,11 @@ spatial(object, summary = TRUE, ...)
 
 \item{trend}{For auto-normal models (CAR and SAR models with Gaussian likelihood only); if \code{trend = TRUE}, the fitted values will include the implicit spatial trend term. The implicit spatial trend is \code{Trend = rho * C \%*\% (Y - Mu)} (see \link[geostan]{stan_car} or \link[geostan]{stan_sar}). I.e., if \code{trend = TRUE}, \code{fitted = Mu + Trend}.}
 }
+\value{
+By default, these methods return a \code{data.frame}. The column named \code{mean} is what most users will be looking for. These contain the fitted values (for the \code{fitted} method), the residuals (fitted values minus observed values, for the \code{resid} method), or the spatial trend (for the \code{spatial} method). The \code{mean} column is the posterior mean of each value, and the column \code{sd} contains the posterior standard deviation for each value. The posterior distributions are also summarized by select quantiles (including 2.5\\% and 97.5\\%).
+
+If \code{summary = FALSE} then the method returns an S-by-N matrix of MCMC samples, where S is the number of MCMC samples and N is the number of observations in the data.
+}
 \description{
 Extract model residuals, fitted values, or spatial trend from a fitted \code{geostan_fit} model.
 }

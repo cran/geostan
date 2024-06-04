@@ -24,6 +24,9 @@ gr(x, w, digits = 3, na.rm = FALSE, warn = TRUE)
 
 \item{warn}{If \code{FALSE}, no warning will be printed to inform you when observations with \code{NA} values have been dropped, or if any observations without neighbors have been found.}
 }
+\value{
+Returns the Geary ratio (a single numeric value).
+}
 \description{
 An index for spatial autocorrelation. Complete spatial randomness (lack of spatial pattern) is indicated by a Geary Ratio (GR) of 1; positive autocorrelation moves the index towards zero, while negative autocorrelation will push the index towards 2.
 }

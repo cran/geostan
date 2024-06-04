@@ -71,13 +71,14 @@ When provided with a fitted \code{geostan} model, the function returns a point-i
 When \code{y} is a fitted CAR or SAR model with \code{family = auto_gaussian()}, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default \code{trend = TRUE} and the call to \link[geostan]{residuals.geostan_fit} will use the default \code{detrend = TRUE}. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.)
 }
 \examples{
-\donttest{
+
 data(georgia)
 sp_diag(georgia$college, georgia)
 
 bin_fn <- function(y) mad(y, na.rm = TRUE)
 sp_diag(georgia$college, georgia, binwidth = bin_fn)
 
+\donttest{
 fit <- stan_glm(log(rate.male) ~ log(income),
                 data = georgia,
                 chains = 2, iter = 800) # for speed only

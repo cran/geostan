@@ -38,6 +38,7 @@ stan_car(
   drop = NULL,
   pars = NULL,
   control = NULL,
+  quiet = FALSE,
   ...
 )
 }
@@ -109,6 +110,8 @@ If \code{slim = TRUE}, then \code{drop} will be ignored.}
 \item{pars}{Optional; specify any additional parameters you'd like stored from the Stan model.}
 
 \item{control}{A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details.}
+
+\item{quiet}{Controls (most) automatic printing to the console. By default, any prior distributions that have not been assigned by the user are printed to the console. If \code{quiet = TRUE}, these will not be printed. Using \code{quiet = TRUE} will also force \code{refresh = 0}.}
 
 \item{...}{Other arguments passed to \code{\link[rstan]{sampling}}.}
 }

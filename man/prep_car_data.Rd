@@ -24,7 +24,8 @@ prep_car_data(
   gamma = 0,
   lambda = TRUE,
   cmat = TRUE,
-  stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf")
+  stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf"),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ prep_car_data(
 \item{cmat}{If \code{cmat = TRUE}, return the full matrix C (in sparse matrix format).}
 
 \item{stan_fn}{Two computational methods are available for CAR models using \code{\link[geostan]{stan_car}}: \code{car\_normal\_lpdf} and \code{wcar\_normal\_lpdf}. For WCAR models, either method will work but \code{wcar\_normal\_lpdf} is faster. To force use \code{car\_normal\_lpdf} when \code{style = 'WCAR'}, provide \code{stan_fn = "car_normal_lpdf"}.}
+
+\item{quiet}{Controls printing behavior. By default, \code{quiet = FALSE} and the range of permissible values for the spatial dependence parameter is printed to the console.}
 }
 \value{
 A list containing all of the data elements required by the CAR model in \code{\link[geostan]{stan_car}}.
@@ -69,6 +72,7 @@ When using \code{\link[geostan]{stan_car}}, always use \code{cmat = TRUE} (the d
 Details on CAR model specifications can be found in Table 1 of Donegan (2021).
 }
 \examples{
+
 data(georgia)
 
 ## use a binary adjacency matrix
@@ -86,4 +90,5 @@ A <- shape2mat(georgia, "B")
 D <- sf::st_distance(sf::st_centroid(georgia))
 A <- D * A
 cp <- prep_car_data(A, "DCAR", k = 1)
+
 }

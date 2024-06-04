@@ -59,23 +59,23 @@ A <- shape2mat(georgia, "B")
 ## prepare data for the CAR model, using WCAR specification
 cars <- prep_car_data(A, style = "WCAR")
 ## provide list of data for the measurement error model
-ME <- prep_me_data(se = data.frame(ICE = georgia$ICE.se),
+ME <- prep_me_data(se = data.frame(college = georgia$college.se),
                    car_parts = cars)
 ## sample from the prior probability model only, including the ME model
-fit <- stan_glm(log(rate.male) ~ ICE,
+fit <- stan_glm(log(rate.male) ~ college,
                 ME = ME,
                 data = georgia, 
                 prior_only = TRUE,
-                iter = 800, # for speed only
+                iter = 1e3, # for speed only
                 chains = 2, # for speed only
                 refresh = 0 # silence some printing
                 )
 
 ## see ME diagnostics
-me_diag(fit, "ICE", georgia)
+me_diag(fit, "college", georgia)
 ## see index values for the largest (absolute) delta values
  ## (differences between raw estimate and the posterior mean)
-me_diag(fit, "ICE", georgia, index = 3)
+me_diag(fit, "college", georgia, index = 3)
 }
 }
 \seealso{

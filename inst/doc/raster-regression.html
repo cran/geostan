@@ -383,7 +383,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>grid &lt;-<span class="st"> </span><span class="kw">st_make_grid</span>(sfc, <span class="dt">cellsize =</span> <span class="dv">1</span>, <span class="dt">square =</span> <span class="ot">TRUE</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>grid &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(grid)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>W &lt;-<span class="st"> </span><span class="kw">shape2mat</span>(grid, <span class="dt">style =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">queen =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
-<pre><code>## The &#39;queen&#39; argument is deprecated. Use &#39;method&#39; instead.</code></pre>
+<pre><code>## Warning in shape2mat(grid, style = &quot;W&quot;, queen = FALSE): The &#39;queen&#39; argument is
+## deprecated. Use &#39;method&#39; instead.</code></pre>
 <pre><code>## Contiguity condition: rook</code></pre>
 <pre><code>## Number of neighbors per unit, summary:</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -407,7 +408,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>The <code>prep_sar_data2</code> and <code>prep_car_data2</code> functions are designed for raster layers. As input, they require the dimensions of the grid (number of rows and number of columns). The eigenvalues are produced very quickly using Equation 5 from <span class="citation">Griffith (<a href="#ref-griffith_2000" role="doc-biblioref">2000</a>)</span>. The methods have certain restrictions. First, this is only applicable to raster layers—regularly spaced, rectangular grids of observations. Second, to define which observations are adjacent to one another, the “rook” criteria is used (spatially, only observations that share an edge are defined as neighbors to one another). Third, the spatial adjacency matrix will be row-standardized. This is standard (and required) for SAR models, and it corresponds to the “WCAR” specification of the CAR model <span class="citation">(see Donegan <a href="#ref-donegan_2022" role="doc-biblioref">2022</a>)</span>.</p>
 <p>The following code will fit a SAR model to our <code>grid</code> data, and is suitable for much larger raster layers:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a>sar_list &lt;-<span class="st"> </span><span class="kw">prep_sar_data2</span>(<span class="dt">row =</span> row, <span class="dt">col =</span> col)</span></code></pre></div>
-<pre><code>## Range of permissible rho values:  -1 1</code></pre>
+<pre><code>## Range of permissible rho values: -1, 1</code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">stan_sar</span>(y <span class="op">~</span><span class="st"> </span>z, </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>      <span class="dt">data =</span> grid,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>          <span class="dt">centerx =</span> <span class="ot">TRUE</span>,</span>
@@ -440,8 +441,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 1).
 ## Chain 1: 
-## Chain 1: Gradient evaluation took 0.002172 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 21.72 seconds.
+## Chain 1: Gradient evaluation took 0.001509 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 15.09 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1: 
 ## Chain 1: 
@@ -449,15 +450,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 1: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 1: 
-## Chain 1:  Elapsed Time: 8.296 seconds (Warm-up)
-## Chain 1:                1.976 seconds (Sampling)
-## Chain 1:                10.272 seconds (Total)
+## Chain 1:  Elapsed Time: 8.866 seconds (Warm-up)
+## Chain 1:                2.107 seconds (Sampling)
+## Chain 1:                10.973 seconds (Total)
 ## Chain 1: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 2).
 ## Chain 2: 
-## Chain 2: Gradient evaluation took 0.001335 seconds
-## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 13.35 seconds.
+## Chain 2: Gradient evaluation took 0.001396 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 13.96 seconds.
 ## Chain 2: Adjust your expectations accordingly!
 ## Chain 2: 
 ## Chain 2: 
@@ -465,15 +466,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 2: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 2: 
-## Chain 2:  Elapsed Time: 3.717 seconds (Warm-up)
-## Chain 2:                2.014 seconds (Sampling)
-## Chain 2:                5.731 seconds (Total)
+## Chain 2:  Elapsed Time: 4.072 seconds (Warm-up)
+## Chain 2:                2.281 seconds (Sampling)
+## Chain 2:                6.353 seconds (Total)
 ## Chain 2: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 3).
 ## Chain 3: 
-## Chain 3: Gradient evaluation took 0.001263 seconds
-## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 12.63 seconds.
+## Chain 3: Gradient evaluation took 0.001196 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 11.96 seconds.
 ## Chain 3: Adjust your expectations accordingly!
 ## Chain 3: 
 ## Chain 3: 
@@ -481,15 +482,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 3: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 3: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 3: 
-## Chain 3:  Elapsed Time: 3.536 seconds (Warm-up)
-## Chain 3:                1.724 seconds (Sampling)
-## Chain 3:                5.26 seconds (Total)
+## Chain 3:  Elapsed Time: 4.39 seconds (Warm-up)
+## Chain 3:                2.186 seconds (Sampling)
+## Chain 3:                6.576 seconds (Total)
 ## Chain 3: 
 ## 
 ## SAMPLING FOR MODEL &#39;foundation&#39; NOW (CHAIN 4).
 ## Chain 4: 
-## Chain 4: Gradient evaluation took 0.001219 seconds
-## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 12.19 seconds.
+## Chain 4: Gradient evaluation took 0.00139 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 13.9 seconds.
 ## Chain 4: Adjust your expectations accordingly!
 ## Chain 4: 
 ## Chain 4: 
@@ -497,9 +498,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## Chain 4: Iteration: 251 / 500 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 500 / 500 [100%]  (Sampling)
 ## Chain 4: 
-## Chain 4:  Elapsed Time: 3.542 seconds (Warm-up)
-## Chain 4:                1.695 seconds (Sampling)
-## Chain 4:                5.237 seconds (Total)
+## Chain 4:  Elapsed Time: 3.999 seconds (Warm-up)
+## Chain 4:                2.071 seconds (Sampling)
+## Chain 4:                6.07 seconds (Total)
 ## Chain 4:</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="kw">print</span>(fit)      </span></code></pre></div>
 <pre><code>## Spatial Model Results 
@@ -520,7 +521,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## sar_rho    0.874   0.000 0.015  0.844  0.862  0.874  0.886  0.902   924 1.004
 ## sar_scale  0.312   0.000 0.006  0.299  0.306  0.311  0.317  0.324  1026 1.001
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri May 10 16:55:03 2024.
+## Samples were drawn using NUTS(diag_e) at Sun Jun  2 15:27:30 2024.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>

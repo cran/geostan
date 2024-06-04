@@ -24,6 +24,9 @@
 
 \item{fill}{fill color for histograms and density plots.}
 }
+\value{
+The print methods writes text to the console to summarize model results. The plot method resturns a \code{ggplot} (from \code{rstan::plot} for stanfit objects).
+}
 \description{
 Print a summary of model results to the R console, or plot posterior distributions of model parameters.
 }

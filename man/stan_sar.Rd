@@ -38,6 +38,7 @@ stan_sar(
   slim = FALSE,
   drop = NULL,
   control = NULL,
+  quiet = FALSE,
   ...
 )
 }
@@ -109,6 +110,8 @@ With the SAR model, any \code{alpha_re} term should be at a \emph{different} lev
 Using \code{drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. Note that if \code{slim = TRUE}, then \code{drop} will be ignored---so only use one or the other.}
 
 \item{control}{A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details.}
+
+\item{quiet}{Controls (most) automatic printing to the console. By default, any prior distributions that have not been assigned by the user are printed to the console. If \code{quiet = TRUE}, these will not be printed. Using \code{quiet = TRUE} will also force \code{refresh = 0}.}
 
 \item{...}{Other arguments passed to \code{\link[rstan]{sampling}}.}
 }

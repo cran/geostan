@@ -451,7 +451,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##       1       1       1       1       1       1</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>cars &lt;-<span class="st"> </span><span class="kw">prep_car_data</span>(C)</span></code></pre></div>
-<pre><code>## Range of permissible rho values:  -1.661134 1</code></pre>
+<pre><code>## Range of permissible rho values: -1.661, 1</code></pre>
 <p>Now we use <code>prep_me_data</code> to combine these items. We are going to use the logit-transform, since we are working with rates:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a>ME_list &lt;-<span class="st"> </span><span class="kw">prep_me_data</span>(<span class="dt">se =</span> SE,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a>                        <span class="dt">car_parts =</span> cars,</span>
@@ -506,7 +506,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## car_rho    0.866   0.003 0.084  0.663  0.802  0.881  0.940  0.985   925 1.000
 ## car_scale  0.449   0.001 0.035  0.384  0.419  0.447  0.477  0.527   994 1.003
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri May 10 16:55:13 2024.
+## Samples were drawn using NUTS(diag_e) at Sun Jun  2 15:27:40 2024.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
@@ -570,7 +570,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## car_rho_x_true[1] 0.91       0 0.06 0.77 0.88 0.92 0.96  0.99  1292    1
 ## sigma_x_true[1]   0.48       0 0.04 0.42 0.46 0.48 0.50  0.56  1235    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Fri May 10 16:55:13 2024.
+## Samples were drawn using NUTS(diag_e) at Sun Jun  2 15:27:40 2024.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>

@@ -14,6 +14,9 @@ eigen_grid(row = 5, col = 5)
 
 \item{col}{Number of columns in the raster dataset}
 }
+\value{
+Returns the eigenvalues of the row-standardized spatial weights matrix (a numeric vector length \code{row * col}).
+}
 \description{
 Approximate eigenvalues for the row-standardized spatial connectivity matrix W of a regular tessellation, e.g., remotely sensed imagery.
 }

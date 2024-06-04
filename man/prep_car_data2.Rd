@@ -7,12 +7,17 @@
 Griffith, Daniel A. (2000). Eigenfunction properties and approximations of selected incidence matrices employed in spatial analyses. \emph{Linear Algebra and its Applications} 321 (1-3): 95-112. \doi{10.1016/S0024-3795(00)00031-8}.
 }
 \usage{
-prep_car_data2(row = 100, col = 100)
+prep_car_data2(row = 100, col = 100, quiet = FALSE)
 }
 \arguments{
 \item{row}{Number of rows in the raster}
 
 \item{col}{Number of columns in the raster}
+
+\item{quiet}{Controls printing behavior. By default, \code{quiet = FALSE} and the range of permissible values for the spatial dependence parameter is printed to the console.}
+}
+\value{
+A list containing all of the data elements required by the CAR model in \code{\link[geostan]{stan_car}}.
 }
 \description{
 Prepare a list of data required for the CAR model; this is for working with (large) raster data files only. For non-raster analysis, see \link[geostan]{prep_car_data}.

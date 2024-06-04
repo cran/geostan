@@ -18,7 +18,7 @@ A folder in your working directory with the shapefile; filepaths are printed to 
 Given a url to a shapefile in a compressed .zip file, download the file and unzip it into a folder in your working directory.
 }
 \examples{
-\dontrun{
+\donttest{
 library(sf)
 url <- "https://www2.census.gov/geo/tiger/GENZ2019/shp/cb_2019_us_state_20m.zip"
 folder <- tempdir()
