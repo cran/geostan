@@ -20,10 +20,10 @@ aple(x, w, digits = 3)
 the APLE estimate, a numeric value.
 }
 \description{
-The approximate-profile likelihood estimator for the spatial autocorrelation parameter from a simultaneous autoregressive (SAR) model (Li et al. 2007). Note, the \code{APLE} approximation is not reliable when the number of observations is large.
+The approximate-profile likelihood estimator for the spatial autocorrelation parameter from a simultaneous autoregressive (SAR) model (Li et al. 2007).
 }
 \details{
-The \code{APLE} is an estimate of the spatial autocorrelation parameter one would obtain from fitting an intercept-only SAR model.
+The \code{APLE} is an estimate of the spatial autocorrelation parameter one would obtain from fitting an intercept-only SAR model. Note, the \code{APLE} approximation is not reliable when the number of observations is large.
 }
 \examples{
 library(sf)

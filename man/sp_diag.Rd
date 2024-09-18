@@ -39,7 +39,7 @@ sp_diag(y, shape, ...)
 
 \item{shape}{An object of class \code{sf} or another spatial object coercible to \code{sf} with \code{sf::st_as_sf} such as \code{SpatialPolygonsDataFrame}.}
 
-\item{...}{Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}. For binomial and Poisson models, this includes the option to view the outcome variable as a rate (the default) rather than a count; for \code{\link[geostan]{stan_car}} models with auto-Gaussian likelihood (\verb{fit$family$family = "auto_gaussian"), the residuals will be detrended by default, but this can be changed using }detrend = FALSE`.}
+\item{...}{Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}.}
 
 \item{name}{The name to use on the plot labels; default to "y" or, if \code{y} is a \code{geostan_fit} object, to "Residuals".}
 
@@ -66,9 +66,7 @@ Visual diagnostics for areal data and model residuals
 \details{
 When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map.
 
-When provided with a fitted \code{geostan} model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions).
-
-When \code{y} is a fitted CAR or SAR model with \code{family = auto_gaussian()}, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default \code{trend = TRUE} and the call to \link[geostan]{residuals.geostan_fit} will use the default \code{detrend = TRUE}. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.)
+When provided with a fitted \code{geostan} model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), a Moran scatter plot for the model residuals, and a map of the mean posterior residuals (means of the marginal distributions). If if \code{mc_style = 'hist'}, the Moran scatter plot is replaced by a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals.
 }
 \examples{
 
@@ -81,7 +79,8 @@ sp_diag(georgia$college, georgia, binwidth = bin_fn)
 \donttest{
 fit <- stan_glm(log(rate.male) ~ log(income),
                 data = georgia,
-                chains = 2, iter = 800) # for speed only
+                centerx = TRUE,
+                chains = 1, iter = 1e3) # for speed only
 sp_diag(fit, georgia)
 }
 }

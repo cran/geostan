@@ -54,7 +54,6 @@
 #' \describe{
 #' \item{fitted}{The N-length vector of fitted values}
 #' \item{log_lambda_mu}{Linear predictor inside the CAR model (for Poisson and binomial models)}
-#' \item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 #' \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
 #' \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 #' }
@@ -178,8 +177,6 @@
 #' 
 #' Cressie, Noel and Wikle, Christopher (2011). *Statistics for Spatio-Temporal Data*. Wiley.
 #'
-#' Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. *Int. J. Env. Res. and Public Health* 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
-#'
 #' Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
 #' 
 #' Haining, Robert and Li, Guangquan (2020). *Modelling Spatial and Spatial-Temporal Data: A Bayesian Approach*. CRC Press.
@@ -263,7 +260,7 @@ stan_car <- function(formula,
     } else {
         C <- car_parts$C
         if (car_parts$WCAR == 0) {
-            message("Consider providing the matrix C explicitly using the C argument. The matrix C is used for calculating spatial-lag of X (SLX) terms and residual spatial autocorrelation. Since you did not provide C, the matrix is being taken from car_parts$C. Since you are not using the WCAR model, the C matrix may or may not be be suitable for these purposes.")
+            message("Since you did not provide C, calculation of residual SA and any spatial-lag of X terms will use the matrix found in car_parts$C.")
         }
     }
     tmpdf <- as.data.frame(data)
@@ -368,7 +365,7 @@ stan_car <- function(formula,
         W_w = as.array(W.list$w),
         W_v = as.array(W.list$v),
         W_u = as.array(W.list$u),
-        dw_nonzero = length(W.list$w),
+        nW_w = length(W.list$w),        
         dwx = dwx,
         wx_idx = wx_idx
     )
@@ -398,19 +395,21 @@ stan_car <- function(formula,
     standata <- append_priors(standata, priors_made)
     standata$car <- 1
     ## EMPTY PLACEHOLDERS
-    standata <- c(standata, empty_icar_data(n), empty_esf_data(n), empty_sar_data(n))    
+    empty_parts <- c(empty_icar_data(n), empty_esf_data(n), empty_sar_data(n))
+    empty_parts <- empty_parts[ which(!names(empty_parts) %in% names(standata)) ]
+    standata <- c(standata, empty_parts) 
     ## ME MODEL -------------
     me.list <- make_me_data(ME, xraw)
 
-    # remove ME-car parts: othwerise, they duplicate the car_parts argument
-    duplicates <- c("n", "nC", "nAx_w", "C", "Delta_inv", "log_det_Delta_inv", "Ax_w", "Ax_v", "Ax_u", "Cidx", "lambda", "WCAR")
+    # remove select ME-car parts: othwerise, they duplicate the car_parts argument
+    duplicates <- c("n", "nA_w", "C", "Delta_inv", "log_det_Delta_inv", "A_w", "A_v", "A_u", "lambda", "WCAR")
     me.list[which(names(me.list) %in% duplicates)] <- NULL
 
     # append me.list to standata
     standata <- c(standata, me.list)
         
     ## PARAMETERS TO KEEP, with CAR PARAMETERS [START] -------------            
-    pars <- c(pars, 'intercept', 'car_scale', 'car_rho', 'fitted', 'log_lik')
+    pars <- c(pars, 'intercept', 'car_scale', 'car_rho', 'fitted')
     if (family_int < 5) pars <- c(pars, 'log_lambda_mu') 
     if (!intercept_only) pars <- c(pars, 'beta')
     if (dwx) pars <- c(pars, 'gamma')
@@ -423,7 +422,7 @@ stan_car <- function(formula,
             pars <- c(pars, "nu_x_true")
         }
     }
-    if (slim == TRUE) drop <- c('fitted', 'log_lik', 'log_lambda_mu', 'alpha_re', 'x_true')
+    if (slim == TRUE) drop <- c('fitted', 'log_lambda_mu', 'alpha_re', 'x_true')
     pars <- drop_params(pars = pars, drop_list = drop)
     priors_made_slim <- priors_made[which(names(priors_made) %in% pars)]
     ## PARAMETERS TO KEEP, with CAR PARAMETERS [STOP] -------------
@@ -460,12 +459,20 @@ stan_car <- function(formula,
     } else {
         out$spatial <- data.frame(par = "phi", method = "CAR")
     }
-    if (any(pars == 'fitted')) {
-        out$C <- as(C, "sparseMatrix") 
+    out$C <- as(C, "sparseMatrix")
+    out$car_parts <- car_parts    
+    out$N <- length( y_index_list$y_obs_idx )
+    out$missing <- y_index_list    
+    out$diagnostic <- list()
+    if (any(pars == 'fitted')) {    
         R <- resid(out, summary = FALSE)
-        out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
-    }
-    out$N <- length( y_index_list$y_obs_idx )    
+        rmc <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
+        out$diagnostic$Residual_MC <- rmc
+    }    
+    if (any(pars == 'fitted')) {
+        out$diagnostic$WAIC <- as.numeric(waic(out)[1])
+    }    
+    
     return (out)
 }
 

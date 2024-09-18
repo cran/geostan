@@ -12,8 +12,6 @@ Donegan, Connor and Morris, Mitzi (2021). Flexible functions for ICAR, BYM, and 
 
 Donegan, Connor (2021b). Building spatial conditional autoregressive (CAR) models in the Stan programming language. \emph{OSF Preprints}. \doi{10.31219/osf.io/3ey65}.
 
-Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. \emph{Int. J. Env. Res. and Public Health} 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
-
 Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue (2018). A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs. \emph{Spatial and Spatio-Temporal Epidemiology}, 26: 25–34.
 
 Morris, Mitzi (2017). Spatial Models in Stan: Intrinsic Auto-Regressive Models for Areal Data. \url{https://mc-stan.org/users/documentation/case-studies/icar_stan.html}
@@ -109,7 +107,6 @@ Before using this term, read the \code{Details} section and the \code{type} argu
 \item{drop}{Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from ICAR models:
 \describe{
 \item{fitted}{The N-length vector of fitted values}
-\item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
 \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 \item{phi}{The N-length vector of spatially-autocorrelated parameters (with the ICAR prior).}
@@ -283,7 +280,7 @@ ggplot(sentencing) +
    low = "navy",
    high = "darkred"
   ) +
-  labs(title = "Log-standardized sentencing ratios",
+  labs(title = "Log-standardized incidence ratios",
        subtitle = "log( Fitted/Expected), base 2") +
   theme_void() +
   theme(

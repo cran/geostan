@@ -33,17 +33,17 @@ A local indicator of spatial association based on the Geary Ratio (Geary's C) fo
 \details{
 Local Geary's C is found in the numerator of the Geary Ratio (GR). For the \eqn{i^{th}} observation, the local Geary statistic is
 \deqn{C_i = \sum_j w_{i,j} * (x_i - x_j)^2}
-Hence, local Geary values will be largest for those observations that are most unlike their neighboring values. If a binary connectivity matrix is used (rather than row-standardized), then having many neighbors will also increase the value of the local Geary statistic. For most purposes, the row-standardized spatial weights matrix may be the more appropriate choice.
+Hence, local Geary values will be largest for those observations that are most unlike their neighboring values. If a binary connectivity matrix is used (rather than row-standardized), then having many neighbors can also increase the value of the local Geary statistic. For most purposes, the row-standardized spatial weights matrix may be the more appropriate choice.
 }
 \examples{
 library(ggplot2)
 data(georgia)
 x <- log(georgia$income)
 w <- shape2mat(georgia, "W")
-lisd <- lg(x, w)
-hist(lisd)
+lisa <- lg(x, w)
+hist(lisa)
 ggplot(georgia) +
-  geom_sf(aes(fill = lisd)) +
+  geom_sf(aes(fill = lisa)) +
 scale_fill_gradient(high = "navy",  
                    low = "white") 
  ## or try: scale_fill_viridis() 

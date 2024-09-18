@@ -17,7 +17,7 @@ me_diag(
   size = 0.25,
   index = 0,
   style = c("W", "B"),
-  w = shape2mat(shape, match.arg(style)),
+  w = shape2mat(shape, match.arg(style), quiet = TRUE),
   binwidth = function(x) 0.5 * sd(x)
 )
 }

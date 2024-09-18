@@ -44,7 +44,7 @@ n_eff <- function(n, rho) {
 #'
 #' @md
 #' 
-#' @description The approximate-profile likelihood estimator for the spatial autocorrelation parameter from a simultaneous autoregressive (SAR) model (Li et al. 2007). Note, the `APLE` approximation is not reliable when the number of observations is large.
+#' @description The approximate-profile likelihood estimator for the spatial autocorrelation parameter from a simultaneous autoregressive (SAR) model (Li et al. 2007). 
 #' 
 #' @param x Numeric vector of values, length `n`. This will be standardized internally with \code{scale(x)}.
 #' @param w An `n x n` row-standardized spatial connectivity matrix. See \link[geostan]{shape2mat}.
@@ -54,7 +54,7 @@ n_eff <- function(n, rho) {
 #'
 #' @seealso \link[geostan]{mc}, \link[geostan]{moran_plot}, \link[geostan]{lisa}, \link[geostan]{sim_sar}
 #'
-#' @details The \code{APLE} is an estimate of the spatial autocorrelation parameter one would obtain from fitting an intercept-only SAR model.
+#' @details The \code{APLE} is an estimate of the spatial autocorrelation parameter one would obtain from fitting an intercept-only SAR model. Note, the `APLE` approximation is not reliable when the number of observations is large.
 #'
 #' @source
 #'
@@ -100,7 +100,7 @@ aple <- function(x, w, digits = 3) {
 #'
 #' If \code{m = 1} a vector of the same length as \code{mu}, otherwise an \code{m x length(mu)} matrix with one sample in each row.
 #'
-#' @details Calls \code{MASS::mvrnorm} internally to draw from the multivariate normal distribution. The covariance matrix is specified following the simultaneous autoregressive (SAR) model. 
+#' @details Calls \code{MASS::mvrnorm} internally to draw from the multivariate normal distribution. The covariance matrix is specified following the simultaneous autoregressive (SAR, aka spatial error) model. 
 #'
 #' @seealso \code{\link[geostan]{aple}}, \code{\link[geostan]{mc}}, \code{\link[geostan]{moran_plot}}, \code{\link[geostan]{lisa}}, \code{\link[geostan]{shape2mat}}
 #' 
@@ -136,7 +136,7 @@ sim_sar <- function(m = 1, mu = rep(0, nrow(w)), w, rho, sigma = 1, ...) {
 #' 
 #' @param shape An object of class \code{sf} or another spatial object coercible to \code{sf} with \code{sf::st_as_sf} such as \code{SpatialPolygonsDataFrame}.
 #'
-#' @param ... Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}. For binomial and Poisson models, this includes the option to view the outcome variable as a rate (the default) rather than a count; for \code{\link[geostan]{stan_car}} models with auto-Gaussian likelihood (`fit$family$family = "auto_gaussian"), the residuals will be detrended by default, but this can be changed using `detrend = FALSE`.
+#' @param ... Additional arguments passed to \code{\link[geostan]{residuals.geostan_fit}}. 
 #' 
 #' @return
 #'
@@ -146,9 +146,7 @@ sim_sar <- function(m = 1, mu = rep(0, nrow(w)), w, rho, sigma = 1, ...) {
 #' 
 #' When provided with a numeric vector, this function plots a histogram, Moran scatter plot, and map.
 #'
-#' When provided with a fitted `geostan` model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), either a Moran scatter plot of residuals or a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals, and a map of the mean posterior residuals (means of the marginal distributions). 
-#'
-#' When `y` is a fitted CAR or SAR model with `family = auto_gaussian()`, the fitted values will include implicit spatial trend term, i.e. the call to \link[geostan]{fitted.geostan_fit} will use the default `trend = TRUE` and the call to \link[geostan]{residuals.geostan_fit} will use the default `detrend = TRUE`. (See \link[geostan]{stan_car} or \link[geostan]{stan_sar} for additional details on their implicit spatial trend components.) 
+#' When provided with a fitted `geostan` model, the function returns a point-interval plot of observed values against fitted values (mean and 95 percent credible interval), a Moran scatter plot for the model residuals, and a map of the mean posterior residuals (means of the marginal distributions). If if `mc_style = 'hist'`, the Moran scatter plot is replaced by a histogram of Moran coefficient values calculated from the joint posterior distribution of the residuals.
 #'
 #' @seealso \code{\link[geostan]{me_diag}}, \code{\link[geostan]{mc}}, \code{\link[geostan]{moran_plot}}, \code{\link[geostan]{aple}}
 #' 
@@ -164,7 +162,8 @@ sim_sar <- function(m = 1, mu = rep(0, nrow(w)), w, rho, sigma = 1, ...) {
 #' \donttest{
 #' fit <- stan_glm(log(rate.male) ~ log(income),
 #'                 data = georgia,
-#'                 chains = 2, iter = 800) # for speed only
+#'                 centerx = TRUE,
+#'                 chains = 1, iter = 1e3) # for speed only
 #' sp_diag(fit, georgia)
 #' }
 #' @importFrom stats sd
@@ -403,7 +402,7 @@ me_diag <- function(fit,
                     size = 0.25,
                     index = 0,
                     style = c("W", "B"),
-                    w = shape2mat(shape, match.arg(style)),
+                    w = shape2mat(shape, match.arg(style), quiet = TRUE),
                     binwidth = function(x) 0.5 * sd(x)
                     ) {
     stopifnot(length(varname) == 1)    
@@ -599,7 +598,7 @@ make_EV <- function(C, nsa = FALSE, threshold = 0.2, values = FALSE) {
 #'
 #' Haining and Li (Ch. 4) provide a helpful discussion of spatial connectivity matrices (Ch. 4).
 #'
-#' The space-time connectivity matrix can be used for eigenvector space-time filtering (\code{\link[geostan]{stan_esf}}. The `lagged' space-time structure connects each observation to its own past (one period lagged) value and the past value of its neighbors. The `contemporaneous' specification links each observation to its neighbors and to its own in situ past (one period lagged) value (Griffith 2012, p. 23).
+#' The space-time connectivity matrix can be used for eigenvector space-time filtering (\code{\link[geostan]{stan_esf}}. The 'lagged' space-time structure connects each observation to its own past (one period lagged) value and the past value of its neighbors. The 'contemporaneous' specification links each observation to its neighbors and to its own in situ past (one period lagged) value (Griffith 2012, p. 23).
 #' 
 #' @source
 #'
@@ -762,37 +761,6 @@ auto_gaussian <- function(type) {
     return(family)
 }
 
-#' Widely Applicable Information Criteria (WAIC)
-#'
-#' @description Widely Application Information Criteria (WAIC) for model comparison
-#' 
-#' @param fit An \code{geostan_fit} object or any Stan model with a parameter named "log_lik", the pointwise log likelihood of the observations.
-#' @param pointwise Logical (defaults to `FALSE`), should a vector of values for each observation be returned? 
-#' @param digits Round results to this many digits.
-#' 
-#' @return A vector of length 3 with \code{WAIC}, a rough measure of the effective number of parameters estimated by the model \code{Eff_pars}, and log predictive density \code{Lpd}. If \code{pointwise = TRUE}, results are returned in a \code{data.frame}.
-#'
-#' @examples
-#' data(georgia)
-#' fit <- stan_glm(log(rate.male) ~ 1, data = georgia,
-#'                 chains = 2, iter = 800) # for speed only
-#' waic(fit)
-#' @source
-#'
-#' Watanabe, S. (2010). Asymptotic equivalence of Bayes cross validation and widely application information criterion in singular learning theory. Journal of Machine Learning Research 11, 3571-3594.
-#' 
-#' @export
-waic <- function(fit, pointwise = FALSE, digits = 2) {
-  ll <- as.matrix(fit, pars = "log_lik")
-  nsamples <- nrow(ll)
-  lpd <- apply(ll, 2, log_sum_exp) - log(nsamples)
-  p_waic <- apply(ll, 2, var)
-  waic <- -2 * (lpd - p_waic)
-  if(pointwise) return(data.frame(waic = waic, eff_pars = p_waic, lpd = lpd))
-  res <- c(WAIC = sum(waic), Eff_pars = sum(p_waic), Lpd = sum(lpd))
-  return(round(res, digits))
-}
-
 #' Count neighbors in a connectivity matrix
 #'
 #' @param C A connectivity matrix
@@ -936,7 +904,7 @@ se_log <- function(x, se, method = c("mc", "delta"), nsim = 5e3, bounds = c(0, I
 #' @param C Connectivity matrix
 #' @param scale_factor Optional vector of scale factors for each connected portion of the graph structure. If not provided by the user it will be fixed to a vector of ones. 
 #' 
-#' @importFrom spdep poly2nb n.comp.nb
+#' @importFrom spdep poly2nb n.comp.nb graph2nb
 #' 
 #' @return list of data to add to Stan data list:
 #' 
@@ -981,9 +949,13 @@ se_log <- function(x, se, method = c("mc", "delta"), nsim = 5e3, bounds = c(0, I
 prep_icar_data <- function(C, scale_factor = NULL) {
   n <- nrow(C)
   E <- edges(C, unique_pairs_only = TRUE)
-  G <- list(np = nrow(C), from = E$node1, to = E$node2, nedges = nrow(E))
+  G <- list(np = nrow(C), from = E$node1, to = E$node2, nedges = nrow(E))  
   class(G) <- "Graph"
-  nb2 <- spdep::n.comp.nb(spdep::graph2nb(G))
+  G1 <- spdep::graph2nb(G)
+  nb2 <- attr(G1, "ncomp")
+  if (is.null(nb2)) {
+      nb2 <- spdep::n.comp.nb(G1)
+  }     
   k = nb2$nc
   if (!inherits(scale_factor, "NULL")) {
       if (length(scale_factor) != k) stop("scale_factor is of wrong length. Must have one value per fully connected graph component. See the documentation for `geostan::stan_icar` to learn how to create the scale_factor.")
@@ -1033,8 +1005,6 @@ prep_icar_data <- function(C, scale_factor = NULL) {
 #' @param gamma For `style = DCAR`, distances will be offset by `gamma` before raising to the `-k`th power.
 #' 
 #' @param lambda If TRUE, return eigenvalues required for calculating the log determinant of the precision matrix and for determining the range of permissible values of rho. These will also be printed with a message if lambda = TRUE.
-#' 
-#' @param cmat If `cmat = TRUE`, return the full matrix C (in sparse matrix format).
 #'
 #' @param stan_fn Two computational methods are available for CAR models using \code{\link[geostan]{stan_car}}: \code{car\_normal\_lpdf} and \code{wcar\_normal\_lpdf}. For WCAR models, either method will work but \code{wcar\_normal\_lpdf} is faster. To force use \code{car\_normal\_lpdf} when `style = 'WCAR'`, provide `stan_fn = "car_normal_lpdf"`. 
 #'
@@ -1054,8 +1024,6 @@ prep_icar_data <- function(C, scale_factor = NULL) {
 #' The DCAR specification is inverse distance-based, and requires the user provide a (sparse) distance matrix instead of a binary adjacency matrix. (For `A`, provide a symmetric matrix of distances, not inverse distances!) Internally, non-zero elements of `A` will be converted to: `d_{ij} = (a_{ij} + gamma)^(-k)` (Cliff and Ord 1981, p. 144; Donegan 2021). Default values are `k=1` and `gamma=0`. Following Cressie (2015), these values will be scaled (divided) by their maximum value. For further details, see the DCAR_A specification in Donegan (2021).
 #'
 #' For inverse-distance weighting schemes, see Cliff and Ord (1981); for distance-based CAR specifications, see Cressie (2015 \[1993\]), Haining and Li (2020), and Donegan (2021).
-#'
-#' When using \code{\link[geostan]{stan_car}}, always use `cmat = TRUE` (the default).
 #'
 #' Details on CAR model specifications can be found in Table 1 of Donegan (2021).
 #'
@@ -1104,7 +1072,6 @@ prep_car_data <- function(A,
                           k = 1,
                           gamma = 0,
                           lambda = TRUE,
-                          cmat = TRUE,
                           stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf"),
                           quiet = FALSE
                           ) {
@@ -1146,18 +1113,14 @@ prep_car_data <- function(A,
     if (stan_fn == "wcar_normal_lpdf") {       
         stopifnot( Matrix::isSymmetric(C %*% Matrix::Diagonal(x = M_diag), check.attributes = FALSE) )
         car.dl <- rstan::extract_sparse_parts(A)
-        names(car.dl) <- paste0("Ax_", names(car.dl))
-        car.dl$nAx_w <- length(car.dl$Ax_w)
-        car.dl$Cidx <- array(0, dim = 1)
-        car.dl$nC <- 1
+        names(car.dl) <- paste0("A_", names(car.dl))
+        car.dl$nA_w <- length(car.dl$A_w)
         car.dl$WCAR <- 1            
     } else {
         stopifnot( Matrix::isSymmetric(C %*% Matrix::Diagonal(x = M_diag), check.attributes = FALSE) )        
-        car.dl <- rstan::extract_sparse_parts(Matrix::Diagonal(n) - C)
-        names(car.dl) <- paste0("Ax_", names(car.dl))
-        car.dl$nAx_w <- length(car.dl$Ax_w)        
-        car.dl$Cidx <- which( car.dl$Ax_w != 1 )
-        car.dl$nC <- length(car.dl$Cidx)
+        car.dl <- rstan::extract_sparse_parts(C)
+        names(car.dl) <- paste0("A_", names(car.dl))
+        car.dl$nA_w <- length(car.dl$A_w)        
         car.dl$WCAR <- 0
     }
     car.dl$Delta_inv <- 1 / M_diag
@@ -1176,7 +1139,7 @@ prep_car_data <- function(A,
         car.dl$lambda <- lambda
         car.dl$rho_lims <- rho_lims
     }
-    if (cmat) car.dl$C <- C
+    car.dl$C <- C
     return (car.dl)
 }
 
@@ -1223,11 +1186,9 @@ prep_car_data <- function(A,
 prep_sar_data <- function(W, quiet = FALSE) {
     stopifnot(inherits(W, "matrix") | inherits(W, "Matrix"))
     N <- nrow(W)
-    sar.dl <- rstan::extract_sparse_parts(Matrix::Diagonal(N) - W)
-    names(sar.dl) <- paste0("ImW_", names(sar.dl))
-    sar.dl$nImW_w <- length(sar.dl$ImW_w)
-    sar.dl$Widx <- which(sar.dl$ImW_w != 1)
-    sar.dl$nW <- length(sar.dl$Widx)
+    sar.dl <- rstan::extract_sparse_parts(W)
+    names(sar.dl) <- paste0("W_", names(sar.dl))
+    sar.dl$nW_w <- length(sar.dl$W_w)
     sar.dl$eigenvalues_w <- sort(as.numeric( eigen(W)$values ))
     sar.dl$n <- N
     sar.dl$W <- W

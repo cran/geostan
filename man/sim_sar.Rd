@@ -26,7 +26,7 @@ If \code{m = 1} a vector of the same length as \code{mu}, otherwise an \code{m x
 Given a spatial weights matrix and degree of autocorrelation, returns autocorrelated data.
 }
 \details{
-Calls \code{MASS::mvrnorm} internally to draw from the multivariate normal distribution. The covariance matrix is specified following the simultaneous autoregressive (SAR) model.
+Calls \code{MASS::mvrnorm} internally to draw from the multivariate normal distribution. The covariance matrix is specified following the simultaneous autoregressive (SAR, aka spatial error) model.
 }
 \examples{
 data(georgia)

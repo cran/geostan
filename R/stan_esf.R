@@ -56,7 +56,6 @@
 #' @param drop Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from ESF models:
 #' \describe{
 #' \item{fitted}{The N-length vector of fitted values}
-#' \item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 #' \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
 #' \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 #' \item{esf}{The N-length eigenvector spatial filter.}
@@ -131,8 +130,6 @@
 #' 
 #' Donegan, C., Y. Chun and A. E. Hughes (2020). Bayesian estimation of spatial filters with Moran’s Eigenvectors and hierarchical shrinkage priors. *Spatial Statistics*. \doi{10.1016/j.spasta.2020.100450} (open access: \doi{10.31219/osf.io/fah3z}).
 #'
-#' Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
-#'
 #' Griffith, Daniel A., and P. R. Peres-Neto (2006). Spatial modeling in ecology: the flexibility of eigenfunction spatial analyses. *Ecology* 87(10), 2603-2613.
 #' 
 #' Griffith, D., and Y. Chun (2014). Spatial autocorrelation and spatial filtering, Handbook of Regional Science. Fischer, MM and Nijkamp, P. eds.
@@ -145,10 +142,9 @@
 #' \donttest{
 #' data(sentencing)
 #' # spatial weights matrix with binary coding scheme
-#' C <- shape2mat(sentencing, style = "B")
+#' C <- shape2mat(sentencing, style = "B", quiet = TRUE)
 #'
-#' # log-expected number of sentences
-#' ## expected counts are based on county racial composition and mean sentencing rates
+#' # expected number of sentences
 #' log_e <- log(sentencing$expected_sents)
 #'
 #' # fit spatial Poisson model with ESF + unstructured 'random effects'
@@ -156,21 +152,18 @@
 #'                    re = ~ name,
 #'                    family = poisson(),
 #'                    data = sentencing,
-#'                    C = C,
+#'                    C = C, 
 #'                    chains = 2, iter = 800) # for speed only
 #' 
 #' # spatial diagnostics 
 #' sp_diag(fit.esf, sentencing)
-#' plot(fit.esf)
 #' 
 #' # plot marginal posterior distributions of beta_ev (eigenvector coefficients)
 #' plot(fit.esf, pars = "beta_ev")
 #'
-#' # plot the marginal posterior distributions of the spatial filter 
-#' plot(fit.esf, pars = "esf")
-#'
-#' # calculate log-standardized incidence ratios 
-#  # (observed/exected counts)
+#' # calculate log-standardized incidence ratios (SIR)
+#' #  # SIR = observed/exected number of cases
+#' # in this case, prison sentences
 #' library(ggplot2)
 #' library(sf)
 #' f <- fitted(fit.esf, rates = FALSE)$mean
@@ -319,7 +312,7 @@ stan_esf <- function(formula,
         W_w = as.array(W.list$w),
         W_v = as.array(W.list$v),
         W_u = as.array(W.list$u),
-        dw_nonzero = length(W.list$w),
+        nW_w = length(W.list$w),        
         dwx = dwx,
         wx_idx = wx_idx
     )
@@ -352,13 +345,15 @@ stan_esf <- function(formula,
     )
     standata <- c(standata, esf_dl)
     ## PRIORS with RHS-ESF [END] -------------
-    ## EMPTY PLACEHOLDERS
-    standata <- c(standata, empty_icar_data(n), empty_car_data(), empty_sar_data(n))
+    ## EMPTY PLACEHOLDERS [drop duplicated SLX/SAR matrix parts]
+    empty_parts <- c(empty_icar_data(n), empty_car_data(), empty_sar_data(n))
+    empty_parts <- empty_parts[ which(!names(empty_parts) %in% names(standata)) ]
+    standata <- c(standata, empty_parts)    
     ## ME MODEL STUFF -------------  
     me.list <- make_me_data(ME, xraw)
     standata <- c(standata, me.list)
     ## PARAMETERS TO KEEP -------------          
-    pars <- c(pars, 'intercept', 'esf', 'beta_ev', 'log_lik', 'fitted')
+    pars <- c(pars, 'intercept', 'esf', 'beta_ev', 'fitted')
     if (!intercept_only) pars <- c(pars, 'beta')
     if (dwx) pars <- c(pars, 'gamma')
     if (family$family %in% c("gaussian", "student_t")) pars <- c(pars, 'sigma')
@@ -372,7 +367,7 @@ stan_esf <- function(formula,
             pars <- c(pars, "nu_x_true")
         }
     }
-    if (slim == TRUE) drop <- c('fitted', 'log_lik', 'alpha_re', 'x_true', 'esf', 'beta_ev')
+    if (slim == TRUE) drop <- c('fitted', 'alpha_re', 'x_true', 'esf', 'beta_ev')
     pars <- drop_params(pars = pars, drop_list = drop)
     priors_made_slim <- priors_made[which(names(priors_made) %in% c(pars, "beta_ev"))]
     if (me.list$has_me) priors_made_slim$ME_model <- ME$prior
@@ -404,11 +399,19 @@ stan_esf <- function(formula,
     out$ME <- list(has_me = me.list$has_me, spatial_me = me.list$spatial_me)
     if (out$ME$has_me) out$ME <- c(out$ME, ME)
     out$spatial <- data.frame(par = "esf", method = "ESF")
-    if (!missing(C) && any(pars == 'fitted')) {    
+    out$N <- length( y_index_list$y_obs_idx )
+    out$missing <- y_index_list
+    out$diagnostic <- list()    
+    if (!missing(C) && any(pars == 'fitted')) {
+        C <- as(C, "sparseMatrix")        
         R <- resid(out, summary = FALSE)
-        out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
-    }
-    out$N <- length( y_index_list$y_obs_idx )    
+        rmc <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
+        out$diagnostic$Residual_MC <- rmc
+    }    
+    if (any(pars == 'fitted')) {
+        out$diagnostic$WAIC <- as.numeric(waic(out)[1])
+    }                                                        
+        
   return (out)
 }
 

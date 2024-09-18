@@ -23,7 +23,6 @@ prep_car_data(
   k = 1,
   gamma = 0,
   lambda = TRUE,
-  cmat = TRUE,
   stan_fn = ifelse(style == "WCAR", "wcar_normal_lpdf", "car_normal_lpdf"),
   quiet = FALSE
 )
@@ -38,8 +37,6 @@ prep_car_data(
 \item{gamma}{For \code{style = DCAR}, distances will be offset by \code{gamma} before raising to the \code{-k}th power.}
 
 \item{lambda}{If TRUE, return eigenvalues required for calculating the log determinant of the precision matrix and for determining the range of permissible values of rho. These will also be printed with a message if lambda = TRUE.}
-
-\item{cmat}{If \code{cmat = TRUE}, return the full matrix C (in sparse matrix format).}
 
 \item{stan_fn}{Two computational methods are available for CAR models using \code{\link[geostan]{stan_car}}: \code{car\_normal\_lpdf} and \code{wcar\_normal\_lpdf}. For WCAR models, either method will work but \code{wcar\_normal\_lpdf} is faster. To force use \code{car\_normal\_lpdf} when \code{style = 'WCAR'}, provide \code{stan_fn = "car_normal_lpdf"}.}
 
@@ -66,8 +63,6 @@ The ACAR specification is from Cressie, Perrin and Thomas-Agnon (2005); also see
 The DCAR specification is inverse distance-based, and requires the user provide a (sparse) distance matrix instead of a binary adjacency matrix. (For \code{A}, provide a symmetric matrix of distances, not inverse distances!) Internally, non-zero elements of \code{A} will be converted to: \verb{d_\{ij\} = (a_\{ij\} + gamma)^(-k)} (Cliff and Ord 1981, p. 144; Donegan 2021). Default values are \code{k=1} and \code{gamma=0}. Following Cressie (2015), these values will be scaled (divided) by their maximum value. For further details, see the DCAR_A specification in Donegan (2021).
 
 For inverse-distance weighting schemes, see Cliff and Ord (1981); for distance-based CAR specifications, see Cressie (2015 [1993]), Haining and Li (2020), and Donegan (2021).
-
-When using \code{\link[geostan]{stan_car}}, always use \code{cmat = TRUE} (the default).
 
 Details on CAR model specifications can be found in Table 1 of Donegan (2021).
 }

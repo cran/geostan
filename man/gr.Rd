@@ -42,11 +42,13 @@ positive autocorrelation, the GR approaches zero. Zero spatial
 autocorrelation is represented by a GR of 1. Negative
 autocorrelation pushes the GR above 1, towards 2.  \deqn{GR =
 \frac{n-1}{2K} \frac{M}{D}} \deqn{M = \sum_i \sum_j w_{i,j} (x_i -
-x_j)^2 } \deqn{D = \sum_i (x_i - \overline{x})^2 } Observations
-with no neighbors are removed before calculating the GR. The
-alternative is for those observations to contribute zero to the
+x_j)^2 } \deqn{D = \sum_i (x_i - \overline{x})^2 }
+
+Observations
+with no neighbors are removed before calculating the GR. (The
+alternative would be for those observations to contribute zero to the
 numerator---but zero is not a neutral value, it represents strong
-positive autocorrelation.
+positive autocorrelation.)
 }
 \examples{
 data(georgia)

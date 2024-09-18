@@ -11,6 +11,7 @@ library(geostan)
 data(georgia)
 
 ## -----------------------------------------------------------------------------
+data(georgia)
 georgia$insurance <- georgia$insurance / 100
 georgia$insurance.se <- georgia$insurance.se / 100
 
@@ -18,7 +19,7 @@ georgia$insurance.se <- georgia$insurance.se / 100
 SE <- data.frame(insurance = georgia$insurance.se)
 
 ## -----------------------------------------------------------------------------
-C <- shape2mat(georgia, "B")
+C <- shape2mat(georgia, "B", quiet = TRUE)
 cars <- prep_car_data(C)
 
 ## -----------------------------------------------------------------------------
@@ -42,16 +43,16 @@ fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
                 data = georgia, 
                 car_parts = cars,
                 iter = 650, # for demo speed 
-                refresh = 0, # minimizes printing
+                quiet = TRUE, 
                 )
 
 print(fit)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
+#  fit2 <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)) + insurance,
 #                  centerx = TRUE,
 #                  ME = ME_list,
-#  		slim = TRUE,
+#  		drop = 'x_true',
 #                  family = poisson(),
 #                  data = georgia,
 #                  car_parts = cars
@@ -78,16 +79,23 @@ x.mu <- apply(x, 2, mean)
 head(x.mu)
 
 ## ----fig.width = 4, fig.height = 4--------------------------------------------
-rs <- resid(fit)$mean
-plot(x.mu, rs)
+res <- resid(fit)$mean
+plot(x.mu, res,
+     xlab = 'Insurance rate',
+     ylab = 'Residual',
+     type = 'n',
+     bty = 'n')
 abline(h = 0)
+points(x.mu, res,
+       col = 4,
+       pch = 20)
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  ME_nsp <- prep_me_data(
 #    se = data.frame(insurance = georgia$insurance.se),
 #    logit = TRUE
 #  )
-#  fit_nsp <- stan_glm(log(rate.male) ~ insurance, data = georgia, ME = ME_nsp, prior_only = TRUE)
+#  fit_nsp <- stan_glm(log(rate.male) ~ insurance, data = georgia, ME = ME_nsp)
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  georgia$college <- georgia$college / 100

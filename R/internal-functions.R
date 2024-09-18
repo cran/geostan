@@ -4,10 +4,11 @@
 #' @param x A model frame or matrix with or without an intercept
 #' @return The same model frame or matrix but without the intercept term 
 remove_intercept <- function(x) {
-  varnames <- dimnames(x)[[2]][-which(attributes(x)$assign == 0)]
-  xnew <- as.matrix(x[,which(attributes(x)$assign != 0)])
-  dimnames(xnew)[[2]] <- varnames
-  return(xnew)
+    nr <- nrow(x)
+    varnames <- dimnames(x)[[2]][-which(attributes(x)$assign == 0)]
+    xnew <- matrix(x[,which(attributes(x)$assign != 0)], nrow = nr)
+    dimnames(xnew)[[2]] <- varnames
+    return(xnew)
 }
 
 #' Convert family to integer
@@ -32,6 +33,7 @@ family_2_int <- function(family) {
 #' @param standata The list of data as passed to rstan::sampling
 #' @param samples The stanfit object returned by rstan::sampling
 #' If centerx = TRUE, return the values on which covariates were centered. Handle ME variables appropriately using modeled covariate mean.
+#' @importFrom Matrix colMeans
 get_x_center <- function(standata, samples) {
     if (standata$center_x == 0) return (FALSE)
     dx_obs <- standata$dx_obs
@@ -195,6 +197,7 @@ make_priors <- function(user_priors = NULL, y, trials, x, hs_global_scale, scali
 }
 
 #' Log sum of exponentials
+#' 
 #' @noRd
 #'
 #' @details Code adapted from Richard McElreath's Rethinking package, and other sources.
@@ -204,6 +207,16 @@ log_sum_exp <- function(x) {
   xsum <- sum( exp( x - xmax ) )
   xmax + log(xsum)
 }
+
+#' @noRd
+#' @details log mean of exponentials
+log_mean_exp <- function(x) {
+  n <- length(x)
+  xmax <- max(x)
+  xsum <- sum( exp( x - xmax ) )
+  ls = xmax + log(xsum)
+  ls - log(n)
+}    
 
 clean_results <- function(samples, pars, is_student, has_re, Wx, x, x_me_idx) {
     n <- nrow(x)
@@ -240,12 +253,8 @@ clean_results <- function(samples, pars, is_student, has_re, Wx, x, x_me_idx) {
     main_pars <- pars[which(pars %in% c("nu", "intercept", "alpha_tau", "gamma", "beta", "sigma", "rho", "spatial_scale", "theta_scale", "car_scale", "car_rho", "sar_rho", "sar_scale"))]
     S <- as.matrix(samples, pars = main_pars)
     summary <- post_summary(S)
-    Residual_MC <- NA
-    if ("log_lik" %in% pars) WAIC <- geostan::waic(samples) else WAIC <- rep(NA, 3)
-    diagnostic <- c(WAIC = as.numeric(WAIC[1]), Eff_pars = as.numeric(WAIC[2]), Lpd = as.numeric(WAIC[3]),
-                    Residual_MC = Residual_MC)
     out <- list(summary = summary,
-                diagnostic = diagnostic, stanfit = samples)
+                stanfit = samples)
     class(out) <- append("geostan_fit", class(out))
     return(out)
 }
@@ -328,19 +337,18 @@ a.n.zeros <- function(n) array(0, dim = c(0, n))
 vec.n.zeros <- function(n) rep(0, n)
 
 #' return empty car_parts list
+#' See R/make-me-data.R; used for ME list, including when ME is not used.
 #' @noRd
 #' @param n vector length
 car_parts_shell <- function(n) {
     list(
-      nC = 1,
-      nAx_w = 1,
+      nA_w = 1,
       C = array(1, dim = c(1, 1)),
       Delta_inv = vec.n.zeros(n),
       log_det_Delta_inv = 0,
-      Ax_w = a.zero(),
-      Ax_v = a.zero(),
-      Ax_u = vec.n.zeros(n+1), 
-      Cidx = a.zero(),
+      A_w = a.zero(),
+      A_v = a.zero(),
+      A_u = vec.n.zeros(n+1), 
       lambda = vec.n.zeros(n),
       WCAR = 0
     )
@@ -387,14 +395,12 @@ empty_car_data <- function() {
 #' @noRd
 empty_sar_data <- function(n) {
     list(
-        nImW_w = 1,
-        nW = 1,
-        ImW_w = a.zero(),
-        ImW_v = a.zero(),
-        ImW_u = rep(0, n+1),
+        nW_w = 1,
+        W_w = a.zero(),
+        W_v = a.zero(),
+        W_u = a.zero(), 
         eigenvalues_w = rep(0, n),
         sar_rho_lims = c(-1, 1),
-        Widx = a.zero(),
         sar = 0
     )
 }
@@ -408,4 +414,45 @@ drop_params <- function(pars, drop_list) {
         pars <- pars[keep_idx]
     }        
     return( pars )
+}
+
+
+car_normal_lpdf <- function(y,
+                            mu,
+                            sigma,
+                            rho,
+                            C,
+                            D_inv,
+                            log_det_D_inv,
+                            lambda,
+                            n) {    
+    z <- y - mu
+    prec = sigma^(-2)    
+    zMinv <- prec * z * D_inv
+    ImrhoCz <- z - rho * C %*% z
+    log_det_ImrhoC <- sum(log(1 - rho * lambda))
+    log_p <- 0.5 * (
+        -n * log(2 * pi) -
+        2 * n * log(sigma) +
+        log_det_D_inv +
+        log_det_ImrhoC -
+        sum(zMinv * ImrhoCz)
+    )
+    return( log_p )
+}
+
+sar_normal_lpdf <- function(y,
+                            mu,
+                            sigma,
+                            rho,
+                            W,
+                            lambda,
+                            n) {
+    z = y - mu
+    tau = sigma^(-2)
+    log_detV = 2 * sum(log(1 - rho * lambda)) - 2 * n * log(sigma);
+    ImrhoWz = z - rho * W %*% z
+    zVz = tau * sum(ImrhoWz * ImrhoWz)
+    log_p = 0.5 * ( -n * log(2 * pi) + log_detV - zVz )
+    return( log_p )
 }

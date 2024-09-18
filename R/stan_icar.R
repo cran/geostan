@@ -54,7 +54,6 @@
 #' @param drop Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from ICAR models:
 #' \describe{
 #' \item{fitted}{The N-length vector of fitted values}
-#' \item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 #' \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
 #' \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 #' \item{phi}{The N-length vector of spatially-autocorrelated parameters (with the ICAR prior).}
@@ -194,8 +193,6 @@
 #' Donegan, Connor and Morris, Mitzi (2021). Flexible functions for ICAR, BYM, and BYM2 models in Stan. Code repository. <https://github.com/ConnorDonegan/Stan-IAR>
 #'
 #' Donegan, Connor (2021b). Building spatial conditional autoregressive (CAR) models in the Stan programming language. *OSF Preprints*. \doi{10.31219/osf.io/3ey65}.
-#'
-#' Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. *Int. J. Env. Res. and Public Health* 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
 #' 
 #' Freni-Sterrantino, Anna, Massimo Ventrucci, and Håvard Rue (2018). A Note on Intrinsic Conditional Autoregressive Models for Disconnected Graphs. *Spatial and Spatio-Temporal Epidemiology*, 26: 25–34.
 #'
@@ -240,7 +237,7 @@
 #'    low = "navy",
 #'    high = "darkred"
 #'   ) +
-#'   labs(title = "Log-standardized sentencing ratios",
+#'   labs(title = "Log-standardized incidence ratios",
 #'        subtitle = "log( Fitted/Expected), base 2") +
 #'   theme_void() +
 #'   theme(
@@ -375,7 +372,7 @@ stan_icar <- function(formula,
         W_w = as.array(W.list$w),
         W_v = as.array(W.list$v),
         W_u = as.array(W.list$u),
-        dw_nonzero = length(W.list$w),
+        nW_w = length(W.list$w),        
         dwx = dwx,
         wx_idx = wx_idx
     )
@@ -397,12 +394,14 @@ stan_icar <- function(formula,
     standata$type <- match(type, c("icar", "bym", "bym2"))
     ## ICAR DATA [STOP] -------------    
     ## EMPTY PLACEHOLDERS
-    standata <- c(standata, empty_esf_data(n), empty_car_data(), empty_sar_data(n))
+    empty_parts <- c(empty_esf_data(n), empty_car_data(), empty_sar_data(n))
+    empty_parts <- empty_parts[ which(!names(empty_parts) %in% names(standata)) ]
+    standata <- c(standata, empty_parts)
     ## ME MODEL -------------  
     me.list <- make_me_data(ME, xraw)
     standata <- c(standata, me.list)  
     ## PARAMETERS TO KEEP with ICAR [START] -------------        
-    pars <- c(pars, 'intercept', 'spatial_scale', 'fitted', 'phi', 'log_lik')
+    pars <- c(pars, 'intercept', 'spatial_scale', 'fitted', 'phi')
     if (type == "bym2") pars <- c(pars, 'theta', 'rho')
     if (type == "bym") pars <- c(pars, 'theta', 'theta_scale')
     if (standata$m) pars <- c(pars, "alpha_phi")
@@ -417,7 +416,7 @@ stan_icar <- function(formula,
             pars <- c(pars, "nu_x_true")
         }
     }
-    if (slim == TRUE) drop <- c('fitted', 'log_lik', 'alpha_re', 'x_true', 'phi', 'theta')
+    if (slim == TRUE) drop <- c('fitted', 'alpha_re', 'x_true', 'phi', 'theta')
     pars <- drop_params(pars = pars, drop_list = drop)
     priors_made_slim <- priors_made[which(names(priors_made) %in% pars)]
     if (me.list$has_me) priors_made_slim$ME_model <- ME$prior        
@@ -451,12 +450,18 @@ stan_icar <- function(formula,
     ## ICAR OUTPUT [START] --------
     out$edges <- edges(C)       
     out$spatial <- data.frame(par = "phi", method = toupper(type))
-    ## ICAR OUTPUT [STOP] --------
-    if (!missing(C) && any(pars == 'fitted')) {
+    ## ICAR OUTPUT [STOP] --------    
+    out$N <- length( y_index_list$y_obs_idx )
+    out$missing <- y_index_list
+    out$diagnostic <- list()    
+    if (!missing(C) && any(pars == 'fitted')) {     
         R <- resid(out, summary = FALSE)
-        out$diagnostic["Residual_MC"] <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
-    }
-    out$N <- length( y_index_list$y_obs_idx )    
+        rmc <- mean( apply(R, 1, mc, w = out$C, warn = FALSE, na.rm = TRUE) )
+        out$diagnostic$Residual_MC <- rmc
+    }    
+    if (any(pars == 'fitted')) {
+        out$diagnostic$WAIC <- as.numeric(waic(out)[1])
+    }    
     return (out)
 }
 

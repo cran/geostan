@@ -5,15 +5,17 @@
 
 ## geostan: Bayesian spatial analysis
 
-The [**geostan**](https://connordonegan.github.io/geostan/) R package
+The [geostan](https://connordonegan.github.io/geostan/) R package
 supports a complete spatial analysis workflow with Bayesian models for
 areal data, including a suite of functions for visualizing spatial data
-and model results. **geostan** models were built using
-[**Stan**](https://mc-stan.org), a state-of-the-art platform for
-Bayesian modeling. The package is designed partly for public health
-research with spatial data, for which it complements the
-[**surveil**](https://connordonegan.github.io/surveil/) R package for
-time series analysis of public health surveillance data.
+and model results. geostan models were built using
+[Stan](https://mc-stan.org), a state-of-the-art platform for Bayesian
+modeling.
+
+Introductions to the software can be found at
+[r-spatial.org](https://r-spatial.org/r/2024/08/02/geostan-introduction.html)
+and in the package
+[vignettes](https://connordonegan.github.io/geostan/articles/index.html).
 
 Features include:
 
@@ -25,27 +27,37 @@ Features include:
     and model diagnostics.  
   - **Observational uncertainty** Incorporate information on data
     reliability, such as standard errors of American Community Survey
-    estimates, into any **geostan** model.
+    estimates, into any geostan model.
   - **Missing and Censored observations** Vital statistics and disease
     surveillance systems like CDC Wonder censor case counts that fall
-    below a threshold number; **geostan** can model disease or mortality
+    below a threshold number; geostan can model disease or mortality
     risk for small areas with censored observations or with missing
     observations.
   - **The RStan ecosystem** Interfaces easily with many high-quality R
     packages for Bayesian modeling.
   - **Custom spatial models** Tools for building custom spatial models
-    in [Stan](https://mc-stan.org/).
+    in Stan.
+
+For public health research, geostan complements the
+[surveil](https://connordonegan.github.io/surveil/) R package for the
+study of time trends in disease incidence or mortality data.
 
 ## Installation
 
-Using your R console, you can install **geostan** from CRAN:
+There are two ways to install geostan: directly from the package github
+repository or from the Comprehensive R Archive Network (CRAN).
+
+### From CRAN
+
+Using your R console, you can install geostan from CRAN:
 
 ``` r
 install.packages("geostan")
 ```
 
-Or, you can install the latest version from the package github
-repository:
+### From github
+
+You can install geostan from github:
 
 ``` r
 if (!require('devtools')) install.packages('devtools')
@@ -67,6 +79,9 @@ first (this is not needed when installing from CRAN). To install Rtools:
     installer</span>.”
 4.  Go to the `.exe` file you just downloaded and double-click to begin
     installation of Rtools.
+
+If you are using Mac and installing with `install_github` then you may
+need to install Xcode Command Line Tools first.
 
 ## Support
 
@@ -90,7 +105,6 @@ Load the package and the `georgia` county mortality data set:
 
 ``` r
 library(geostan)
-#> This is geostan version 0.6.0
 data(georgia)
 ```
 
@@ -104,11 +118,19 @@ summary of crude female mortality rates (as deaths per 10,000):
 
 ``` r
 A <- shape2mat(georgia, style = "B")
+#> Contiguity condition: queen
+#> Number of neighbors per unit, summary:
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>   1.000   4.000   5.000   5.409   6.000  10.000
+#> 
+#> Spatial weights, summary:
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#>       1       1       1       1       1       1
 mortality_rate <- georgia$rate.female * 10e3
 sp_diag(mortality_rate, georgia, w = A)
 #> 3 NA values found in x will be dropped from data x and matrix w
-#> Warning: Removed 3 rows containing non-finite outside the scale range
-#> (`stat_bin()`).
+#> Warning: Removed 3 rows containing non-finite outside the scale
+#> range (`stat_bin()`).
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
@@ -128,7 +150,7 @@ rates:
 
 ``` r
 cars <- prep_car_data(A)
-#> Range of permissible rho values:  -1.661134 1
+#> Range of permissible rho values: -1.661, 1
 fit <- stan_car(deaths.female ~ offset(log(pop.at.risk.female)),
                 censor_point = 9,
         data = georgia,
@@ -162,8 +184,8 @@ diagnostics for spatial models:
 sp_diag(fit, georgia, w = A)
 #> Using sp_diag(y, shape, rates = TRUE, ...). To examine data as (unstandardized) counts, use rates = FALSE.
 #> 3 NA values found in x will be dropped from data x and matrix w
-#> Warning: Removed 3 rows containing missing values or values outside the scale
-#> range (`geom_pointrange()`).
+#> Warning: Removed 3 rows containing missing values or values
+#> outside the scale range (`geom_pointrange()`).
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
@@ -181,8 +203,8 @@ print(fit)
 #> Spatial method (outcome):  CAR 
 #> Likelihood function:  poisson 
 #> Link function:  log 
-#> Residual Moran Coefficient:  0.00123875 
-#> WAIC:  1228.29 
+#> Residual Moran Coefficient:  0.0011525 
+#> WAIC:  1227.47 
 #> Observations:  156 
 #> Data models (ME): none
 #> Inference for Stan model: foundation.
@@ -190,11 +212,11 @@ print(fit)
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean    sd   2.5%    20%    50%    80%  97.5% n_eff  Rhat
-#> intercept -4.666   0.007 0.143 -4.840 -4.729 -4.672 -4.616 -4.484   461 1.006
-#> car_rho    0.924   0.001 0.059  0.778  0.884  0.937  0.973  0.996  3086 1.001
-#> car_scale  0.456   0.001 0.036  0.390  0.427  0.454  0.485  0.533  3776 1.000
+#> intercept -4.674   0.002 0.089 -4.849 -4.730 -4.674 -4.621 -4.505  2362 1.000
+#> car_rho    0.923   0.001 0.058  0.778  0.879  0.937  0.973  0.995  3319 1.000
+#> car_scale  0.458   0.001 0.036  0.395  0.428  0.456  0.488  0.534  3618 0.999
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue Apr 16 08:52:52 2024.
+#> Samples were drawn using NUTS(diag_e) at Tue Sep 17 16:44:56 2024.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
@@ -210,19 +232,19 @@ mortality_est <- fitted(fit) * 10e3
 county_name <- georgia$NAME
 head( cbind(county_name, mortality_est) )
 #>           county_name      mean        sd      2.5%       20%       50%
-#> fitted[1]       Crisp 101.64998  9.384722  84.24670  93.71233 101.29406
-#> fitted[2]     Candler 137.17952 16.264992 107.11368 123.59204 136.39838
-#> fitted[3]      Barrow  94.22368  6.126884  82.75981  89.00941  94.11519
-#> fitted[4]      DeKalb  59.76170  1.595148  56.68882  58.40064  59.76835
-#> fitted[5]    Columbia  53.36728  3.265343  47.21909  50.61056  53.33728
-#> fitted[6]        Cobb  54.13621  1.545304  51.09988  52.81882  54.11181
+#> fitted[1]       Crisp 101.48785  9.604829  83.99009  93.31163 101.17610
+#> fitted[2]     Candler 136.99885 15.905146 109.27395 123.11823 136.31355
+#> fitted[3]      Barrow  94.25470  6.071597  82.80270  89.20105  94.16678
+#> fitted[4]      DeKalb  59.76214  1.579194  56.72962  58.44624  59.75766
+#> fitted[5]    Columbia  53.33958  3.257549  47.19615  50.56654  53.28387
+#> fitted[6]        Cobb  54.12983  1.498260  51.24933  52.85101  54.10133
 #>                 80%     97.5%
-#> fitted[1] 109.51372 120.80189
-#> fitted[2] 150.22007 171.23752
-#> fitted[3]  99.29052 106.43936
-#> fitted[4]  61.09047  62.90342
-#> fitted[5]  56.01686  60.00058
-#> fitted[6]  55.46060  57.14337
+#> fitted[1] 109.30723 121.16598
+#> fitted[2] 150.17348 169.77611
+#> fitted[3]  99.19399 106.44508
+#> fitted[4]  61.07091  62.86805
+#> fitted[5]  56.08790  59.78086
+#> fitted[6]  55.42278  57.02966
 ```
 
 The mortality estimates are stored in the column named “mean”, and the

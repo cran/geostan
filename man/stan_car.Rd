@@ -10,8 +10,6 @@ Cressie, Noel (2015 (1993)). \emph{Statistics for Spatial Data}. Wiley Classics,
 
 Cressie, Noel and Wikle, Christopher (2011). \emph{Statistics for Spatio-Temporal Data}. Wiley.
 
-Donegan, Connor and Chun, Yongwan and Griffith, Daniel A. (2021). Modeling community health with areal data: Bayesian inference with survey standard errors and spatial structure. \emph{Int. J. Env. Res. and Public Health} 18 (13): 6856. DOI: 10.3390/ijerph18136856 Data and code: \url{https://github.com/ConnorDonegan/survey-HBM}.
-
 Donegan, Connor (2021). Building spatial conditional autoregressive (CAR) models in the Stan programming language. \emph{OSF Preprints}. \doi{10.31219/osf.io/3ey65}.
 
 Haining, Robert and Li, Guangquan (2020). \emph{Modelling Spatial and Spatial-Temporal Data: A Bayesian Approach}. CRC Press.
@@ -101,7 +99,6 @@ With the CAR model, any \code{alpha_re} term should be at a \emph{different} lev
 \describe{
 \item{fitted}{The N-length vector of fitted values}
 \item{log_lambda_mu}{Linear predictor inside the CAR model (for Poisson and binomial models)}
-\item{log_lik}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 \item{alpha_re}{Vector of 'random effects'/varying intercepts.}
 \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 }

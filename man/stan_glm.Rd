@@ -87,11 +87,10 @@ alpha_tau ~ Student_t(d.f., location, scale).
 \item{drop}{Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from GLM models:
 \describe{
 \item{'fitted'}{The N-length vector of fitted values}
-\item{'log_lik'}{The N-length vector of pointwise log-likelihoods, which is used to calculate WAIC.}
 \item{'alpha_re'}{Vector of 'random effects'/varying intercepts.}
 \item{'x_true'}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 }
-Using \code{drop = c('fitted', 'log_lik', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. If \code{slim = TRUE}, then \code{drop} will be ignored.}
+Using \code{drop = c('fitted', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. If \code{slim = TRUE}, then \code{drop} will be ignored.}
 
 \item{pars}{Specify any additional parameters you'd like stored from the Stan model.}
 
