@@ -61,15 +61,21 @@ get_x_center <- function(standata, samples) {
 #' @param f formula (from slx)
 #' @param DF `as.data.frame(data)`
 #' @param x The possibly centered model matrix, no intercept
-#' @param W row-standardized spatial weights matrix
+#' @param W spatial weights matrix (usually row-standardized)
+#' @param Durbin Logical; if `TRUE`, add spatial lag for all x.
 #' 
 #' @noRd
 #' 
-SLX <- function(f, DF, x, W) {
-    z <- remove_intercept(model.matrix(f, DF))    
-    x_slx <- as.matrix(x[, colnames(z)])
-    Wx <- W %*% x_slx
-    colnames(Wx) <- paste0("w.", colnames(z))
+SLX <- function(f, DF, x, W, Durbin = 0) {
+    if (!Durbin) {
+        z <- remove_intercept(model.matrix(f, DF))    
+        x_slx <- as.matrix(x[, colnames(z)])
+        Wx <- W %*% x_slx
+        colnames(Wx) <- paste0("w.", colnames(z))
+    } else {
+        Wx <- W %*% x
+        colnames(Wx) <- paste0("w.", colnames(x))
+    }
     return (Wx)       
    }
 
@@ -337,7 +343,7 @@ a.n.zeros <- function(n) array(0, dim = c(0, n))
 vec.n.zeros <- function(n) rep(0, n)
 
 #' return empty car_parts list
-#' See R/make-me-data.R; used for ME list, including when ME is not used.
+#' See R/make-me-data.R; this is used for making the ME list, including when ME is not used.
 #' @noRd
 #' @param n vector length
 car_parts_shell <- function(n) {
@@ -354,7 +360,6 @@ car_parts_shell <- function(n) {
     )
 }
 
-#' @noRd
 empty_icar_data <- function(n) {
     dl <- list(
         type = 0,
@@ -373,7 +378,6 @@ empty_icar_data <- function(n) {
     return (dl)
 }
 
-#' @noRd
 empty_esf_data <- function(n) {
     list(
         dev = 0,
@@ -384,7 +388,6 @@ empty_esf_data <- function(n) {
     )
 }
 
-#' @noRd
 empty_car_data <- function() {
     list(
         car = 0,
@@ -392,7 +395,7 @@ empty_car_data <- function() {
     )
 }
 
-#' @noRd
+
 empty_sar_data <- function(n) {
     list(
         nW_w = 1,
@@ -406,7 +409,6 @@ empty_sar_data <- function(n) {
 }
 
 
-#' @noRd
 drop_params <- function(pars, drop_list) {
     if (!is.null(drop_list)) {
         drop <- paste0("^", drop_list, "$", collapse = "|")
@@ -414,6 +416,24 @@ drop_params <- function(pars, drop_list) {
         pars <- pars[keep_idx]
     }        
     return( pars )
+}
+
+#' add missing Stan data elements to stan_data list (in model fitting functions)
+#'
+#' this will avoid the introduction of duplicate parts
+#' @noRd
+add_missing_parts <- function(current_list) {
+    n <- current_list$n
+    full_list <- c(empty_car_data(),
+                  empty_esf_data(n),
+                  empty_icar_data(n),
+                  empty_sar_data(n),
+                  ZMP = 0                  
+                  )
+    add_idx <- !names(full_list) %in% names(current_list)
+    add_list <- full_list[ add_idx ]
+    return_list <- c(current_list, add_list)
+    return (return_list)
 }
 
 
@@ -442,6 +462,26 @@ car_normal_lpdf <- function(y,
 }
 
 sar_normal_lpdf <- function(y,
+    mu,
+    sigma,
+    rho,
+    W,
+    lambda,
+    n,
+    type
+    ) {   
+    
+    if (type == 1)
+        return ( spatial_error_lpdf(y, mu, sigma, rho, W, lambda, n) )
+    
+    if (type == 2)
+        return ( spatial_lag_lpdf(y, mu, sigma, rho, W, lambda, n) )
+    
+    stop("missing 'type' (1 for SEM/SDEM, 2 for SDEM/SLM)")
+}
+
+
+spatial_error_lpdf <- function(y,
                             mu,
                             sigma,
                             rho,
@@ -456,3 +496,19 @@ sar_normal_lpdf <- function(y,
     log_p = 0.5 * ( -n * log(2 * pi) + log_detV - zVz )
     return( log_p )
 }
+
+spatial_lag_lpdf <- function(y,
+                            mu,
+                            sigma,
+                            rho,
+                            W,
+                            lambda,
+                            n) {
+    ymrwy = y - rho * W %*% y - mu
+    tau = sigma^(-2)
+    log_detV = 2 * sum(log(1 - rho * lambda)) - 2 * n * log(sigma);
+    zVz = tau * sum(ymrwy * ymrwy)
+    log_p = 0.5 * ( -n * log(2 * pi) + log_detV - zVz )
+    return( log_p )
+}
+

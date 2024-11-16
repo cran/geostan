@@ -62,7 +62,7 @@ Before using this term, read the \code{Details} section and the \code{type} argu
 
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
-\item{C}{Spatial connectivity matrix which will be used to construct an edge list for the ICAR model, and to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms. It will automatically be row-standardized before calculating \code{slx} terms. \code{C} must be a binary symmetric \code{n x n} matrix.}
+\item{C}{Spatial connectivity matrix which will be used to construct an edge list for the ICAR model, and to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms. It will automatically be row-standardized before calculating \code{slx} terms (matching the ICAR model). \code{C} must be a binary symmetric \code{n x n} matrix.}
 
 \item{family}{The likelihood function for the outcome variable. Current options are \code{binomial(link = "logit")} and \code{poisson(link = "log")}.}
 
@@ -126,7 +126,7 @@ If \code{slim = TRUE}, then \code{drop} will be ignored.}
 An object of class class \code{geostan_fit} (a list) containing:
 \describe{
 \item{summary}{Summaries of the main parameters of interest; a data frame}
-\item{diagnostic}{Widely Applicable Information Criteria (WAIC) with a measure of effective number of parameters (\code{eff_pars}) and mean log pointwise predictive density (\code{lpd}), and mean residual spatial autocorrelation as measured by the Moran coefficient.}
+\item{diagnostic}{Residual spatial autocorrelation as measured by the Moran coefficient.}
 \item{stanfit}{an object of class \code{stanfit} returned by \code{rstan::stan}}
 \item{data}{a data frame containing the model data}
 \item{edges}{The edge list representing all unique sets of neighbors and the weight attached to each pair (i.e., their corresponding element in the connectivity matrix  C}

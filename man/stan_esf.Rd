@@ -59,9 +59,9 @@ alpha_tau ~ Student_t(d.f., location, scale).
 
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
-\item{C}{Spatial connectivity matrix which will be used to calculate eigenvectors, if \code{EV} is not provided by the user. Typically, the binary connectivity matrix is best for calculating eigenvectors (i.e., using \code{C = shape2mat(shape, style = "B")}). This matrix will also be used to calculate residual spatial autocorrelation and any user specified \code{slx} terms; it will be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.}
+\item{C}{Spatial connectivity matrix. This will be used to calculate eigenvectors if \code{EV} is not provided by the user. See \code{\link[geostan]{shape2mat}}. Use of row-normalization (as in `\code{shape2mat(shape, 'W')} is not recommended for creating \code{EV}. Matrix \code{C} will also be used ('as is') to create any user-specified \code{slx} terms.}
 
-\item{EV}{A matrix of eigenvectors from any (transformed) connectivity matrix, presumably spatial (see \code{\link[geostan]{make_EV}}). If \code{EV} is provided, still also provide a spatial weights matrix \code{C} for other purposes; \code{threshold} and \code{nsa} are ignored for user provided \code{EV}.}
+\item{EV}{A matrix of eigenvectors from any (transformed) connectivity matrix, presumably spatial or network-based (see \code{\link[geostan]{make_EV}}). If \code{EV} is provided, still also provide a spatial weights matrix \code{C} for other purposes; \code{threshold} and \code{nsa} are ignored for user provided \code{EV}.}
 
 \item{nsa}{Include eigenvectors representing negative spatial autocorrelation? Defaults to \code{nsa = FALSE}. This is ignored if \code{EV} is provided.}
 
@@ -125,7 +125,7 @@ If \code{slim = TRUE}, then \code{drop} will be ignored.}
 An object of class class \code{geostan_fit} (a list) containing:
 \describe{
 \item{summary}{Summaries of the main parameters of interest; a data frame}
-\item{diagnostic}{Widely Applicable Information Criteria (WAIC) with a measure of effective number of parameters (\code{eff_pars}) and mean log pointwise predictive density (\code{lpd}), and mean residual spatial autocorrelation as measured by the Moran coefficient.}
+\item{diagnostic}{Residual spatial autocorrelation as measured by the Moran coefficient.}
 \item{data}{a data frame containing the model data}
 \item{EV}{A matrix of eigenvectors created with \code{w} and \code{geostan::make_EV}}
 \item{C}{The spatial weights matrix used to construct EV}

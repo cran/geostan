@@ -12,13 +12,13 @@
 #' alpha_tau ~ Student_t(d.f., location, scale).
 #' ```
 #' 
-#' @param C Spatial connectivity matrix which will be used to calculate eigenvectors, if `EV` is not provided by the user. Typically, the binary connectivity matrix is best for calculating eigenvectors (i.e., using `C = shape2mat(shape, style = "B")`). This matrix will also be used to calculate residual spatial autocorrelation and any user specified \code{slx} terms; it will be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.
+#' @param C Spatial connectivity matrix. This will be used to calculate eigenvectors if `EV` is not provided by the user. See \code{\link[geostan]{shape2mat}}. Use of row-normalization (as in `\code{shape2mat(shape, 'W')} is not recommended for creating \code{EV}. Matrix \code{C} will also be used ('as is') to create any user-specified \code{slx} terms.
 #'
 #' @param nsa Include eigenvectors representing negative spatial autocorrelation? Defaults to \code{nsa = FALSE}. This is ignored if \code{EV} is provided.
 #' 
 #' @param threshold Eigenvectors with standardized Moran coefficient values below this `threshold` value will be excluded from the candidate set of eigenvectors, `EV`. This defaults to \code{threshold = 0.25}, and is ignored if \code{EV} is provided. 
 #' 
-#' @param EV A matrix of eigenvectors from any (transformed) connectivity matrix, presumably spatial (see \code{\link[geostan]{make_EV}}). If `EV` is provided, still also provide a spatial weights matrix \code{C} for other purposes; `threshold` and `nsa` are ignored for user provided `EV`.
+#' @param EV A matrix of eigenvectors from any (transformed) connectivity matrix, presumably spatial or network-based (see \code{\link[geostan]{make_EV}}). If `EV` is provided, still also provide a spatial weights matrix \code{C} for other purposes; `threshold` and `nsa` are ignored for user provided `EV`.
 #' 
 #' @param data A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.
 #'
@@ -104,7 +104,7 @@
 #' @return An object of class class \code{geostan_fit} (a list) containing: 
 #' \describe{
 #' \item{summary}{Summaries of the main parameters of interest; a data frame}
-#' \item{diagnostic}{Widely Applicable Information Criteria (WAIC) with a measure of effective number of parameters (\code{eff_pars}) and mean log pointwise predictive density (\code{lpd}), and mean residual spatial autocorrelation as measured by the Moran coefficient.}
+#' \item{diagnostic}{Residual spatial autocorrelation as measured by the Moran coefficient.}
 #' \item{data}{a data frame containing the model data}
 #' \item{EV}{A matrix of eigenvectors created with \code{w} and \code{geostan::make_EV}}
 #' \item{C}{The spatial weights matrix used to construct EV}
@@ -273,12 +273,11 @@ stan_esf <- function(formula,
           x_full <- xraw          
       } else {
           stopifnot(inherits(slx, "formula"))
-          W <- row_standardize(C, msg =  "Row standardizing connectivity matrix to calculate spatially lagged covaraite(s)")
-          W.list <- rstan::extract_sparse_parts(W)
-          Wx <- SLX(f = slx, DF = mod_frame, x = xraw, W = W)
+          #W <- row_standardize(C, warn = !quiet, msg = "Row standardizing matrix C for spatial lag of X calculations.")
+          W.list <- rstan::extract_sparse_parts(C)
+          Wx <- SLX(f = slx, DF = mod_frame, x = xraw, W = C)
           dwx <- ncol(Wx)
           wx_idx <- as.array( which(paste0("w.", colnames(xraw)) %in% colnames(Wx)), dim = dwx )
-
           x_full <- cbind(Wx, xraw)
       }
   }
@@ -345,10 +344,13 @@ stan_esf <- function(formula,
     )
     standata <- c(standata, esf_dl)
     ## PRIORS with RHS-ESF [END] -------------
+    
     ## EMPTY PLACEHOLDERS [drop duplicated SLX/SAR matrix parts]
-    empty_parts <- c(empty_icar_data(n), empty_car_data(), empty_sar_data(n))
-    empty_parts <- empty_parts[ which(!names(empty_parts) %in% names(standata)) ]
-    standata <- c(standata, empty_parts)    
+    standata <- add_missing_parts(standata)    
+    ##empty_parts <- c(empty_icar_data(n), empty_car_data(), empty_sar_data(n))
+    ##empty_parts <- empty_parts[ which(!names(empty_parts) %in% names(standata)) ]
+    ##standata <- c(standata, empty_parts)
+    
     ## ME MODEL STUFF -------------  
     me.list <- make_me_data(ME, xraw)
     standata <- c(standata, me.list)
@@ -407,11 +409,8 @@ stan_esf <- function(formula,
         R <- resid(out, summary = FALSE)
         rmc <- mean( apply(R, 1, mc, w = C, warn = FALSE, na.rm = TRUE) )
         out$diagnostic$Residual_MC <- rmc
-    }    
-    if (any(pars == 'fitted')) {
-        out$diagnostic$WAIC <- as.numeric(waic(out)[1])
-    }                                                        
-        
+    }
+    
   return (out)
 }
 

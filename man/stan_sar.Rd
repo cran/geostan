@@ -23,13 +23,15 @@ stan_sar(
   re,
   data,
   C,
-  sar_parts = prep_sar_data(C),
+  sar_parts = prep_sar_data(C, quiet = TRUE),
   family = auto_gaussian(),
+  type = c("SEM", "SDEM", "SDLM", "SLM"),
   prior = NULL,
   ME = NULL,
   centerx = FALSE,
   prior_only = FALSE,
   censor_point,
+  zmp,
   chains = 4,
   iter = 2000,
   refresh = 500,
@@ -57,11 +59,13 @@ With the SAR model, any \code{alpha_re} term should be at a \emph{different} lev
 
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
-\item{C}{Spatial weights matrix (conventionally referred to as \eqn{W} in the SAR model). Typically, this will be created using \code{geostan::shape2mat(shape, style = "W")}. This will be passed internally to \code{\link[geostan]{prep_sar_data}}, and will also be used to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms; it will automatically be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.}
+\item{C}{Spatial connectivity matrix which will be used internally to create \code{sar_parts} (if \code{sar_parts} is missing); if the user provides an \code{slx} formula for the model, the required connectivity matrix will be taken from the \code{sar_parts} list. See \code{\link[geostan]{shape2mat}}.}
 
-\item{sar_parts}{Optional. If not provided, then \code{\link[geostan]{prep_sar_data}} will be used automatically to create \code{sar_parts} using the user-provided spatial weights matrix.}
+\item{sar_parts}{List of data constructed by \code{\link[geostan]{prep_sar_data}}. If not provided, then \code{C} will automatically be passed to \code{\link[geostan]{prep_sar_data}} to create \code{sar_parts}.}
 
-\item{family}{The likelihood function for the outcome variable. Current options are \code{auto_gaussian()}, \code{binomial(link = "logit")}, and \code{poisson(link = "log")}; if \code{family = gaussian()} is provided, it will automatically be converted to \code{auto_gaussian()}.}
+\item{family}{The likelihood function for the outcome variable. Current options are \code{auto_gaussian()}, \code{binomial()} (with logit link function) and \code{poisson()} (with log link function); if \code{family = gaussian()} is provided, it will automatically be converted to \code{auto_gaussian()}.}
+
+\item{type}{Type of SAR model (character string): spatial error model ('SEM'), spatial Durbin error model ('SDEM'), spatial Durbin lag model ('SDLM'), or spatial lag model ('SLM'). see Details below.}
 
 \item{prior}{A named list of parameters for prior distributions (see \code{\link[geostan]{priors}}):
 \describe{
@@ -79,25 +83,27 @@ With the SAR model, any \code{alpha_re} term should be at a \emph{different} lev
 
 }}
 
-\item{ME}{To model observational uncertainty (i.e. measurement or sampling error) in any or all of the covariates, provide a list of data as constructed by the \code{\link[geostan]{prep_me_data}} function.}
+\item{ME}{To model observational uncertainty in any or all of the covariates (i.e. measurement or sampling error), provide a list of data constructed by the \code{\link[geostan]{prep_me_data}} function.}
 
-\item{centerx}{To center predictors on their mean values, use \code{centerx = TRUE}. If the ME argument is used, the modeled covariate (i.e., latent variable), rather than the raw observations, will be centered. When using the ME argument, this is the recommended method for centering the covariates.}
+\item{centerx}{To center predictors on their mean values, use \code{centerx = TRUE}. This increases sampling speed. If the ME argument is used, the modeled covariate (i.e., the latent variable), rather than the raw observations, will be centered.}
 
 \item{prior_only}{Logical value; if \code{TRUE}, draw samples only from the prior distributions of parameters.}
 
-\item{censor_point}{Integer value indicating the maximum censored value; this argument is for modeling censored (suppressed) outcome data, typically disease case counts or deaths.}
+\item{censor_point}{Integer value indicating the maximum censored value; this argument is for modeling censored (suppressed) outcome data, typically disease case counts or deaths which are left-censored to protect confidentiality when case counts are very low.}
+
+\item{zmp}{Use zero-mean parameterization for the SAR model? Only relevant for Poisson and binomial outcome models (i.e., hierarchical models). See details below; this can sometimes improve MCMC sampling when the data is sparse, but does not alter the model specification.}
 
 \item{chains}{Number of MCMC chains to use.}
 
-\item{iter}{Number of samples per chain.}
+\item{iter}{Number of MCMC samples per chain.}
 
 \item{refresh}{Stan will print the progress of the sampler every \code{refresh} number of samples. Set \code{refresh=0} to silence this.}
 
-\item{keep_all}{If \code{keep_all = TRUE} then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors and the \code{bridgesampling} package.}
+\item{keep_all}{If \code{keep_all = TRUE} then samples for all parameters in the Stan model will be kept; this is necessary if you want to do model comparison with Bayes factors using the \code{bridgesampling} package.}
 
-\item{pars}{Optional; specify any additional parameters you'd like stored from the Stan model.}
+\item{pars}{Specify any additional parameters you'd like stored from the Stan model.}
 
-\item{slim}{If \code{slim = TRUE}, then the Stan model will not collect the most memory-intensive parameters (including n-length vectors of fitted values, log-likelihoods, and ME-modeled covariate values). This will disable many convenience functions that are otherwise available for fitted \code{geostan} models, such as the extraction of residuals, fitted values, and spatial trends, WAIC, and spatial diagnostics, and ME diagnostics; many quantities of interest, such as fitted values and spatial trends, can still be calculated manually using given parameter estimates. The "slim" option is designed for data-intensive routines, such as regression with raster data, Monte Carlo studies, and measurement error models. For more control over which parameters are kept or dropped, use the \code{drop} argument instead of \code{slim}.}
+\item{slim}{If \code{slim = TRUE}, then the Stan model will not save the most memory-intensive parameters (including n-length vectors of fitted values, other 'random effects', and ME-modeled covariate values). This will disable some convenience functions that are otherwise available for fitted \code{geostan} models, such as the extraction of residuals, fitted values, and spatial trends, spatial diagnostics, and ME diagnostics. The "slim" option is designed for data-intensive routines, such as regression with raster data, Monte Carlo studies, and measurement error models.}
 
 \item{drop}{Provide a vector of character strings to specify the names of any parameters that you do not want MCMC samples for. Dropping parameters in this way can improve sampling speed and reduce memory usage. The following parameter vectors can potentially be dropped from SAR models:
 \describe{
@@ -106,11 +112,11 @@ With the SAR model, any \code{alpha_re} term should be at a \emph{different} lev
 \item{log_lambda_mu}{Linear predictor inside the SAR model (for Poisson and binomial models)}
 \item{x_true}{N-length vector of 'latent'/modeled covariate values created for measurement error (ME) models.}
 }
-Using \code{drop = c('fitted', 'alpha_re', 'x_true')} is equivalent to \code{slim = TRUE}. Note that if \code{slim = TRUE}, then \code{drop} will be ignored---so only use one or the other.}
+Using \code{drop = c('fitted', 'alpha_re', 'x_true', 'log_lambda_mu')} is equivalent to \code{slim = TRUE}. Note that if \code{slim = TRUE}, then \code{drop} will be ignored---so only use one or the other.}
 
 \item{control}{A named list of parameters to control the sampler's behavior. See \code{\link[rstan]{stan}} for details.}
 
-\item{quiet}{Controls (most) automatic printing to the console. By default, any prior distributions that have not been assigned by the user are printed to the console. If \code{quiet = TRUE}, these will not be printed. Using \code{quiet = TRUE} will also force \code{refresh = 0}.}
+\item{quiet}{Controls (most) automatic printing to the console. By default, any prior distributions that have not been assigned by the user are printed to the console; if \code{quiet = TRUE}, these will not be printed. Using \code{quiet = TRUE} will also force \code{refresh = 0}.}
 
 \item{...}{Other arguments passed to \code{\link[rstan]{sampling}}.}
 }
@@ -118,7 +124,7 @@ Using \code{drop = c('fitted', 'alpha_re', 'x_true')} is equivalent to \code{sli
 An object of class class \code{geostan_fit} (a list) containing:
 \describe{
 \item{summary}{Summaries of the main parameters of interest; a data frame.}
-\item{diagnostic}{Widely Applicable Information Criteria (WAIC) with a measure of effective number of parameters (\code{eff_pars}) and mean log pointwise predictive density (\code{lpd}), and mean residual spatial autocorrelation as measured by the Moran coefficient.}
+\item{diagnostic}{Residual spatial autocorrelation as measured by the Moran coefficient.}
 \item{stanfit}{an object of class \code{stanfit} returned by \code{rstan::stan}}
 \item{data}{a data frame containing the model data}
 \item{family}{the user-provided or default \code{family} argument used to fit the model}
@@ -133,46 +139,55 @@ An object of class class \code{geostan_fit} (a list) containing:
 \item{spatial}{A data frame with the name of the spatial component parameter (either "phi" or, for auto Gaussian models, "trend") and method ("SAR")}
 \item{ME}{A list indicating if the object contains an ME model; if so, the user-provided ME list is also stored here.}
 \item{C}{Spatial weights matrix (in sparse matrix format).}
+\item{sar_type}{Type of SAR model: 'SEM', 'SDEM', 'SDLM', or 'SLM'.}
 }
 }
 \description{
-Fit data to an spatial Gaussian SAR (spatial error) model, or model a vector of spatially-autocorrelated parameters using a SAR prior model.
+Fit data to a simultaneous spatial autoregressive (SAR) model, or use the SAR model as the prior model for a parameter vector in a hierarchical model.
 }
 \details{
-Discussions of SAR models may be found in Cliff and Ord (1981), Cressie (2015, Ch. 6), LeSage and Pace (2009), and LeSage (2014). The Stan implementation draws from Donegan (2021).
+Discussions of SAR models may be found in Cliff and Ord (1981), Cressie (2015, Ch. 6), LeSage and Pace (2009), and LeSage (2014). The Stan implementation draws from Donegan (2021). It is a multivariate normal distribution with covariance matrix of \eqn{\Sigma = \sigma^2 (I - \rho C)^{-1}(I - \rho C')^{-1}.}.
 
-The general scheme of the SAR model for numeric vector \eqn{y} is
-\deqn{y = \mu + ( I - \rho W)^{-1} \epsilon}
-\deqn{\epsilon \sim Gauss(0, \sigma^2 I)}
-where \eqn{W} is the spatial weights matrix, \eqn{I} is the n-by-n identity matrix, and \eqn{\rho} is a spatial autocorrelation parameter. In words, the errors of the regression equation are spatially autocorrelated.
+There are two SAR specification options which are commonly known as the spatial error ('SEM') and the spatial lag ('SLM') models. When the spatial-lags of all covariates are included in the linear predictor (as in \eqn{\mu = \alpha + X \beta + W X \gamma}), then the model is referred to as a spatial Durbin model; depending on the model type, it becomes a spatial Durbin error model ('SDEM') or a spatial Durbin lag model ('SDLM'). To control which covariates are introduced in spatial-lag form, use the \code{slx} argument together with 'type = SEM' or 'type = SLM'.
+\subsection{Auto-normal: spatial error}{
+
+The spatial error specification ('SEM') is
+\deqn{y = \mu + ( I - \rho C)^{-1} \epsilon}
+\deqn{\epsilon \sim Gauss(0, \sigma^2)}
+where \eqn{C} is the spatial connectivity matrix, \eqn{I} is the n-by-n identity matrix, and \eqn{\rho} is a spatial autocorrelation parameter. In words, the errors of the regression equation are spatially autocorrelated. The expected value for the SEM is the usual \eqn{\mu}: the intercept plus \code{X*beta} and any other terms added to the linear predictor.
 
 Re-arranging terms, the model can also be written as follows:
-\deqn{y = \mu + \rho W (y - \mu)  + \epsilon}
-which perhaps shows more intuitively the implicit spatial trend component, \eqn{\rho W (y - \mu)}.
-
-Most often, this model is applied directly to observations (referred to below as the auto-Gaussian model). The SAR model can also be applied to a vector of parameters inside a hierarchical model. The latter enables spatial autocorrelation to be modeled when the observations are discrete counts (e.g., disease incidence data).
-
-A note on terminology: the spatial statistics literature conceptualizes the simultaneously-specified spatial autoregressive model (SAR) in relation to the conditionally-specified spatial autoregressive model (CAR) (see \link[geostan]{stan_car}) (see Cliff and Ord 1981). The spatial econometrics literature, by contrast, refers to the simultaneously-specified spatial autoregressive (SAR) model as the spatial error model (SEM), and they contrast the SEM with the spatial lag model (which contains a spatially-lagged dependent variable on the right-hand-side of the regression equation) (see LeSage 2014).
-\subsection{Auto-Gaussian}{
-
-When \code{family = auto_gaussian()}, the SAR model is specified as follows:
-
-\deqn{y \sim Gauss(\mu, \Sigma)}
-\deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}}
-where \eqn{\mu} is the mean vector (with intercept, covariates, etc.), \eqn{W} is a spatial weights matrix (usually row-standardized), and \eqn{\sigma} is a scale parameter.
-
-The SAR model contains an implicit spatial trend (i.e., spatial autocorrelation) component \eqn{\phi} which is calculated as follows:
-\deqn{
-\phi = \rho W (y - \mu)
-}
-
-This term can be extracted from a fitted auto-Gaussian model using the \link[geostan]{spatial} method.
+\deqn{y = \mu + \rho C (y - \mu)  + \epsilon}
+which shows more intuitively the implicit spatial trend component, \eqn{\phi = \rho C (y - \mu)}. This term \eqn{\phi} can be extracted from a fitted auto-Gaussian/auto-normal model using the \link[geostan]{spatial} method.
 
 When applied to a fitted auto-Gaussian model, the \link[geostan]{residuals.geostan_fit} method returns 'de-trended' residuals \eqn{R} by default. That is,
 \deqn{
-R = y - \mu - \rho W (y - \mu).
+R = y - \mu - \rho C (y - \mu).
 }
 To obtain "raw" residuals (\eqn{y - \mu}), use \code{residuals(fit, detrend = FALSE)}. Similarly, the fitted values obtained from the \link[geostan]{fitted.geostan_fit} will include the spatial trend term by default.
+}
+
+\subsection{Auto-normal: spatial lag}{
+
+The second SAR specification type is the 'spatial lag of y' ('SLM'). This model describes a diffusion or contagion process:
+\deqn{y = \rho C y + \mu + \epsilon}
+\deqn{\epsilon \sim Gauss(0, \sigma^2)}
+This is very attractive for modeling actual contagion or diffusion processes (or static snapshots of such processes). The model does not allow for the usual interpretation of regression coefficients as marginal effects. To interpret SLM results, use \link[geostan]{impacts}.
+
+Note that the expected value of the SLM is equal to \eqn{(I - \rho C)^{-1} \mu}.
+
+The \link[geostan]{spatial} method returns the vector
+\deqn{ \phi = \rho C y, }
+the spatial lag of \eqn{y}.
+
+The \link[geostan]{residuals.geostan_fit} method returns 'de-trended' residuals \eqn{R} by default:
+\deqn{R = y - \rho C y - \mu,}
+where \eqn{\mu} contains the intercept and any covariates (and possibly other terms).
+
+Similarly, the fitted values obtained from the \link[geostan]{fitted.geostan_fit} will include the spatial trend \eqn{\rho C y} by default to equal
+\deqn{\rho C y + \mu.}
+
+For now at least, the SLM/SDLM option is only supported for auto-normal models (as opposed to hierarchical Poisson and binomial models).
 }
 
 \subsection{Poisson}{
@@ -181,21 +196,24 @@ For \code{family = poisson()}, the model is specified as:
 
 \deqn{y \sim Poisson(e^{O + \lambda})}
 \deqn{\lambda \sim Gauss(\mu, \Sigma)}
-\deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
+\deqn{\Sigma = \sigma^2 (I - \rho C)^{-1}(I - \rho C')^{-1}}
 
-If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator \eqn{p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
+where \eqn{O} is a constant/offset term and \eqn{e^\lambda} is a rate parameter.
 
-This is often written (equivalently) as:
+If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator \eqn{p} (often this will be the size of the population at risk), then the offset term should be the log of the denominator: \eqn{O=log(p)}.
+
+This same model can be written (equivalently) as:
 
 \deqn{y \sim Poisson(e^{O + \mu + \phi})}
 \deqn{ \phi \sim Gauss(0, \Sigma) }
-\deqn{ \Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
 
-For Poisson models, the \link[geostan]{spatial} method returns the parameter vector \eqn{\phi}.
+This second version is referred to here as the zero-mean parameterization (ZMP), since the SAR model is forced to have mean of zero. Although the non-ZMP is typically better for MCMC sampling, use of the ZMP can greatly improve MCMC sampling \emph{when the data is sparse}. Use \code{zmp = TRUE} in \code{stan_sar} to apply this specification. (See the geostan vignette on 'custom spatial models' for full details on implementation of the ZMP.)
 
-In the Poisson SAR model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
+For Poisson models, the \link[geostan]{spatial} method returns the (zero-mean) parameter vector \eqn{\phi}. When \code{zmp = FALSE} (the default), \eqn{\phi} is obtained by subtraction: \eqn{\phi = \lambda - \mu}.
+
+In the Poisson SAR model, \eqn{\phi} contains a latent (smooth) spatial trend as well as additional variation around it (this is merely a verbal description of the CAR model). If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 \deqn{
- \rho W \phi.
+ \rho C \phi.
 }
 }
 
@@ -205,7 +223,7 @@ For \code{family = binomial()}, the model is specified as:
 
 \deqn{y \sim Binomial(N, \lambda) }
 \deqn{logit(\lambda) \sim Gauss(\mu, \Sigma) }
-\deqn{\Sigma = \sigma^2 (I - \rho W)^{-1}(I - \rho W')^{-1}.}
+\deqn{\Sigma = \sigma^2 (I - \rho C)^{-1}(I - \rho C')^{-1},}
 
 where outcome data \eqn{y} are counts, \eqn{N} is the number of trials, and \eqn{\lambda} is the rate of 'success'. Note that the model formula should be structured as: \code{cbind(sucesses, failures) ~ 1} (for an intercept-only model), such that \code{trials = successes + failures}.
 
@@ -213,44 +231,111 @@ For fitted Binomial models, the \code{\link[geostan]{spatial}} method will retur
 
 \deqn{\phi = logit(\lambda) - \mu.}
 
+The zero-mean parameterization (ZMP) of the SAR model can also be applied here (see the Poisson model for details); ZMP provides an equivalent model specification that can improve MCMC sampling when data is sparse.
+
 As is also the case for the Poisson model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 \deqn{
-\rho W \phi.
+\rho C \phi.
 }
 }
 
 \subsection{Additional functionality}{
 
-The SAR models can also incorporate spatially-lagged covariates, measurement/sampling error in covariates (particularly when using small area survey estimates as covariates), missing outcome data, and censored outcomes (such as arise when a disease surveillance system suppresses data for privacy reasons). For details on these options, please see the Details section in the documentation for \link[geostan]{stan_glm}.
+The SAR models can also incorporate spatially-lagged covariates, measurement/sampling error in covariates (particularly when using small area survey estimates as covariates), missing outcome data (for Poisson and binomial models), and censored outcomes (such as arise when a disease surveillance system suppresses data for privacy reasons). For details on these options, please see the Details section in the documentation for \link[geostan]{stan_glm}.
 }
 }
 \examples{
-# model mortality risk
+
+##
+## simulate SAR data on a regular grid
+##
+
+sars <- prep_sar_data2(row = 10, col = 10, quiet = TRUE)
+w <- sars$W
+
+# draw x
+x <- sim_sar(w = w, rho = 0.5)
+
+# draw y = mu + rho*W*(y - mu) + epsilon
+# beta = 0.5, rho = 0.5
+y <- sim_sar(w = w, rho = .5, mu = 0.5 * x)
+dat <- data.frame(y = y, x = x)
+
+##
+## fit SEM
+##
+
+fit_sem <- stan_sar(y ~ x, data = dat, sar = sars,
+                    chains = 1, iter = 800)
+print(fit_sem)
+
+##
+## data for SDEM
+##
+
+# mu = x*beta + wx*gamma; beta=1, gamma=-0.25
+x <- sim_sar(w = w, rho = 0.5)
+mu <- 1 * x - 0.25 * (w \%*\% x)[,1]
+y <- sim_sar(w = w, rho = .5, mu = mu)
+# or for SDLM:
+# y <- sim_sar(w = w, rho = 0.5, mu = mu, type = "SLM")
+dat <- data.frame(y=y, x=x)
+
+#
+## fit models
+##
+
+# SDEM
+# y = mu + rho*W*(y - mu) + epsilon
+# mu = beta*x + gamma*Wx
+fit_sdem <- stan_sar(y ~ x, data = dat,
+                    sar_parts = sars, type = "SDEM",
+                    iter = 800, chains = 1,
+                    quiet = TRUE)
+
+# SDLM
+# y = rho*Wy + beta*x + gamma*Wx + epsilon
+fit_sdlm <- stan_sar(y ~ x, data = dat,
+                    sar_parts = sars,
+                    type = "SDLM",
+                    iter = 800,
+                    chains = 1,
+                    quiet = TRUE)
+
+# compare by DIC
+dic(fit_sdem)
+dic(fit_sdlm)
+
+\donttest{
+##
+## Modeling mortality rates
+##
+
+# simple spatial regression
 data(georgia)
 W <- shape2mat(georgia, style = "W")
 
 fit <- stan_sar(log(rate.male) ~ 1,
                 C = W,
                 data = georgia,
-                chains = 1, # for ex. speed only
-                iter = 700 
+                iter = 900
                 )
 
-rstan::stan_rhat(fit$stanfit)
-rstan::stan_mcse(fit$stanfit)
-print(fit)
-plot(fit)
+# view fitted vs. observed, etc.
 sp_diag(fit, georgia)
 
-\donttest{
- # a more appropriate model for count data:
+# A more appropriate model for count data:
+# hierarchical spatial poisson model
 fit2 <- stan_sar(deaths.male ~ offset(log(pop.at.risk.male)),
                 C = W,
                 data = georgia,
                 family = poisson(),
                 chains = 1, # for ex. speed only
-                iter = 700 
+                iter = 900,
+                quiet = TRUE
                  )
+
+# view fitted vs. observed, etc.
 sp_diag(fit2, georgia)
 }
 }

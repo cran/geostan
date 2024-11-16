@@ -84,7 +84,7 @@ plot(x.mu, res,
      xlab = 'Insurance rate',
      ylab = 'Residual',
      type = 'n',
-     bty = 'n')
+     bty = 'L')
 abline(h = 0)
 points(x.mu, res,
        col = 4,

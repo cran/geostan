@@ -20,14 +20,15 @@ stan_car(
   slx,
   re,
   data,
-  car_parts,
   C,
+  car_parts = prep_car_data(C, "WCAR"),
   family = gaussian(),
   prior = NULL,
   ME = NULL,
   centerx = FALSE,
   prior_only = FALSE,
   censor_point,
+  zmp,
   chains = 4,
   iter = 2000,
   refresh = 500,
@@ -55,9 +56,9 @@ With the CAR model, any \code{alpha_re} term should be at a \emph{different} lev
 
 \item{data}{A \code{data.frame} or an object coercible to a data frame by \code{as.data.frame} containing the model data.}
 
-\item{car_parts}{A list of data for the CAR model, as returned by \code{\link[geostan]{prep_car_data}}.}
+\item{C}{Spatial connectivity matrix which will be used internally to create \code{car_parts} (if \code{car_parts} is missing); if the user provides an \code{slx} formula for the model, the required connectivity matrix will be taken from the \code{car_parts} list. See \code{\link[geostan]{shape2mat}}.}
 
-\item{C}{Optional spatial connectivity matrix which will be used to calculate residual spatial autocorrelation as well as any user specified \code{slx} terms; it will automatically be row-standardized before calculating \code{slx} terms. See \code{\link[geostan]{shape2mat}}.}
+\item{car_parts}{A list of data for the CAR model, as returned by \code{\link[geostan]{prep_car_data}}. If not provided by the user, then \code{C} will automatically be passed to \code{prep_car_data} to create it.}
 
 \item{family}{The likelihood function for the outcome variable. Current options are \code{auto_gaussian()}, \code{binomial(link = "logit")}, and \code{poisson(link = "log")}; if \code{family = gaussian()} is provided, it will automatically be converted to \code{auto_gaussian()}.}
 
@@ -84,6 +85,8 @@ With the CAR model, any \code{alpha_re} term should be at a \emph{different} lev
 \item{prior_only}{Logical value; if \code{TRUE}, draw samples only from the prior distributions of parameters.}
 
 \item{censor_point}{Integer value indicating the maximum censored value; this argument is for modeling censored (suppressed) outcome data, typically disease case counts or deaths.}
+
+\item{zmp}{Use zero-mean parameterization for the CAR model? Only relevant for Poisson and binomial outcome models (i.e., hierarchical models). See details below; this can sometimes improve MCMC sampling when the data is sparse, but does not alter the model specification.}
 
 \item{chains}{Number of MCMC chains to use.}
 
@@ -116,7 +119,7 @@ If \code{slim = TRUE}, then \code{drop} will be ignored.}
 An object of class class \code{geostan_fit} (a list) containing:
 \describe{
 \item{summary}{Summaries of the main parameters of interest; a data frame.}
-\item{diagnostic}{Widely Applicable Information Criteria (WAIC) with a measure of effective number of parameters (\code{eff_pars}) and mean log pointwise predictive density (\code{lpd}), and mean residual spatial autocorrelation as measured by the Moran coefficient.}
+\item{diagnostic}{Residual spatial autocorrelation as measured by the Moran coefficient.}
 \item{stanfit}{an object of class \code{stanfit} returned by \code{rstan::stan}}
 \item{data}{a data frame containing the model data}
 \item{family}{the user-provided or default \code{family} argument used to fit the model}
@@ -139,28 +142,24 @@ Use the CAR model as a prior on parameters, or fit data to a spatial Gaussian CA
 \details{
 CAR models are discussed in Cressie and Wikle (2011, p. 184-88), Cressie (2015, Ch. 6-7), and Haining and Li (2020, p. 249-51). It is often used for areal or lattice data.
 
-Details for the Stan code for this implementation of the CAR model can be found in Donegan (2021).
+Details for the Stan code for this implementation of the CAR model can be found in Donegan (2021) and the geostan vignette 'Custom spatial models with Rstan and geostan'.
 
-The general scheme for the CAR model is as follows:
+For outcome variable \eqn{y} and N-by-N connectivity matrix \eqn{C}, a standard spatial CAR model may be written as
+\deqn{
+ y = \mu + \rho C (y - \mu) + \epsilon
+}
+where \eqn{\rho} is a spatial dependence or autocorrelation parameter. The models accounts for autocorrelated errors in the regression.
+
+The model is defined by its covariance matrix. The general scheme for the CAR model is as follows:
 \deqn{
  y \sim Gauss( \mu, ( I - \rho C)^{-1} M),
 }
-where \eqn{I} is the identity matrix, \eqn{\rho} is a spatial dependence parameter, \eqn{C} is a spatial connectivity matrix, and \eqn{M} is a diagonal matrix of variance terms. The diagonal of \eqn{M} contains a scale parameter \eqn{\tau} multiplied by a vector of weights (often set to be proportional to the inverse of the number of neighbors assigned to each site). The CAR model owes its name to the fact that this joint distribution corresponds to a set of conditional distributions that relate the expected value of each observation to a function of neighboring values, i.e., the Markov condition holds:
-\deqn{
-E(y_i | y_1, y_2, \dots, y_{i-1}, y_{i+1}, \dots, y_n) = \mu_i + \rho \sum_{j=1}^n c_{i,j} (y_j - \mu_j),
-}
-where entries of \eqn{c_{i,j}} are non-zero only if \eqn{j \in N(i)} and \eqn{N(i)} indexes the sites that are neighbors of the \eqn{i^{th}} site.
+where \eqn{I} is the identity matrix, \eqn{\rho} is a spatial dependence parameter, \eqn{C} is a spatial connectivity matrix, and \eqn{M} is a diagonal matrix of variance terms. The diagonal of \eqn{M} contains a scale parameter \eqn{\tau} multiplied by a vector of weights (often set to be proportional to the inverse of the number of neighbors assigned to each site).
 
-With the Gaussian probability distribution,
-\deqn{
- y_i | y_j: j \neq i \sim Gauss(\mu_i + \rho \sum_{j=1}^n c_{i,j} (y_j - \mu_j), \tau_i^2)
-}
-where \eqn{\tau_i} is a scale parameter and \eqn{\mu_i} may contain covariates or simply the intercept.
-
-The covariance matrix of the CAR model contains two parameters: \eqn{\rho} (\code{car_rho}) which controls the kind (positive or negative) and degree of spatial autocorrelation, and the scale parameter \eqn{\tau} (\code{car_scale}). The range of permissible values for \eqn{\rho} depends on the specification of \eqn{\boldsymbol C} and \eqn{\boldsymbol M}; for specification options, see \link[geostan]{prep_car_data} and Cressie and Wikle (2011, pp. 184-188) or Donegan (2021).
+The covariance matrix of the CAR model contains two parameters: \eqn{\rho} (\code{car_rho}) which controls the kind (positive or negative) and degree of spatial autocorrelation, and the scale parameter \eqn{\tau}. The range of permissible values for \eqn{\rho} depends on the specification of \eqn{\boldsymbol C} and \eqn{\boldsymbol M}; for specification options, see \link[geostan]{prep_car_data} and Cressie and Wikle (2011, pp. 184-188) or Donegan (2021).
 
 Further details of the models and results depend on the \code{family} argument, as well as on the particular CAR specification chosen (from \link[geostan]{prep_car_data}).
-\subsection{Auto-Gaussian}{
+\subsection{Auto-Normal}{
 
 When \code{family = auto_gaussian()} (the default), the CAR model is applied directly to the data as follows:
 \deqn{
@@ -188,12 +187,15 @@ For \code{family = poisson()}, the model is specified as:
 \deqn{\lambda \sim Gauss(\mu, (I - \rho C)^{-1} \boldsymbol M).}
 If the raw outcome consists of a rate \eqn{\frac{y}{p}} with observed counts \eqn{y} and denominator \eqn{p} (often this will be the size of the population at risk), then the offset term \eqn{O=log(p)} is the log of the denominator.
 
-This is often written (equivalently) as:
+The same model can also be described or specified such that \eqn{\phi} has a mean of zero:
 \deqn{y \sim Poisson(e^{O + \mu + \phi})}
 \deqn{\phi \sim Gauss(0, (I - \rho C)^{-1} \boldsymbol M).}
-For Poisson models, the \link[geostan]{spatial} method returns the parameter vector \eqn{\phi}.
 
-In the Poisson CAR model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it: \eqn{\phi_i = \rho \sum_{i=1}^n c_{ij} \phi_j + \epsilon_i}, where \eqn{\epsilon_i \sim Gauss(0, \tau_i^2)}. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating (following Cressie 2015, p. 564):
+This is the zero-mean parameterization (ZMP) of the CAR model; although the non-ZMP is typically better for MCMC sampling, use of the ZMP can greatly improve MCMC sampling \emph{when the data is sparse}. Use \code{zmp = TRUE} in \code{stan_car} to apply this specification. (See the geostan vignette on 'custom spatial models' for full details on implementation of the ZMP.)
+
+For all CAR Poisson models, the \link[geostan]{spatial} method returns the (zero-mean) parameter vector \eqn{\phi}. When \code{zmp = FALSE} (the default), \eqn{phi} is obtained by subtraction: \eqn{\phi = \lambda - \mu}.
+
+In the Poisson CAR model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it: \eqn{\phi_i = \rho \sum_{i=1}^n c_{ij} \phi_j + \epsilon_i}, where \eqn{\epsilon_i \sim Gauss(0, \tau_i^2)}. If for some reason you would like to extract the smoother latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating (following Cressie 2015, p. 564):
 \deqn{\rho  C  \phi.}
 }
 
@@ -204,16 +206,12 @@ For \code{family = binomial()}, the model is specified as:
 \deqn{logit(\lambda) \sim Gauss(\mu, (I - \rho C)^{-1} \boldsymbol M).}
 where outcome data \eqn{y} are counts, \eqn{N} is the number of trials, \eqn{\lambda} is the 'success' rate, and \eqn{\mu} contains the intercept and possibly covariates. Note that the model formula should be structured as: \code{cbind(sucesses, failures) ~ x}, such that \code{trials = successes + failures}.
 
-This is often written (equivalently) as:
-\deqn{y \sim Binomial(N, \lambda)}
-\deqn{logit(\lambda) = \mu + \phi}
-\deqn{\phi \sim Gauss(0, (I - \rho C)^{-1} \boldsymbol M).}
-For fitted Binomial models, the \link[geostan]{spatial} method will return the parameter vector \code{phi}.
-
 As is also the case for the Poisson model, \eqn{\phi} contains a latent spatial trend as well as additional variation around it. If you would like to extract the latent/implicit spatial trend from \eqn{\phi}, you can do so by calculating:
 \deqn{
 \rho C \phi.
 }
+
+The zero-mean parameterization (ZMP) of the CAR model can also be applied here (see the Poisson model for details); ZMP provides an equivalent model specification that can improve MCMC sampling when data is sparse.
 }
 
 \subsection{Additional functionality}{
@@ -223,37 +221,65 @@ The CAR models can also incorporate spatially-lagged covariates, measurement/sam
 }
 \examples{
 
-# model mortality risk
+##
+## model mortality risk
+##
+
+# simple spatial model for log rates
+
 data(georgia)
 C <- shape2mat(georgia, style = "B")
-cp <- prep_car_data(C)
+cars <- prep_car_data(C)
 
-fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
-                car_parts = cp,
-                data = georgia,
-                family = poisson(),
-                iter = 800, chains = 1 # for example speed only
-                 )
-rstan::stan_rhat(fit$stanfit)
-rstan::stan_mcse(fit$stanfit)
-print(fit)
+# MCMC specs: set for purpose of demo speed 
+iter = 500
+chains = 2
+
+fit <- stan_car(log(rate.male) ~ 1, data = georgia,
+          car_parts = cars, iter = iter, chains = chains)
+
+# model diagnostics
 sp_diag(fit, georgia)
 
+# A more appropriate model for mortality rates:
+# hierarchical spatial Poisson model
+fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
+                car_parts = cars,
+                data = georgia,
+                family = poisson(),
+                iter = iter, chains = chains)
+
+# model diagnostics
+sp_diag(fit, georgia)
+
+# county mortality rates
+eta = fitted(fit)
+
+# spatial trend component
+phi = spatial(fit)
+
 \donttest{
-## DCAR specification (inverse-distance based)
+
+##
+## Distance-based weights matrix:
+##   the 'DCAR' model
+##
+
 library(sf)
 A <- shape2mat(georgia, "B")
 D <- sf::st_distance(sf::st_centroid(georgia))
-A <- D * A
-cp <- prep_car_data(A, "DCAR", k = 1)
+D <- D * A
+dcars <- prep_car_data(D, "DCAR", k = 1)
 
-fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
+Dfit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
                data = georgia,
-               car = cp,
+               car = dcars,
                family = poisson(),
-               iter = 800, chains = 1 # for example speed only 
-)
-print(fit)
+               iter = iter, chains = chains)
+
+sp_diag(Dfit, georgia, dcars$C)
+dic(Dfit); dic(fit)
+
 }
 
 }

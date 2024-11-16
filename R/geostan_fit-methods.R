@@ -54,28 +54,29 @@ print.geostan_fit <- function(x,
     cat("Partial pooling (varying intercept): ")
     print(x$re$formula)
     pars <- c(pars, "alpha_tau")
-  }  
-  cat("Spatial method (outcome): ", as.character(x$spatial$method), "\n")
+  }
+  cat("Likelihood: ", x$family$family, "\n")
+  cat("Link: ", x$family$link, "\n")
+  
+  meth <- x$spatial$method
+  if (meth == "SAR") meth <- paste0(meth, " (", x$sar_type, ")")  
+  cat("Spatial method: ", as.character(meth), "\n")
   if (x$spatial$method == "CAR") pars <- c(pars, "car_rho", "car_scale")
   if (x$spatial$method == "SAR") pars <- c(pars, "sar_rho", "sar_scale")  
   if (x$spatial$method == "BYM2") pars <- c(pars, "rho", "spatial_scale")
   if (x$spatial$method == "BYM") pars <- c(pars, "spatial_scale", "theta_scale")
   if (x$spatial$method == "ICAR") pars <- c(pars, "spatial_scale")  
-  cat("Likelihood function: ", x$family$family, "\n")
-  cat("Link function: ", x$family$link, "\n")
+
   if (!is.null(x$diagnostic$Residual_MC)) cat("Residual Moran Coefficient: ", x$diagnostic$Residual_MC, "\n")
-  if (!is.null(x$diagnostic$WAIC)) cat("WAIC: ", x$diagnostic$WAIC, "\n")
   cat("Observations: ", x$N, "\n")  
-  cat("Data models (ME): ")
   if (x$ME$has_me) {
+      cat("Data models (ME): ")
       cat(paste(names(x$ME$se), sep = ", ")) 
       if (x$ME$spatial_me) {
-          cat("\n Data model (ME prior): CAR (auto Gaussian)")
+          cat("\n Data model (ME prior): CAR (auto-normal)")
       } else {
           cat("\nData model (ME prior): Student's t")
       }
-  } else {
-      cat("none")
   }
   if (x$spatial$method == "HS") {
     cat("\nHorseshoe global shrinkage prior: ", round(x$priors$beta_ev$global_scale, 2), "\n")
@@ -268,22 +269,67 @@ spatial.geostan_fit <- function(object,
 }
 
 extract_autoGauss_trend <- function(object) {
-    if (object$spatial$method == "CAR") rho_name <- "car_rho"
-    if (object$spatial$method == "SAR") rho_name <- "sar_rho"
+    
+    if (object$spatial$method == "CAR") {
+        link <- object$family$link
+        scale_param <- "car_scale"
+        ZMP <- object$car_parts$ZMP        
+        rho_name <- "car_rho"
+        lag_y <- FALSE
+    }
+    
+    if (object$spatial$method == "SAR") {
+        link <- object$family$link
+        scale_param <- "sar_scale"        
+        ZMP <- object$sar_parts$ZMP        
+        rho_name <- "sar_rho"
+        lag_y <- grepl("SDLM|SLM", object$sar_type)                
+    }
+    
     if (object$family$family == "auto_gaussian") {
-        C <- object$C
-        y <- object$data[,1]
-        rho <- as.matrix(object, pars = rho_name)
-        fits <- as.matrix(object$stanfit, pars = "fitted")
-        R = sweep(fits, MARGIN = 2, STATS = as.array(y), FUN = .resid)
-        spatial.samples <- t(sapply(1:nrow(rho), function(i) {
-            as.numeric( rho[i] * C %*% R[i,] )
-        }))         
-      } else {
-          log_lambda_mu <- as.matrix(object, pars = "log_lambda_mu")
-          log_lambda <- log( fitted(object, summary = FALSE, rates = TRUE) )
-          spatial.samples <- log_lambda - log_lambda_mu
-      }
+
+        if (lag_y) {
+
+            C <- object$C
+            y <- object$data[,1]
+            rho <- as.matrix(object, pars = rho_name)
+            spatial.samples <- t(sapply(1:nrow(rho), function(i) {
+                as.numeric( rho[i] * C %*% y )
+            }))
+            
+        } else {
+            C <- object$C
+            y <- object$data[,1]
+            rho <- as.matrix(object, pars = rho_name)
+            fits <- as.matrix(object$stanfit, pars = "fitted")
+            R = sweep(fits, MARGIN = 2, STATS = as.array(y), FUN = .resid)
+            spatial.samples <- t(sapply(1:nrow(rho), function(i) {
+                as.numeric( rho[i] * C %*% R[i,] )
+            }))
+        }
+
+        # auto-gaussan return:
+        return (spatial.samples)   
+    }
+
+    # hierarchical models:
+    if (ZMP == 1) {
+
+        scale <- as.matrix(object, pars = scale_param)
+        log_lambda <- as.matrix(object, pars = "log_lambda")
+        spatial.samples <- sweep(log_lambda, MARGIN = 1, STATS = scale, FUN = "*")        
+
+    } else {
+
+        log_lambda_mu <- as.matrix(object, pars = "log_lambda_mu")
+        # 'fitted, rates=TRUE' sweeps out the offset from fitted values
+        lambda <- fitted(object, summary = FALSE, rates = TRUE)
+        if (link == "log") log_lambda <- exp(lambda)
+        if (link == "logit") log_lambda <- inv_logit(lambda)        
+        spatial.samples <- log_lambda - log_lambda_mu                
+      
+    }
+    
     return (spatial.samples)
 }
 
@@ -352,25 +398,57 @@ as.array.geostan_fit <- function(x, ...){
 #' 
 #' @param object A fitted model object of class \code{geostan_fit}.
 #' 
-#' @param newdata A data frame in which to look for variables with which to predict, presumably for the purpose of viewing marginal effects. Note that if the model formula includes an offset term, `newdata` must contain the offset. Note also that any spatially-lagged covariate terms will be ignored if they were provided using the `slx` argument. If covariates in the model were centered using the `centerx` argument, the `predict.geostan_fit` method will automatically center the predictors in `newdata` using the values stored in `object$x_center`. If `newdata` is missing, the fitted values of the model will be returned.
+#' @param newdata A data frame in which to look for variables with which to predict. Note that if the model formula includes an offset term, `newdata` must contain the offset column (see examples below). If covariates in the model were centered using the `centerx` argument, the `predict.geostan_fit` method will automatically center the predictors in `newdata` using the values stored in `object$x_center`. If `newdata` is missing, the fitted values of the model will be returned.
 #' 
-#' @param alpha An N-by-1 matrix of MCMC samples for the intercept; this is provided by default. However, this argument might be used if there is a need to incorporate the spatial trend term, in which case it may be thought of as a spatially-varying intercept. If used, note that the intercept needs to be provided on the scale of the linear predictor. 
+#' @param alpha An N-by-1 matrix of MCMC samples for the intercept; this is provided by default. If used, note that the intercept needs to be provided on the scale of the linear predictor. This argument might be used if there is a need to incorporate the spatial trend term (as a spatially-varying intercept).
 #'
-#' @param center Optional vector of numeric values or a logical scalar to pass to \code{\link[base]{scale}}. Defaults to using `object$x_center`. If the model was fit using `centerx = TRUE`, then covariates were centered and their mean values are stored in `object$x_center` and the `predict` method will use them to automatically center `newdata`; if the model was fit with `centerx = FALSE`, then `object$x_center = FALSE` and `newdata` will not be centered.
+#' @param center Optional vector of numeric values or a logical scalar to pass to \code{\link[base]{scale}}. Defaults to using `object$x_center`. If the model was fit using `centerx = TRUE`, then covariates were centered and their mean values are stored in `object$x_center` and the `predict` method will use them automatically to center `newdata`; if the model was fit with `centerx = FALSE`, then `object$x_center = FALSE` and `newdata` will not be centered.
 #'
 #' @param summary If `FALSE`, a matrix containing samples from the posterior distribution at each observation is returned. The default, `TRUE`, will summarize results by providing an estimate (mean) and credible interval (formed by taking quantiles of the MCMC samples).
 #' 
 #' @param type By default, results from `predict` are on the scale of the linear predictor (`type = "link")`). The alternative (`type = "response"`) is on the scale of the response variable. For example, the default return values for a Poisson model on the log scale, and using `type = "response"` will return the original scale of the outcome variable (by exponentiating the log values).
 #'
+#' @param add_slx Logical. If `add_slx = TRUE`, any spatially-lagged covariates that were specified through the 'slx' argument (of the model fitting function, e.g., `stan_glm`) will be added to the linear predictor. The spatial lag terms will be calculated internally using `object$C`, the spatial weights matrix used to fit the model. Hence, `newdata` must have `N = object$N` rows. Predictions from spatial lag models (SAR models of type 'SLM' and 'SDLM') always include the SLX terms (i.e., any value passed to `add_slx` will be overwritten with `TRUE`).
+#' 
+#' @param approx For SAR models of type 'SLM' or 'SDLM' only; use an approximation for matrix inversion? See details below.
+#'
+#' @param K Number of matrix powers to use with \code{approx}.
+#' 
 #' @param ... Not used
 #'
 #' @details
 #'
-#' The purpose of the predict method is to explore marginal effects of (combinations of) covariates. 
+#' The primary purpose of the predict method is to explore marginal effects of covariates. The uncertainty present in these predictions refers to uncertainty in the expected value of the model. The expectation does not include the error term of the model (nb: one expects actual observations to form a cloud of points around the expected value). By contrast, \link[geostan]{posterior_predict} returns the complete (posterior) predictive distribution of the model (the expectation plus noise).
 #'
-#' The model formula will be taken from `object$formula`, and then a model matrix will be created by passing `newdata` to the \link[stats]{model.frame} function (as in: \code{model.frame(newdata, object$formula}). Parameters are taken from `as.matrix(object, pars = c("intercept", "beta"))`.
+#' The model formula will be taken from `object$formula`, and then a model matrix will be created by passing `newdata` to the \link[stats]{model.frame} function (as in: \code{model.frame(object$formula, newdata)}. Parameters are taken from \code{as.matrix(object, pars = c("intercept", "beta"))}. 
+#'
+#' The examples illustrate how to use the function in most cases.
+#'
+#' Special considerations apply to models with spatially-lagged covariates and a spatially-lagged dependent variable (i.e., the 'SLM' and 'SDLM' models fit by \link[geostan]{stan_sar}). 
 #' 
-#' Be aware that in generalized linear models (such as Poisson and Binomial models) marginal effects plots on the response scale may be sensitive to the level of other covariates in the model. If the model includes any spatially-lagged covariates (introduced using the `slx` argument) or a spatial autocorrelation term (for example, you used a spatial CAR, SAR, or ESF model), these terms will essentially be fixed at zero for the purposes of calculating marginal effects. If you want to change this, you can introduce spatial trend values by specifying a varying intercept using the `alpha` argument.
+#' ## Spatial lag of X
+#' 
+#' Spatially-lagged covariates which were included via the `slx` argument will, by default, not be included in the predicted values. (The user can have greater control by manually adding the spatially-lagged covariate to the main model formula.) The `slx` term will be be included in predictions if `add_slx = TRUE` or if the fitted model is a SAR model of type 'SLM' or 'SDLM'. In either of those cases, `newdata` must have the same number of rows as were used to fit the original data.
+#'
+#' ## Spatial lag of Y
+#' 
+#' The typical 'marginal effect' interpretation of the regression coefficients does not hold for the SAR models of type 'SLM' or 'SDLM'. For details on these 'spillover effects', see LeSage and Pace (2009), LeSage (2014), and \link[geostan]{impacts}. 
+#'
+#' Predictions for the spatial lag model (SAR models of type 'SLM') are equal to:
+#' \deqn{
+#'  (I - \rho W)^{-1} X \beta
+#' }
+#' where \eqn{X \beta} contains the intercept and covariates. Predictions for the spatial Durbin lag model (SAR models of type 'SDLM') are equal to:
+#' \deqn{
+#'  (I - \rho W)^{-1} (X \beta + WX \gamma)
+#' }
+#' where \eqn{WX \gamma} are spatially lagged covariates multiplied by their coefficients. For this reason, the `predict.geostan_fit` method requires that `newdata` have as many rows as the original data (so that `nrow(newdata) == nrow(object$C)`); the spatial weights matrix will be taken from `object$C`. 
+#'
+#' The inverse of the matrix \eqn{(I - \rho W)} can be time consuming to compute (especially when iterating over MCMC samples). You can use `approx = TRUE` to approximate the inverse using a series of matrix powers. The argument \eqn{K} controls how many powers to use for the approximation. As a rule, higher values of \eqn{\rho} require larger \eqn{K} to obtain accuracy. Notice that \eqn{\rho^K} should be close to zero for the approximation to hold. For example, for \eqn{\rho = .5} a value of \eqn{K=8} may suffice (\eqn{0.5^8 = 0.004}), but larger values of \eqn{\rho} require higher values of \eqn{K}. 
+#'
+#' ## Generalized linear models
+#' 
+#' In generalized linear models (such as Poisson and Binomial models) marginal effects plots on the response scale may be sensitive to the level of other covariates in the model and to geographic location (given a spatially-varying mean value). If the model includes a spatial autocorrelation component (for example, you used a spatial CAR, SAR, or ESF model, or used the `re` argument for random effects), by default these terms will be fixed at zero for the purposes of calculating marginal effects. If you want to change this, you can introduce a varying intercept manually using the `alpha` argument.
 #' 
 #' @return
 #'
@@ -382,16 +460,17 @@ as.array.geostan_fit <- function(x, ...){
 #' 
 #' fit <- stan_glm(deaths.male ~ offset(log(pop.at.risk.male)) + log(income),
 #'                data = georgia,
+#'                re = ~ GEOID,
 #'                centerx = TRUE,
 #'                family = poisson(),
 #'                chains = 2, iter = 600) # for speed only
 #'
-#' # note: pop.at.risk.male=1 leads to log(pop.at.risk.male)=0
+#' # note: pop.at.risk.male=1 leads to offset of log(pop.at.risk.male)=0
 #' # so that the predicted values are rates
 #' newdata <- data.frame(
 #'              income = seq(min(georgia$income),
 #'                           max(georgia$income),
-#'                            length.out = 100),
+#'                            length.out = 200),
 #'              pop.at.risk.male = 1)
 #'
 #' preds <- predict(fit, newdata, type = "response")
@@ -406,21 +485,59 @@ as.array.geostan_fit <- function(x, ...){
 #' newdata$pop.at.risk.male <- 10e3
 #' preds <- predict(fit, newdata, type = "response")
 #' head(preds)
+#'
+#' # plot range
+#' y_lim <- c(min(preds$`2.5%`), max(preds$`97.5%`))
+#'
+#' # plot line
 #' plot(preds$income,
 #'     preds$mean,
-#'     type = "l",
+#'     type = "l",    
 #'     ylab = "Deaths per 10,000",
-#'     xlab = "Income ($1,000s)")
-#' @export 
+#'     xlab = "Income ($1,000s)",
+#'     ylim = y_lim,
+#'     axes = FALSE)
+#'
+#' # add shaded cred. interval
+#' x <- c(preds$income, rev(preds$income))
+#' y <- c(preds$`2.5%`, rev(preds$`97.5%`))
+#' polygon(x = x, y = y,
+#'        col = rgb(0.1, 0.2, 0.3, 0.3),
+#'        border = NA)
+#'
+#' # add axes
+#' yat = seq(0, 300, by = 20)
+#' axis(2, at = yat)
+#'
+#' xat = seq(0, 200, by = 10)
+#' axis(1, at = xat)
+#'
+#' # show county incomes
+#' rug(georgia$income)
+#' @source
+#'
+#' Goulard, Michael, Thibault Laurent, and Christine Thomas-Agnan (2017). About predictions in spatial autoregressive models: optimal and almost optimal strategies. *Spatial Economic Analysis* 12 (2-3): 304-325.
+#' 
+#' LeSage, James (2014). What Regional Scientists Need to Know about Spatial Econometrics. *The Review of Regional Science* 44: 13-32 (2014 Southern Regional Science Association Fellows Address).
+#' 
+#' LeSage, James, & Robert kelley Pace (2009). *Introduction to Spatial Econometrics*. Chapman and Hall/CRC.
+#'
+#' @importFrom Matrix Diagonal solve
+#' @export
+#' @md
+#' 
 predict.geostan_fit <- function(object,
                                 newdata,
-                                alpha = as.matrix(object, pars = "intercept"),
+                                alpha = as.matrix(object, pars = "intercept"),                                
                                 center = object$x_center,
                                 summary = TRUE,
                                 type = c("link", "response"),
+                                add_slx = FALSE,
+                                approx = FALSE,
+                                K = 15,  
                                 ...) {
     type <- match.arg(type)
-    if (missing(newdata)) return (fitted(object, summary = summary, ...))    
+    if (missing(newdata)) return (fitted(object, summary = summary, ...))
     f <- object$formula[-2]
     X <- as.matrix(model.matrix(f, newdata)[,-1])    
     X <- scale(X, center = center, scale = FALSE)
@@ -431,19 +548,78 @@ predict.geostan_fit <- function(object,
     N <- nrow(X)
     P <- matrix(NA, nrow = M, ncol = N)
     stopifnot(nrow(alpha) == nrow(Beta))
-    for (m in 1:M) P[m,] <- O + alpha[m,] + X %*% Beta[m,] 
+    
+    for (m in 1:M) {
+        P[m,] <- O + alpha[m,] + X %*% Beta[m,]
+    }
+
+    lag_y <- FALSE
+    if (object$spatial$method == "SAR") {
+        add_slx <- grepl("SDEM|SDLM", object$sar_type)
+        lag_y <- grepl("SLM|SDLM", object$sar_type)
+    }
+    
+    if (add_slx) {        
+        stopifnot( nrow(newdata) == nrow(object$C) )        
+        Gamma <- as.matrix(object, pars = "gamma")            
+        gnames <- gsub("^w.", "", colnames(Gamma))
+        xnames <- colnames(X)
+        idx <- na.omit( match(xnames, gnames) )
+        X_tmp <- as.matrix(X[, idx])
+        if (length(idx) != ncol(Gamma)) stop("Mis-match of SLX coefficient names and X column names.")
+        WX <- W %*% X_tmp        
+        for (m in 1:M) P[m,] <- as.numeric( P[m,] + WX %*% as.matrix(Gamma[m,]) )        
+    }
+    
+    if (lag_y == TRUE) {
+        
+        if ( nrow(object$C) != N ) {
+            stop("Prediction with SLM and SDLM models requires that 'newdata' is the same size as your spatial weights matrix (N rows).")
+        }
+        
+        W <- object$C
+        I <- Matrix::Diagonal(N)
+        rho <- as.matrix(object, pars = "sar_rho")[,1]
+
+        if (approx) {
+            Q <- K + 1
+            powers = 0:K
+            Mlist <- list()
+            Mlist[[1]] <- I
+            Mlist[[2]] <- W
+            W_k <- W    
+            for (q in 3:Q) {
+                W_k <- W %*% W_k
+                Mlist[[q]] <- W_k
+            }        
+            for (m in 1:M) {
+                rho_powers <- rho[ m ]^powers
+                Mpowers <- lapply(seq(Q), function(j) Mlist[[j]] * rho_powers[j])
+                Multiplier <- Reduce(`+`, Mpowers)
+                P[ m, ] <- as.numeric( Multiplier %*% P[ m, ] )
+            }           
+
+        } else {
+            for (m in 1:M) {
+                Multiplier <- Matrix::solve(I - rho[m] * W) 
+                P[m,] <- as.numeric( Multiplier %*% P[m,] )                    
+            }
+        }
+        
+    }
+    
     if (type == "response") {
         if (object$family$link == "log") P <- exp(P)
         if (object$family$link == "logit") P <- inv_logit(P)
     }
+    
     if (summary) {
         P <- post_summary(P)
         P <- cbind(newdata, P)
     }
+    
     return (P)
 }
-
-
 
 #' @export
 log_lik <- function(object, ...) {

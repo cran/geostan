@@ -15,7 +15,7 @@ sp_diag(y, shape, ...)
   plot = TRUE,
   mc_style = c("scatter", "hist"),
   style = c("W", "B"),
-  w,
+  w = y$C,
   rates = TRUE,
   binwidth = function(x) 0.5 * stats::sd(x, na.rm = TRUE),
   size = 0.1,

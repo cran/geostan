@@ -4,14 +4,14 @@
 \alias{row_standardize}
 \title{Row-standardize a matrix; safe for zero row-sums.}
 \usage{
-row_standardize(C, warn = TRUE, msg = "Row standardizing connectivity matrix")
+row_standardize(C, warn = FALSE, msg = "Row standardizing connectivity matrix")
 }
 \arguments{
 \item{C}{A matrix}
 
-\item{warn}{Print \code{msg} if \code{warn = TRUE}.}
+\item{warn}{Print message \code{msg} if \code{warn = TRUE}.}
 
-\item{msg}{A warning message to print.}
+\item{msg}{A warning message; used internally by geostan.}
 }
 \value{
 A row-standardized matrix, W (i.e., all row sums equal 1, or zero).
@@ -27,4 +27,5 @@ Matrix::rowSums(A)
 W <- row_standardize(A)
 head(Matrix::summary(W))
 Matrix::rowSums(W)
+
 }
