@@ -258,7 +258,9 @@ head(preds)
 # scale GDP
 preds <- transform(preds, gdpPercap = gdpPercap / 1e3)
 
-yrange <- c(min(preds$`2.5%`), max(preds$`97.5%`))
+## yrange <- c(min(preds$`2.5%`), max(preds$`97.5%`))
+yrange <- c(57, 85)
+
 plot(preds$gdpPercap, preds$mean,
      t = 'l',
      ylim = yrange,
@@ -271,6 +273,9 @@ axis(2)
 # add credible intervals
 lines(preds$gdpPercap, preds$`2.5%`, lty = 3)
 lines(preds$gdpPercap, preds$`97.5%`, lty = 3)
+
+# show actual gdp values
+rug(world$gdpPercap / 1e3, lwd = 0.25)
 
 ## ----echo = TRUE--------------------------------------------------------------
 # function for getting colors, breaks, and labels for mapping

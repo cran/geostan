@@ -57,6 +57,6 @@ print(fit)
 #  W <- sar_list$W
 #  
 #  z <- sim_sar(rho = .8, w = W, quick = TRUE)
-#  y <- sim_sar(mu = -.5 * z, rho = .9, w = W, quick = TRUE)
+#  y <- sim_sar(mu = -.5 * z, rho = .7, w = W, quick = TRUE)
 #  dat <- cbind(y, z)
 

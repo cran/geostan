@@ -15,7 +15,7 @@ sim_sar(
   w,
   type = c("SEM", "SLM"),
   approx = FALSE,
-  K = 15,
+  K = 20,
   ...
 )
 }

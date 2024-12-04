@@ -1,7 +1,7 @@
 Package: geostan
 Title: Bayesian Spatial Analysis
-Version: 0.8.0
-Date: 2024-11-15
+Version: 0.8.1
+Date: 2024-12-04
 URL: https://connordonegan.github.io/geostan/
 BugReports: https://github.com/ConnorDonegan/geostan/issues
 Authors@R: c(
@@ -28,10 +28,10 @@ Suggests: testthat, knitr, rmarkdown, bayesplot
 SystemRequirements: GNU make
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2024-11-16 18:25:52 UTC; connor
+Packaged: 2024-12-04 21:54:21 UTC; connor
 Author: Connor Donegan [aut, cre] (<https://orcid.org/0000-0002-9698-5443>),
   Mitzi Morris [ctb],
   Amy Tims [ctb]
 Maintainer: Connor Donegan <connor.donegan@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-11-16 19:10:02 UTC
+Date/Publication: 2024-12-04 22:30:01 UTC
