@@ -408,7 +408,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>The following Stan code implements the above model; if you’re following along, copy the Stan code and save it in a file inside your working directory; I’ll name it “autonormal.stan” and I’ll save the name as an R variable:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>autonormal_file &lt;-<span class="st"> &quot;autonormal.stan&quot;</span></span></code></pre></div>
 <p>Here’s the Stan code:</p>
-<pre><code>functions {
+<pre class="stan"><code>functions {
 #include wcar-lpdf.stan
 }
 
@@ -466,7 +466,7 @@ model {
 }
 </code></pre>
 <p>The input file “wcar-lpdf.stan” contains the following code (save this code inside your working directory and name it “wcar-lpdf.stan”):</p>
-<pre><code>/**
+<pre class="stan"><code>/**
  * Log probability density of the conditional autoregressive (CAR) model: WCAR specifications only
  *
  * @param y Process to model
@@ -576,7 +576,7 @@ real wcar_normal_lpdf(vector y, vector mu,
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true"></a>    )</span></code></pre></div>
 <p>The following Stan code provides a template for a simple disease mapping model using the CAR model as a prior for <span class="math inline">\(\phi\)</span>. As before, you can save the code in your working directory and give it a name like “car_poisson.stan”. I’ll store the file name in my R environment:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>car_poisson_file &lt;-<span class="st"> &quot;car_poisson.stan&quot;</span></span></code></pre></div>
-<pre><code>functions {
+<pre class="stan"><code>functions {
 #include wcar-lpdf.stan
 }
 
@@ -701,7 +701,7 @@ model {
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a>    )</span></code></pre></div>
 <p>(This <code>zmp</code> option is also available in <code>stan_sar</code>.)</p>
 <p>To code this in Stan, we take “car_poisson.stan” and change the top of model block to the following:</p>
-<pre><code>model {
+<pre class="stan"><code>model {
   vector[n] y_mu = exp(const_offset + alpha + x * beta + phi * tau);
   vector[n] phi_mu = rep_vector(0, n);
   
@@ -722,7 +722,7 @@ model {
 }
 </code></pre>
 <p>Everything else is the same. However, when you extract the MCMC samples of <span class="math inline">\(\phi\)</span> you have to remember to multiple them by the scale parameter. It can be easier if you complete this step inside the Stan model; to do so, you can append the following generated quantity to the model:</p>
-<pre><code>generated quantities {
+<pre class="stan"><code>generated quantities {
   vector[n] eta = phi * tau;  
 }</code></pre>
 <p>NB: these ways of parameterizing a hierarchical model are sometimes referred to as ‘centered’ and ‘non-centered’ parameterizations (these are good search terms to learn more about it). We use the term ZMP here because it seems more intuitive: it is obvious which parameterization of the CAR model has mean of zero; it is not obvious which of these two is the ‘non-centered’ parameterization.</p>
@@ -730,7 +730,8 @@ model {
 </div>
 <div id="sar-models" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> SAR models</h1>
-<p>The simultaneously-specified spatial autoregression (SAR) is written as <span class="math display">\[\begin{equation}
+<p>There are two variants of the simultaneously-specified spatial autoregression (SAR) model. One is known as a spatial lag or spatial lag of y model (SLM). The SLM is now implemented in geostan (as of version 0.8.0). The second type of SAR model is known as the spatial error model (SEM). This vignette only covers the SEM, but it may be updated in the future with instructions for the SLM. The SLM introduces various complications for interpretation, as referenced in the <code>geostan::stan_sar</code> documentation.</p>
+<p>The SEM is written as <span class="math display">\[\begin{equation}
   \begin{aligned}
     y = \mu + (I - \rho \cdot W)^{-1} \epsilon \\
     \epsilon \sim Normal(0, \sigma^2 \cdot I)
@@ -739,15 +740,16 @@ model {
 where <span class="math inline">\(W\)</span> is a row-standardized spatial weights matrix, <span class="math inline">\(I\)</span> is the n-by-n identity matrix, and <span class="math inline">\(\rho\)</span> is a spatial autocorrelation parameter. (The spatial econometrics literature refers to this as the spatial error model.) This is also a multivariate normal distribution but with a different covariance matrix than the CAR model: <span class="math display">\[\begin{equation}
   \Sigma = \sigma^2 \cdot (I - \rho \cdot W)^{-1} (I - \rho \cdot W^T)^{-1},
 \end{equation}\]</span> where <span class="math inline">\(T\)</span> is the matrix transpose operator. The SA parameter <span class="math inline">\(\rho\)</span> for the SAR model has a more intuitive connection to the degree of SA than the CAR model (it behaves more similarly to a correlation coefficient).</p>
-<p>Using <code>geostan::stan_sar</code>, we can fit spatial data to the SAR model as follows:</p>
+<p>Using <code>geostan::stan_sar</code>, we can fit spatial data to the SAR (SEM) model as follows:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a>W &lt;-<span class="st"> </span><span class="kw">shape2mat</span>(georgia, <span class="st">&quot;W&quot;</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>fit &lt;-<span class="st"> </span><span class="kw">stan_sar</span>(<span class="kw">log</span>(income <span class="op">/</span><span class="st"> </span><span class="fl">1e3</span>) <span class="op">~</span><span class="st"> </span><span class="kw">log</span>(population <span class="op">/</span><span class="st"> </span><span class="fl">1e3</span>), </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>                <span class="dt">data =</span> georgia,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>                <span class="dt">C =</span> W, </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a>                <span class="dt">centerx =</span> <span class="ot">TRUE</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a>                <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>        <span class="dt">type =</span> <span class="st">&quot;SEM&quot;</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a>                <span class="dt">C =</span> W, </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a>                <span class="dt">centerx =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a>                <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
 <p>The Stan function that is used by <code>geostan::stan_sar</code> is as follows (the R code below will assume that you have saved this as “sar-lpdf.stan”):</p>
-<pre><code>/**
+<pre class="stan"><code>/**
  * Log probability density of the simultaneous autoregressive (SAR) model (spatial error model)
  *
  * @param y Process to model
@@ -781,7 +783,7 @@ where <span class="math inline">\(W\)</span> is a row-standardized spatial weigh
 </code></pre>
 <p>The following Stan model provides an example of how to use this function to build a SAR model. Again, its an autonormal model for continuous outcome variable with <span class="math inline">\(k\)</span> covariates.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a>sar_model_file &lt;-<span class="st"> &quot;sar_model.stan&quot;</span></span></code></pre></div>
-<pre><code>functions {
+<pre class="stan"><code>functions {
 #include sar-lpdf.stan
 }
 
@@ -849,13 +851,13 @@ model{
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>sar_list<span class="op">$</span>x &lt;-<span class="st"> </span><span class="kw">scale</span>(<span class="kw">log</span>(georgia<span class="op">$</span>population <span class="op">/</span><span class="st"> </span><span class="fl">1e3</span>), <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">FALSE</span>)</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a>sar_list<span class="op">$</span>k &lt;-<span class="st"> </span><span class="kw">ncol</span>(sar_list<span class="op">$</span>x)</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true"></a></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true"></a><span class="co"># compile Stan model from file</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true"></a><span class="co"># compile Stan model from file (SEM)</span></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true"></a>sar_model_file &lt;-<span class="st"> &quot;sar_model.stan&quot;</span></span>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true"></a>sar_model &lt;-<span class="st"> </span><span class="kw">stan_model</span>(sar_model_file)</span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true"></a></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true"></a><span class="co"># sample from model</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true"></a><span class="co"># sample from model (SEM)</span></span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true"></a>samples &lt;-<span class="st"> </span><span class="kw">sampling</span>(sar_model, <span class="dt">data =</span> sar_list, <span class="dt">iter =</span> <span class="fl">1e3</span>)</span></code></pre></div>
-<p>One can also use the SAR model as a prior distribution for a parameter vector, just as was done above with the CAR model.</p>
+<p>One can also use the SAR (SEM) model as a prior distribution for a parameter vector, just as was done above with the CAR model.</p>
 </div>
 <div id="references" class="section level1 unnumbered" number>
 <h1 class="unnumbered" number>References</h1>

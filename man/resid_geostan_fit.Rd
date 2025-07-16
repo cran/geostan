@@ -22,16 +22,18 @@ spatial(object, summary = TRUE, ...)
 
 \item{rates}{For Poisson and Binomial models, should the fitted values be returned as rates, as opposed to raw counts? Defaults to \code{TRUE}; see the \code{Details} section for more information.}
 
-\item{detrend}{For auto-normal models (CAR and SAR models with Gaussian likelihood only); if \code{detrend = TRUE}, the implicit spatial trend will be removed from the residuals. The implicit spatial trend is \code{Trend = rho * C \%*\% (Y - Mu)} (see \link[geostan]{stan_car} or \link[geostan]{stan_sar}). I.e., \code{resid = Y - (Mu + Trend)}.}
+\item{detrend}{For auto-normal models (CAR and SAR models with Gaussian likelihood only); if \code{detrend = FALSE}, the residuals will equal \code{y - Mu}, where \code{Mu} does not contain the implicit spatial trend. If \code{detrend = TRUE} (the default), the residuals will equal \code{Resid = y - Mu - Trend}. For CAR models and for SAR models of type SEM, the implicit spatial trend is \code{Trend = rho * C \%*\% (Y - Mu)} (see \link[geostan]{stan_car} or \link[geostan]{stan_sar}). For SAR models of type SLM, the spatial trend is \code{rho * C * y}.}
 
 \item{...}{Not used}
 
-\item{trend}{For auto-normal models (CAR and SAR models with Gaussian likelihood only); if \code{trend = TRUE}, the fitted values will include the implicit spatial trend term. The implicit spatial trend is \code{Trend = rho * C \%*\% (Y - Mu)} (see \link[geostan]{stan_car} or \link[geostan]{stan_sar}). I.e., if \code{trend = TRUE}, \code{fitted = Mu + Trend}.}
+\item{trend}{For auto-normal models (CAR and SAR models with Gaussian likelihood only); if \code{trend = FALSE}, the fitted values will not include the implicit spatial trend term. Rather, the fitted values will equal \code{Mu}: the intercept plus any other terms explicitly included in the model formula and the \code{re} argument ('random effects'). If \code{trend = TRUE} (the default), \code{fitted = Mu + Trend}. For CAR models and SAR models of type SEM, the spatial trend is \code{rho * C (y - Mu)}. For SAR models of type SLM, the spatial trend is \code{rho * C * y}.}
 }
 \value{
-By default, these methods return a \code{data.frame}. The column named \code{mean} is what most users will be looking for. These contain the fitted values (for the \code{fitted} method), the residuals (fitted values minus observed values, for the \code{resid} method), or the spatial trend (for the \code{spatial} method). The \code{mean} column is the posterior mean of each value, and the column \code{sd} contains the posterior standard deviation for each value. The posterior distributions are also summarized by select quantiles (including 2.5\\% and 97.5\\%).
+By default, these methods return a \code{data.frame}. The column named \code{mean} is what most users will be looking for. These contain the fitted values (for the \code{fitted} method), the residuals (fitted values minus observed values, for the \code{resid} method), or the spatial trend (for the \code{spatial} method). The \code{mean} column is the posterior mean of each value, and the column \code{sd} contains the posterior standard deviation for each value. The posterior distributions are also summarized by select quantiles.
 
 If \code{summary = FALSE} then the method returns an S-by-N matrix of MCMC samples, where S is the number of MCMC samples and N is the number of observations in the data.
+
+For spatial GLMs, the \code{spatial} method returns values on the scale of the linear predictor. Hence, for a Poisson with log link function, the spatial trend is on the log scale (in the same way that the intercept and coefficients are on the log scale).
 }
 \description{
 Extract model residuals, fitted values, or spatial trend from a fitted \code{geostan_fit} model.
@@ -46,7 +48,7 @@ When \code{rates = FALSE} and the model is Poisson or Binomial, the fitted value
 
 If the fitted values are extracted using \code{rates = FALSE}, then \code{fitted(fit)} will return the expectation of \eqn{y}. If \code{rates = TRUE} (the default), then \code{fitted(fit)} will return the expected value of the rate \eqn{\frac{y}{E}}.
 
-If a binomial model is used instead of the Poisson, then using \code{rates = TRUE} will return the expectation of \eqn{\frac{y}{N}} where \eqn{N} is the sum of the number of 'successes' and 'failures', as in:
+If a binomial model is used instead of the Poisson, then using \code{rates = TRUE} with the \code{fitted} method will return the expectation of \eqn{\frac{y}{N}} where \eqn{y} is the number of 'successes' and \eqn{N} is the sum of the number of 'successes' and 'failures', as in:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{fit <- stan_glm(cbind(successes, failures) ~ 1,
                data = data,
@@ -54,32 +56,47 @@ If a binomial model is used instead of the Poisson, then using \code{rates = TRU
 }\if{html}{\out{</div>}}
 }
 \examples{
-\donttest{
-data(georgia)
-C <- shape2mat(georgia, "B")
+sar_list <- prep_sar_data2(row = 10, col = 10, quiet = TRUE)
+W <- sar_list$W
+x <- sim_sar(w = W, rho = 0.8)
+y <- sim_sar(w = W, rho = 0.7, mu = 1 + 0.5 * x)
+dat <- data.frame(x = x, y = y)
 
-fit <- stan_esf(deaths.male ~ offset(log(pop.at.risk.male)),
-                C = C,
-                re = ~ GEOID,
-                data = georgia,
-                family = poisson(),
-                chains = 1, iter = 600) # for speed only
-
+fit <- stan_sar(y ~ x, data = dat, sar = sar_list,
+                    chains = 1, iter = 800)
 
 # Residuals
-r <- resid(fit)
+r = resid(fit)
 head(r)
-moran_plot(r$mean, C)
+moran_plot(r$mean, W)
+
+# when residuals are not detrended, they exhibit spatial autocorrelation
+r2 = resid(fit, detrend = FALSE)
+mc(r$mean, W)
+mc(r2$mean, W)
+
+r_mat <- resid(fit, summary = FALSE)
+r_mean <- apply(r_mat, 2, mean)
+head(r_mean)
+mean(r_mean)
 
 # Fitted values
 f <- fitted(fit)
 head(f)
 
-f2 <- fitted(fit, rates = FALSE)
-head(f2)
-
 # Spatial trend
-esf  <- spatial(fit)
-head(esf)
-}
+sp_trend  <- spatial(fit)
+head(sp_trend)
+
+# another way to obtain detrended residuals 
+sp <- spatial(fit, summary = FALSE)
+r <- resid(fit, detrend = FALSE, summary = FALSE)
+# detrended residuals (matrix of samples):
+r_det <- r - sp
+# summarize (take posterior means):
+r_det <- apply(r_det, 2, mean)
+r <- apply(r, 2, mean)
+# Moran coefficients:
+mc(r_det, W)
+mc(r, W)
 }

@@ -220,7 +220,6 @@ The CAR models can also incorporate spatially-lagged covariates, measurement/sam
 }
 }
 \examples{
-
 ##
 ## model mortality risk
 ##
@@ -247,12 +246,13 @@ fit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
                 car_parts = cars,
                 data = georgia,
                 family = poisson(),
-                iter = iter, chains = chains)
+                iter = iter,
+                chains = chains)
 
 # model diagnostics
 sp_diag(fit, georgia)
 
-# county mortality rates
+# county mortality rates (estimates)
 eta = fitted(fit)
 
 # spatial trend component
@@ -275,13 +275,11 @@ Dfit <- stan_car(deaths.male ~ offset(log(pop.at.risk.male)),
                data = georgia,
                car = dcars,
                family = poisson(),
-               iter = iter, chains = chains)
+               iter = iter,
+               chains = chains)
 
-sp_diag(Dfit, georgia, dcars$C)
-dic(Dfit); dic(fit)
-
+waic(Dfit); waic(fit)
 }
-
 }
 \author{
 Connor Donegan, \email{connor.donegan@gmail.com}

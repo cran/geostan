@@ -111,6 +111,7 @@ knitr::opts_chunk$set(eval = FALSE, echo = TRUE)
 #  W <- shape2mat(georgia, "W")
 #  fit <- stan_sar(log(income / 1e3) ~ log(population / 1e3),
 #                  data = georgia,
+#  		type = "SEM",
 #                  C = W,
 #                  centerx = TRUE,
 #                  iter = 1e3)
@@ -131,10 +132,10 @@ knitr::opts_chunk$set(eval = FALSE, echo = TRUE)
 #  sar_list$x <- scale(log(georgia$population / 1e3), center = TRUE, scale = FALSE)
 #  sar_list$k <- ncol(sar_list$x)
 #  
-#  # compile Stan model from file
+#  # compile Stan model from file (SEM)
 #  sar_model_file <- "sar_model.stan"
 #  sar_model <- stan_model(sar_model_file)
 #  
-#  # sample from model
+#  # sample from model (SEM)
 #  samples <- sampling(sar_model, data = sar_list, iter = 1e3)
 
